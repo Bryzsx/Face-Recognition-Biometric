@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Employee Biometric Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+    <h2>Employee Biometric Attendance</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <p style="color:red">{{ messages[0] }}</p>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="/start/morning_in">
+        <button>Morning Time IN</button>
+    </form>
+
+    <form method="post" action="/start/lunch_out">
+        <button>Lunch Time OUT</button>
+    </form>
+
+    <form method="post" action="/start/afternoon_in">
+        <button>Afternoon Time IN</button>
+    </form>
+
+    <form method="post" action="/start/time_out">
+        <button>Time OUT (5 PM)</button>
+    </form>
+
+    <hr>
+
+    <img src="{{ url_for('video_feed') }}" class="camera">
+
+    <br><br>
+    <a href="/stop">Stop Camera</a>
+</div>
+
+</body>
+</html>

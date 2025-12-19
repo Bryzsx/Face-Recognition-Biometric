@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attendance</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+<h2>Attendance Records</h2>
+<table>
+<tr>
+<th>Name</th><th>Date</th><th>Morning IN</th>
+<th>Lunch OUT</th><th>Afternoon IN</th><th>Time OUT</th>
+</tr>
+{% for r in records %}
+<tr>
+<td>{{ r.full_name }}</td>
+<td>{{ r.date }}</td>
+<td>{{ r.morning_in or '--' }}</td>
+<td>{{ r.lunch_out or '--' }}</td>
+<td>{{ r.afternoon_in or '--' }}</td>
+<td>{{ r.time_out or '--' }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Employee Attendance Records</title>
+<style>
+body{font-family:Segoe UI;background:#f2f4f7}
+.container{max-width:1000px;margin:40px auto;background:#fff;padding:30px;border-radius:10px}
+table{width:100%;border-collapse:collapse}
+th{background:#1f2937;color:#fff;padding:12px}
+td{padding:10px;border-bottom:1px solid #ddd}
+.back{float:right;text-decoration:none;color:#2563eb}
+</style>
+</head>
+<body>
+
+<div class="container">
+<a class="back" href="/admin/dashboard">← Back to Admin Dashboard</a>
+<h2>📋 Employee Attendance Records</h2>
+
+<table>
+<thead>
+<tr>
+<th>Employee Name</th>
+<th>Date</th>
+<th>Time IN</th>
+<th>Time OUT</th>
+</tr>
+</thead>
+<tbody>
+{% for r in records %}
+<tr>
+<td>{{ r.full_name }}</td>
+<td>{{ r.date }}</td>
+<td>{{ r.time_in or '--:--' }}</td>
+<td>{{ r.time_out or '--:--' }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+</body>
+</html>
