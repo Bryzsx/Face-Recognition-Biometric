@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Admin{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+
+<div class="sidebar">
+    <ul>
+        <li><a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a></li>
+        <li><a href="{{ url_for('admin_register') }}">➕ Register Employee</a></li>
+        <li><a href="{{ url_for('admin_employees') }}">👥 All Employees</a></li>
+        <li><a href="{{ url_for('admin_employee_info') }}">📄 Employee Information</a></li>
+        <li><a href="{{ url_for('admin_attendance') }}">📅 Attendance</a></li>
+        <li><a href="{{ url_for('admin_reports') }}">📈 Reports</a></li>
+        <li><a href="{{ url_for('admin_logout') }}">🔒 Logout</a></li>
+    </ul>
+</div>
+
+<div class="main">
+    <h2>{% block page_title %}{% endblock %}</h2>
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

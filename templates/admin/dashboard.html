@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats">
+  <div class="stat"><small>Total Employees</small><h2>{{ total_employees }}</h2></div>
+  <div class="stat"><small>Present Today</small><h2>{{ present_today }}</h2></div>
+  <div class="stat"><small>Absent</small><h2>{{ absent_today }}</h2></div>
+  <div class="stat"><small>Late</small><h2>{{ late_today }}</h2></div>
+</div>
+
+<div class="card">
+  <div class="card-title">Recent Attendance</div>
+  <p>No records yet.</p>
+</div>
+{% endblock %}

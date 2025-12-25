@@ -1,66 +1,493 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
 </head>
-<body>
 
-<div class="container">
-    <h2>Admin Dashboard</h2>
+<div class="sidebar">
+  <div class="logo">
+    <img src="static/logo.png" class="logo-img" alt="Admin Logo">
+    <div class="logo-text">Admin Panel</div>
+  </div>
 
-    <h3>Add Employee</h3>
-    <form method="POST" action="/admin/add_employee">
-        <input type="text" name="full_name" placeholder="Full Name" required>
-        <input type="text" name="id_number" placeholder="ID Number" required>
-        <button type="submit">Add Employee</button>
-    </form>
+  <ul class="nav-menu">
+<li><a href="#" class="nav-link active" data-target="dashboard">📊Dashboard</a></li>
+<li><a href="#" class="nav-link" data-target="register">➕Register Employee</a></li>
+<li><a href="#" class="nav-link" data-target="employees">👥All Employees</a></li>
+<li><a href="#" class="nav-link" data-target="attendance">📅Today's Attendance</a></li>
+<li><a href="#" class="nav-link" data-target="reports">📈Reports</a></li>
+<li><a href="#" class="nav-link" data-target="employeeInfo">📄Employee Information</a></li>
+</ul>
 
-    <hr>
+  <div class="logout-box">
+    <a href="#" id="logout-btn" class="logout-btn">🔒 Logout</a>
+  </div>
+</div>
 
-    <p>
-        <a href="/admin/attendance">📋 View Attendance Records</a> |
-        <a href="/admin/logout">Logout</a>
-    </p>
 
-    <hr>
+<!-- ================= MAIN ================= -->
+<div class="main">
 
-    <h3>Employee List</h3>
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="page-title" id="title">Dashboard</div>
+  <div class="admin-profile">
+    <div class="admin-info">
+      <strong>Alex Morgan</strong>
+      <small>System Administrator</small>
+    </div>
+    <div class="admin-avatar">AM</div>
+  </div>
+</div>
 
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Full Name</th>
-            <th>ID Number</th>
-            <th>Enroll Face</th>
-            <th>Delete</th>
-        </tr>
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
+<div class="stats">
+<div class="stat"><div class="stat-icon">👥</div><small>Total Employees</small><h2>127</h2><span>Company-wide</span></div>
+<div class="stat"><div class="stat-icon">✅</div><small>Present Today</small><h2>114</h2><span>89.8%</span></div>
+<div class="stat"><div class="stat-icon">❌</div><small>Absent</small><h2>8</h2><span>Needs review</span></div>
+<div class="stat"><div class="stat-icon">⏰</div><small>Late</small><h2>5</h2><span>Today</span></div>
+</div>
 
-        {% for e in employees %}
-        <tr>
-            <td>{{ e.employee_id }}</td>
-            <td>{{ e.full_name }}</td>
-            <td>{{ e.id_number }}</td>
-            <td>
-                <a href="/admin/enroll/{{ e.employee_id }}">Enroll Face</a>
-            </td>
-            <td>
-                <form
-                    action="/admin/delete_employee/{{ e.employee_id }}"
-                    method="POST"
-                    onsubmit="return confirm('Delete this employee?');"
-                    style="display:inline;"
-                >
-                    <button type="submit" style="background:#dc2626; color:white;">
-                        Delete
-                    </button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+<div class="card">
+<div class="card-title">Recent Attendance</div>
+<div class="attendance-grid">
+<div class="attendance-card">
+<div class="att-left"><div class="att-avatar">SJ</div><div><strong>Sarah Johnson<br></strong><small>Engineering</small></div></div>
+<div class="att-right"><span class="att-time">08:15 AM</span><br><span class="att-badge ontime">On Time</span></div>
+</div>
+<div class="attendance-card">
+<div class="att-left"><div class="att-avatar">MC</div><div><strong>Michael Chen<br></strong><small>Marketing</small></div></div>
+<div class="att-right"><span class="att-time">08:32 AM</span><br><span class="att-badge late">Late</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- REGISTER (UPDATED ONLY HERE) -->
+<div id="register" class="section">
+<div class="card">
+<div class="card-title">Register Employee</div>
+
+<div class="register-grid">
+
+<!-- PERSONAL INFORMATION -->
+<div class="register-card">
+<h5>Personal Information</h5>
+<div class="form-grid">
+<input placeholder="Full Name">
+<input placeholder="Employee ID">
+<input placeholder="Address">
+<input placeholder="Place of Birth">
+<input placeholder="Blood Type">
+<input type="date">
+<input placeholder="Gender">
+<input placeholder="Civil Status">
+<input placeholder="Age">
+</div>
+</div>
+
+<style>
+@page{
+    size: 3.2in 8.5in;
+    margin: 0;
+}
+
+.dtr-container{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 7px;
+}
+
+.dtr-wrapper{
+    width: 3.2in;
+    height: 8.5in;
+    border: 1px solid #000;
+    padding: 2px;
+    box-sizing: border-box;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dtr-center{
+    text-align: center;
+}
+
+.dtr-bold{
+    font-weight: bold;
+}
+
+.dtr-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2px;
+    margin-bottom: 0;
+    font-size: 6px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.dtr-table th, .dtr-table td{
+    border: 1px solid #000;
+    padding: 0px;
+    text-align: center;
+    height: 10px;
+    font-size: 6px;
+}
+
+.dtr-left{
+    text-align: left;
+}
+
+.dtr-signature{
+    margin-top: 2px;
+    text-align: center;
+    font-size: 6px;
+}
+
+.dtr-line{
+    border-bottom: 1px solid #000;
+    width: 120px;
+    margin: 2px auto;
+}
+
+p.dtr-cert{
+    font-size: 6px;
+    margin: 2px;
+    padding: 0;
+    line-height: 1;
+}
+</style>
+<div class="register-card">
+<h5>Contact & Education</h5>
+<div class="form-grid">
+<input placeholder="Contact Number">
+<input placeholder="Email">
+<input placeholder="Course">
+<input placeholder="Entity / Office">
+</div>
+</div>
+
+<!-- GOVERNMENT NUMBERS -->
+<div class="register-card">
+<h5>Government & Identification Numbers</h5>
+<div class="form-grid">
+<input placeholder="BP Number">
+<input placeholder="PhilHealth Number">
+<input placeholder="Pag-IBIG Number">
+<input placeholder="TIN">
+<input placeholder="ID Number">
+</div>
+</div>
+
+<!-- EMPLOYMENT INFORMATION -->
+<div class="register-card">
+<h5>Employment Information</h5>
+<div class="form-grid">
+<input placeholder="Position">
+<input placeholder="Salary Grade">
+<input placeholder="Basic Salary">
+<input placeholder="Department">
+<input placeholder="Place of Assignment">
+<input placeholder="Original Place of Assignment">
+<input placeholder="Item Number">
+</div>
+</div>
+
+<!-- APPOINTMENT & SERVICE -->
+<div class="register-card">
+<h5>Appointment & Service Records</h5>
+<div class="form-grid">
+<input type="date">
+<input type="date">
+<input type="date">
+<input placeholder="Employment Status">
+<input placeholder="Eligibility">
+</div>
+</div>
+
+<!-- FACIAL CAPTURE -->
+<div class="register-card">
+<h5>Facial Capture</h5>
+<div class="photo-box">
+<p>Facial Capture (UI Only)</p>
+<div class="photo-grid">
+<div class="photo">1</div>
+<div class="photo">2</div>
+<div class="photo">3</div>
+<div class="photo">4</div>
+<div class="photo">5</div>
+</div><br>
+<button onclick="capture()">Capture Photo</button>
+</div>
+</div>
 
 </div>
+
+<div class="register-actions">
+<button>Register Employee (UI Only)</button>
+</div>
+
+</div>
+</div>
+
+
+<!-- EMPLOYEES INFORMATION-->
+<div id="employeeInfo" class="section">
+<div class="card">
+<div class="card-title">Employee Information</div>
+
+<div class="info-grid">
+
+<!-- PERSONAL DETAILS -->
+<div class="info-card">
+<h5>Personal Details</h5>
+<div class="info-item"><span>Full Name</span><strong>Juan Dela Cruz</strong></div>
+<div class="info-item"><span>Employee ID</span><strong>EMP-001</strong></div>
+<div class="info-item"><span>Gender</span><strong>Male</strong></div>
+<div class="info-item"><span>Civil Status</span><strong>Single</strong></div>
+<div class="info-item"><span>Birthday</span><strong>1998-05-14</strong></div>
+</div>
+
+<!-- EMPLOYMENT DETAILS -->
+<div class="info-card">
+<h5>Employment Details</h5>
+<div class="info-item"><span>Position</span><strong>IT Officer</strong></div>
+<div class="info-item"><span>Department</span><strong>Information Technology</strong></div>
+<div class="info-item"><span>Salary Grade</span><strong>SG-11</strong></div>
+<div class="info-item"><span>Status</span><strong>Permanent</strong></div>
+</div>
+
+<!-- GOVERNMENT NUMBERS -->
+<div class="info-card">
+<h5>Government Numbers</h5>
+<div class="info-item"><span>TIN</span><strong>123-456-789</strong></div>
+<div class="info-item"><span>PhilHealth</span><strong>12-3456789</strong></div>
+<div class="info-item"><span>Pag-IBIG</span><strong>987654321</strong></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- EMPLOYEES -->
+<div id="employees" class="section">
+<div class="card">
+<div class="card-title">All Employees</div>
+<input class="search" placeholder="Search employee">
+<table class="table">
+<tr><th>Name</th><th>Dept</th><th>Status</th></tr>
+<tr><td>Sarah Johnson</td><td>Engineering</td><td><span class="badge active-b">Active</span></td></tr>
+<tr><td>Michael Chen</td><td>Marketing</td><td><span class="badge active-b">Active</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- ATTENDANCE -->
+<div id="attendance" class="section">
+<div class="card">
+<div class="card-title">Today's Attendance</div>
+<div style="margin-bottom: 15px;">
+<label>Select Date: </label>
+<input type="date">
+</div>
+<table class="table">
+<tr><th>Name</th><th>Date</th><th>Time In</th><th>Time Out</th><th>Status</th></tr>
+<tr><td>Sarah Johnson</td><td>2024-01-15</td><td>8:15 AM</td><td>5:30 PM</td><td><span class="badge present">Present</span></td></tr>
+<tr><td>Michael Chen</td><td>2024-01-15</td><td>8:30 AM</td><td>5:45 PM</td><td><span class="badge present">Present</span></td></tr>
+<tr><td>John Smith</td><td>2024-01-15</td><td>9:00 AM</td><td>--</td><td><span class="badge late">Late</span></td></tr>
+<tr><td>Emma Wilson</td><td>2024-01-15</td><td>--</td><td>--</td><td><span class="badge absent">Absent</span></td></tr>
+</table>
+</div>
+</div>
+
+<!-- REPORTS -->
+<div id="reports" class="section">
+<div class="card">
+
+<style>
+@page{
+    size: 3.2in 8.5in;
+    margin: 0;
+}
+
+.dtr-container{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8px;
+}
+
+.dtr-wrapper{
+    width: 3.2in;
+    height: 8.5in;
+    border: 1px solid #000;
+    padding: 4px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.dtr-center{
+    text-align: center;
+}
+
+.dtr-bold{
+    font-weight: bold;
+}
+
+.dtr-table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4px;
+}
+
+.dtr-table th, .dtr-table td{
+    border: 1px solid #000;
+    padding: 1px;
+    text-align: center;
+    height: 13px;
+    font-size: 7.5px;
+}
+
+.dtr-left{
+    text-align: left;
+}
+
+.dtr-signature{
+    margin-top: 8px;
+    text-align: center;
+}
+
+.dtr-line{
+    border-bottom: 1px solid #000;
+    width: 150px;
+    margin: 4px auto;
+}
+</style>
+
+<div class="dtr-container">
+    <div class="dtr-wrapper">
+
+        <div class="dtr-center dtr-bold">CIVIL SERVICE FORM NO. 48</div>
+        <div class="dtr-center dtr-bold">DAILY TIME RECORD</div>
+
+        <br>
+
+        <div>
+            (Name) ___________________________________________
+        </div>
+
+        <br>
+
+        <div>
+            For the month of _________________________________
+        </div>
+
+        <div style="margin-top:4px">
+            Official hours for arrival and departure
+            &nbsp;&nbsp;&nbsp;&nbsp;
+            Regular Days
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Saturdays
+        </div>
+
+        <table class="dtr-table">
+            <tr>
+                <th rowspan="2">Day</th>
+                <th colspan="2">A.M.</th>
+                <th colspan="2">P.M.</th>
+                <th colspan="2">UNDER TIME</th>
+            </tr>
+            <tr>
+                <th>Arrival</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Departure</th>
+                <th>Hours</th>
+                <th>Minutes</th>
+            </tr>
+
+            <!-- DAYS 1–31 -->
+            <tbody id="dtr-days"></tbody>
+
+            <tr>
+                <td colspan="5" class="dtr-left dtr-bold">TOTAL</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+
+        <p style="font-size:7.5px; margin-top:4px">
+            I CERTIFY on my honor that the above is a true and correct report of the
+            hours of work performed, record of which was made daily at the time of
+            arrival at and departure from office.
+        </p>
+
+        <p style="font-size:7.5px">
+            Verified as to the prescribed office hours:
+        </p>
+
+        <div class="dtr-signature">
+            <div class="dtr-line"></div>
+            <div class="dtr-bold">ATTY. ALIM D. PANGANDAMAN</div>
+            Regional Director
+        </div>
+    </div>
+</div>
+
+<script>
+// Generate DTR days 1-31
+(function(){
+    const tbody = document.getElementById('dtr-days');
+    for(let i=1; i<=31; i++){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${i}</td>
+            <td></td><td></td>
+            <td></td><td></td>
+            <td></td><td></td>
+        `;
+        tbody.appendChild(tr);
+    }
+})();
+</script>
+
+</div>
+</div>
+</div>
+
+<script>
+document.querySelectorAll(".nav-link").forEach(link=>{
+link.onclick=e=>{
+e.preventDefault();
+document.querySelectorAll(".nav-link").forEach(l=>l.classList.remove("active"));
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+link.classList.add("active");
+document.getElementById(link.dataset.target).classList.add("active");
+document.getElementById("title").innerText=link.innerText.trim();
+}
+});
+
+let count=0;
+function capture(){
+if(count<5){
+document.querySelectorAll(".photo")[count].classList.add("done");
+document.querySelectorAll(".photo")[count].innerText="✓";
+count++;
+}
+}
+</script>
 
 </body>
 </html>

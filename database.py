@@ -1,6 +1,24 @@
 import sqlite3
 
+DB_NAME = "biometric.db"
+
 def get_db():
-    conn = sqlite3.connect("biometric.db", check_same_thread=False)
-    conn.row_factory = sqlite3.Row
-    return conn
+    return sqlite3.connect(DB_NAME)
+
+def init_db():
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS employee (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        full_name TEXT NOT NULL,
+        employee_id TEXT UNIQUE NOT NULL,
+        department TEXT,
+        position TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    db.commit()
+    db.close()

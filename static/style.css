@@ -1,161 +1,97 @@
-/* ========== GLOBAL RESET ========== */
-* {
-    box-sizing: border-box;
+/* ================= ADMIN LOGIN ================= */
+
+.login-body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#1a1a2e,#16213e);
+    font-family:Segoe UI,Roboto,sans-serif;
 }
 
-/* ========== BODY ========== */
-body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #e9ecef;
-    margin: 0;
-    padding: 0;
+.login-card{
+    width:100%;
+    max-width:420px;
+    background:#fff;
+    border-radius:16px;
+    padding:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+    animation:fadeIn .8s ease;
 }
 
-/* ========== MAIN CONTAINER ========== */
-.container {
-    max-width: 1200px;
-    margin: 30px auto;
-    background: #ffffff;
-    padding: 30px;
-    display: flex;
-    gap: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+.login-header{
+    text-align:center;
+    margin-bottom:25px;
 }
 
-/* ========== CAMERA SECTION ========== */
-.camera-section {
-    flex: 2;
-    text-align: center;
+.login-icon{
+    font-size:42px;
+    margin-bottom:10px;
 }
 
-.camera-section h2 {
-    margin-top: 0;
-    margin-bottom: 10px;
+.login-header h2{
+    margin:0;
+    font-weight:700;
 }
 
-.date {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
+.login-header p{
+    color:#666;
+    font-size:14px;
+    margin-top:5px;
 }
 
-/* CAMERA STATUS */
-.camera-status {
-    font-size: 14px;
-    margin-bottom: 10px;
+.form-group{
+    margin-bottom:15px;
 }
 
-.camera-status .on {
-    color: green;
-    font-weight: bold;
+.form-group label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:5px;
+    color:#333;
 }
 
-.camera-status .off {
-    color: red;
-    font-weight: bold;
+.form-group input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:14px;
+    transition:.3s;
 }
 
-/* CAMERA IMAGE */
-.camera {
-    width: 100%;
-    border: 3px solid #111;
-    border-radius: 10px;
-    background: #000;
+.form-group input:focus{
+    outline:none;
+    border-color:#4f46e5;
+    box-shadow:0 0 0 2px rgba(79,70,229,.15);
 }
 
-/* CAMERA HINT */
-.hint {
-    font-size: 14px;
-    color: #555;
-    margin-top: 10px;
+.login-btn{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:#4f46e5;
+    color:white;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    transition:.3s;
 }
 
-/* ========== ATTENDANCE PANEL ========== */
-.time-section {
-    flex: 1;
-    background: #f9fafb;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
+.login-btn:hover{
+    background:#4338ca;
 }
 
-.time-section h3 {
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
+.login-footer{
+    text-align:center;
+    margin-top:20px;
+    font-size:12px;
+    color:#888;
 }
 
-/* TIME BOXES */
-.time-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px;
-    margin-bottom: 12px;
-    background: #ffffff;
-    border-left: 5px solid #2563eb;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-.time-box span {
-    color: #333;
-}
-
-.time-box strong {
-    font-size: 15px;
-    color: #111;
-}
-
-/* ========== TABLES (ADMIN SAFE) ========== */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-th,
-td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
-    background: #1f2937;
-    color: white;
-}
-
-/* ========== FORMS (ADMIN) ========== */
-form input[type="text"],
-form input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-form button {
-    padding: 10px 15px;
-    background: #2563eb;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-form button:hover {
-    background: #1d4ed8;
-}
-
-/* ========== LINKS ========== */
-a {
-    color: #2563eb;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px)}
+    to{opacity:1;transform:translateY(0)}
 }

@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Register Employee{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h2>➕ Register Employee</h2>
+</div>
+
+<form method="POST" action="{{ url_for('admin_register') }}" class="card">
+
+    <!-- ================= PERSONAL INFORMATION ================= -->
+    <div class="form-section">
+        <h4>Personal Information</h4>
+        <div class="form-grid">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="text" name="employee_id" placeholder="Employee ID" required>
+            <input type="text" name="address" placeholder="Address">
+            <input type="text" name="place_of_birth" placeholder="Place of Birth">
+            <input type="text" name="blood_type" placeholder="Blood Type">
+            <input type="date" name="birth_date">
+            <input type="text" name="gender" placeholder="Gender">
+            <input type="text" name="civil_status" placeholder="Civil Status">
+            <input type="number" name="age" placeholder="Age">
+        </div>
+    </div>
+
+    <!-- ================= CONTACT & EDUCATION ================= -->
+    <div class="form-section">
+        <h4>Contact & Education</h4>
+        <div class="form-grid">
+            <input type="text" name="contact_number" placeholder="Contact Number">
+            <input type="email" name="email" placeholder="Email">
+            <input type="text" name="course" placeholder="Course">
+            <input type="text" name="office" placeholder="Entity / Office">
+        </div>
+    </div>
+
+    <!-- ================= EMPLOYMENT INFORMATION ================= -->
+    <div class="form-section">
+        <h4>Employment Information</h4>
+        <div class="form-grid">
+            <input type="text" name="position" placeholder="Position">
+            <input type="text" name="department" placeholder="Department">
+        </div>
+    </div>
+
+    <!-- ================= ACTION ================= -->
+    <div class="form-actions">
+        <button type="submit" class="btn-primary">
+            Register Employee
+        </button>
+    </div>
+
+</form>
+
+{% endblock %}
