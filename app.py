@@ -106,12 +106,24 @@ def admin_dashboard():
     )
     late = cur.fetchone()[0]
 
+    # Get recent attendance records (last 10 records)
+    cur.execute("""
+        SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
+               a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
+        FROM attendance a
+        JOIN employees e ON a.employee_id = e.id
+        ORDER BY a.date DESC, a.morning_in DESC
+        LIMIT 10
+    """)
+    recent_attendance = cur.fetchall()
+
     return render_template(
         "admin/dashboard.html",
         total_employees=total_employees,
         present=present,
         absent=absent,
         late=late,
+        recent_attendance=recent_attendance,
     )
 
 
@@ -844,4 +856,4 @@ def attendance_history():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=5000, debug=True)

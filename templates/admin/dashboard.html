@@ -9,25 +9,49 @@
   <div class="stats">
     <div class="stat">
       <small>Total Employees</small>
-      <h2>0</h2>
+      <h2>{{ total_employees }}</h2>
     </div>
     <div class="stat">
       <small>Present Today</small>
-      <h2>0</h2>
+      <h2>{{ present }}</h2>
     </div>
     <div class="stat">
       <small>Absent</small>
-      <h2>0</h2>
+      <h2>{{ absent }}</h2>
     </div>
     <div class="stat">
       <small>Late</small>
-      <h2>0</h2>
+      <h2>{{ late }}</h2>
     </div>
   </div>
 
   <div class="card">
     <h3 class="card-title">Recent Attendance</h3>
-    <p>No records yet.</p>
+    {% if recent_attendance %}
+      <div class="attendance-grid">
+        {% for record in recent_attendance %}
+        <div class="attendance-card">
+          <div class="att-left">
+            <div class="att-avatar">{{ record.full_name[0:2].upper() if record.full_name else 'N/A' }}</div>
+            <div>
+              <strong>{{ record.full_name or 'N/A' }}</strong><br>
+              <small>{{ record.employee_code or 'N/A' }} • {{ record.date }}</small>
+            </div>
+          </div>
+          <div class="att-right">
+            {% if record.morning_in %}
+              <span class="att-time">{{ record.morning_in }}</span><br>
+            {% endif %}
+            <span class="att-badge {% if record.attendance_status == 'Present' %}ontime{% elif record.attendance_status == 'Late' %}late{% else %}absent{% endif %}">
+              {{ record.attendance_status or 'Pending' }}
+            </span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No records yet.</p>
+    {% endif %}
   </div>
 
 </div>
