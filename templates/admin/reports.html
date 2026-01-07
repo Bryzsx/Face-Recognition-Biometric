@@ -1,8 +1,149 @@
 {% extends "admin/base.html" %}
 
 {% block title %}Reports{% endblock %}
-{% block page_title %}Reports{% endblock %}
 
 {% block content %}
-<!-- PUT YOUR DTR HTML EXACTLY AS IS HERE -->
+<div class="section active">
+  <div class="card">
+    <div class="card-title">Reports - Daily Time Record (DTR)</div>
+    
+    <!-- Employee and Month Selection -->
+    <div style="margin-bottom: 30px; padding: 20px; background: #f9fafb; border-radius: 10px;">
+      <form method="GET" action="{{ url_for('admin_reports') }}" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Select Employee:</label>
+          <select name="employee_id" required style="width: 100%;">
+            <option value="">-- Select Employee --</option>
+            {% for emp in employees %}
+            <option value="{{ emp.id }}" {% if employee_id and employee_id|string == emp.id|string %}selected{% endif %}>
+              {{ emp.full_name }} ({{ emp.employee_code }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">For the month of:</label>
+          <input type="month" name="month" value="{{ month_year }}" required style="width: 100%;">
+        </div>
+        <div>
+          <button type="submit">Generate DTR</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- DTR Form -->
+    {% if dtr_data and employee_info %}
+    <div id="dtr-form" style="background: white; padding: 30px; border: 1px solid #e5e7eb; border-radius: 8px;">
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 5px;">CIVIL SERVICE FORM NO. 48</h2>
+        <h3 style="font-size: 16px; font-weight: 600; color: #374151;">DAILY TIME RECORD</h3>
+      </div>
+
+      <div style="margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <strong>Name:</strong> {{ employee_info.full_name or 'N/A' }}
+        </div>
+        <div>
+          <strong>For the month of:</strong> 
+          {% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
+          {{ month_names[dtr_data.month|int - 1] }} {{ dtr_data.year }}
+        </div>
+      </div>
+
+      <table class="dtr-table" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
+        <thead>
+          <tr style="background: #f3f4f6;">
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Day</th>
+            <th colspan="2" style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">A.M.</th>
+            <th colspan="2" style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">P.M.</th>
+            <th colspan="2" style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">UNDER TIME</th>
+          </tr>
+          <tr style="background: #f3f4f6;">
+            <th style="border: 1px solid #d1d5db; padding: 8px;"></th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Arrival</th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Departure</th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Arrival</th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Departure</th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Hours</th>
+            <th style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">Minutes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] %}
+          {% set month_num = dtr_data.month|int %}
+          {% set year_num = dtr_data.year|int %}
+          {% set max_days = days_in_month[month_num - 1] %}
+          {% if month_num == 2 and year_num % 4 == 0 and (year_num % 100 != 0 or year_num % 400 == 0) %}
+            {% set max_days = 29 %}
+          {% endif %}
+          
+          {% for day in range(1, max_days + 1) %}
+          {% set day_str = day|string %}
+          {% set day_padded = day_str.zfill(2) %}
+          {% set record = dtr_data.records.get(day_padded, {}) %}
+          <tr>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center; font-weight: 500;">{{ day }}</td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;">{{ record.morning_in or '' }}</td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;">{{ record.lunch_out or '' }}</td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;">{{ record.afternoon_in or '' }}</td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;">{{ record.time_out or '' }}</td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;"></td>
+            <td style="border: 1px solid #d1d5db; padding: 6px; text-align: center;"></td>
+          </tr>
+          {% endfor %}
+          <tr style="background: #f3f4f6; font-weight: 600;">
+            <td style="border: 1px solid #d1d5db; padding: 8px; text-align: center;">TOTAL</td>
+            <td colspan="6" style="border: 1px solid #d1d5db; padding: 8px;"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+        <p style="margin-bottom: 40px; font-size: 13px;">
+          <strong>CERTIFY:</strong> This is to certify that the above entries are true and correct to the best of my knowledge and belief.
+        </p>
+        <div style="text-align: center; margin-top: 60px;">
+          <div style="border-top: 1px solid #000; width: 300px; margin: 0 auto; padding-top: 5px;">
+            <strong>{{ employee_info.full_name or 'N/A' }}</strong>
+          </div>
+          <div style="margin-top: 5px; font-size: 12px;">Employee Signature</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Button -->
+    <div style="margin-top: 20px; text-align: center;">
+      <button onclick="window.print()" style="padding: 12px 30px; font-size: 16px;">Print DTR</button>
+    </div>
+    {% elif employee_id and month_year %}
+    <div style="padding: 40px; text-align: center; color: #6b7280;">
+      <p>No attendance records found for the selected employee and month.</p>
+    </div>
+    {% else %}
+    <div style="padding: 40px; text-align: center; color: #6b7280;">
+      <p>Please select an employee and month to generate the DTR.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #dtr-form, #dtr-form * {
+    visibility: visible;
+  }
+  #dtr-form {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .sidebar, .topbar, .card-title, button, form {
+    display: none !important;
+  }
+}
+</style>
 {% endblock %}

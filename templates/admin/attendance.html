@@ -1,10 +1,64 @@
 {% extends "admin/base.html" %}
 
 {% block title %}Today's Attendance{% endblock %}
-{% block page_title %}Today's Attendance{% endblock %}
 
 {% block content %}
-<div class="card">
-  <p>No attendance records yet.</p>
+<div class="section active">
+  <div class="card">
+    <div class="card-title">Today's Attendance</div>
+    
+    <!-- Date Selector -->
+    <div style="margin-bottom: 20px;">
+      <form method="GET" action="{{ url_for('admin_attendance') }}" style="display: flex; gap: 10px; align-items: center;">
+        <label style="font-weight: 500;">Select Date:</label>
+        <input type="date" name="date" value="{{ selected_date }}" style="width: auto;">
+        <button type="submit">View</button>
+      </form>
+    </div>
+
+    <!-- Attendance Table -->
+    {% if records %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Time In</th>
+          <th>Lunch Out</th>
+          <th>Afternoon In</th>
+          <th>Time Out</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in records %}
+        <tr>
+          <td>{{ record.full_name }}</td>
+          <td>{{ record.date }}</td>
+          <td>{{ record.morning_in or '--' }}</td>
+          <td>{{ record.lunch_out or '--' }}</td>
+          <td>{{ record.afternoon_in or '--' }}</td>
+          <td>{{ record.time_out or '--' }}</td>
+          <td>
+            {% if record.attendance_status == 'Present' %}
+              <span class="badge present">Present</span>
+            {% elif record.attendance_status == 'Late' %}
+              <span style="color: #f59e0b; font-weight: 500;">Late</span>
+            {% elif record.attendance_status == 'Absent' %}
+              <span style="color: #ef4444; font-weight: 500;">Absent</span>
+            {% else %}
+              <span style="color: #6b7280;">--</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="margin-top: 20px; color: #6b7280; text-align: center; padding: 40px;">
+      No attendance records for {{ selected_date }}
+    </p>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

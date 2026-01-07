@@ -1,11 +1,68 @@
 {% extends "admin/base.html" %}
 
 {% block title %}All Employees{% endblock %}
-{% block page_title %}All Employees{% endblock %}
 
 {% block content %}
-<div class="card">
-  <div class="card-title">All Employees</div>
-  <p>No employees registered.</p>
+<div class="section active">
+  <div class="card">
+    <div class="card-title">All Employees</div>
+    
+    <!-- Search Bar -->
+    <div class="search">
+      <form method="GET" action="{{ url_for('admin_employees') }}" style="display: flex; gap: 10px; align-items: center;">
+        <input type="text" 
+               name="search" 
+               placeholder="Search employee..." 
+               value="{{ search_query or '' }}" 
+               style="flex: 1;">
+        <button type="submit">Search</button>
+        {% if search_query %}
+        <a href="{{ url_for('admin_employees') }}" class="btn-secondary" style="padding: 12px 20px; text-decoration: none; display: inline-block; white-space: nowrap;">Clear</a>
+        {% endif %}
+      </form>
+    </div>
+
+    <!-- Employees Table -->
+    {% if employees %}
+    <table class="table" style="margin-top: 20px;">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Employee ID</th>
+          <th>Department</th>
+          <th>Position</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in employees %}
+        <tr>
+          <td>
+            <a href="{{ url_for('admin_employee_info') }}?id={{ emp.id }}" style="color: #667eea; text-decoration: none; font-weight: 500;">
+              {{ emp.full_name or 'N/A' }}
+            </a>
+          </td>
+          <td>{{ emp.employee_code or 'N/A' }}</td>
+          <td>{{ emp.department or 'N/A' }}</td>
+          <td>{{ emp.position or 'N/A' }}</td>
+          <td>
+            <span class="badge {% if emp.status == 'Active' %}active-b{% else %}present{% endif %}">
+              {{ emp.status or 'Active' }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="margin-top: 20px; color: #6b7280; text-align: center; padding: 40px;">
+      {% if search_query %}
+        No employees found matching "{{ search_query }}"
+      {% else %}
+        No employees registered yet.
+      {% endif %}
+    </p>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

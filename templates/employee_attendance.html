@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Attendance - Face Recognition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            display: block;
+            border-radius: 50%;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-text {
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .date-time {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .scan-status {
+            background: #10b981;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        .scan-status.active {
+            display: flex;
+        }
+
+        .scan-status.success {
+            background: #10b981;
+        }
+
+        .scan-status.error {
+            background: #ef4444;
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .checkmark {
+            width: 50px;
+            height: 50px;
+            color: white;
+            font-size: 50px;
+        }
+
+        .welcome-name {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .checkin-time {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+        }
+
+        .camera-container {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #10b981;
+        }
+
+        #video {
+            width: 100%;
+            display: block;
+            transform: scaleX(-1);
+        }
+
+        .face-guide {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 200px;
+            border: 3px solid #10b981;
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .status-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            flex-shrink: 0;
+        }
+
+        .status-dot.error {
+            background: #ef4444;
+        }
+
+        .status-text {
+            color: #333;
+            font-size: 14px;
+        }
+
+        .history-section {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .history-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 2px solid #4f46e5;
+            background: white;
+            color: #4f46e5;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .history-list {
+            max-height: 500px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .history-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-date {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .history-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-in {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-out {
+            background: #f59e0b;
+            color: white;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .scanning-indicator {
+            display: none;
+            text-align: center;
+            color: #10b981;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .scanning-indicator.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='Department_of_Transportation_(Philippines).svg-CnZCv33r.png') }}" 
+             alt="DOTR Logo" 
+             class="logo">
+        <div class="welcome-text">Welcome!</div>
+        <div class="subtitle">Scan your face to record attendance</div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Section: Face Scanning -->
+        <div class="card">
+            <div class="date-time" id="dateTime"></div>
+
+            <!-- Success/Error Status -->
+            <div class="scan-status" id="scanStatus">
+                <div class="checkmark-circle">
+                    <div class="checkmark">✓</div>
+                </div>
+                <div class="welcome-name" id="welcomeName"></div>
+                <div class="checkin-time" id="checkinTime"></div>
+            </div>
+
+            <!-- Camera Feed -->
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <div class="face-guide"></div>
+            </div>
+            <div class="scanning-indicator" id="scanningIndicator">Scanning...</div>
+
+            <!-- Status Messages -->
+            <div class="status-messages">
+                <div class="status-item">
+                    <div class="status-dot" id="statusDot"></div>
+                    <div class="status-text" id="statusText">Ready to Scan - Position your face in the frame</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <div class="status-text">👤 Look directly at the camera and stay still for recognition</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section: Attendance History -->
+        <div class="history-section">
+            <div class="history-header">
+                <div class="history-title">
+                    📄 Your Attendance History
+                </div>
+                <div class="time-filter">
+                    <button class="filter-btn active" onclick="loadHistory('week')">This Week</button>
+                    <button class="filter-btn" onclick="loadHistory('month')">This Month</button>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let video = document.getElementById('video');
+        let scanning = false;
+        let scanInterval = null;
+        let currentFilter = 'week';
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true
+            };
+            document.getElementById('dateTime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Start camera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                video.srcObject = stream;
+                
+                // Start scanning after camera is ready
+                setTimeout(() => {
+                    startScanning();
+                }, 1000);
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                document.getElementById('statusText').textContent = 'Camera access denied. Please allow camera permissions.';
+                document.getElementById('statusDot').classList.add('error');
+            }
+        }
+
+        // Start face recognition scanning
+        function startScanning() {
+            if (scanning) return;
+            scanning = true;
+            
+            scanInterval = setInterval(async () => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    await captureAndRecognize();
+                }
+            }, 2000); // Scan every 2 seconds
+        }
+
+        // Capture frame and send for recognition
+        async function captureAndRecognize() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            document.getElementById('scanningIndicator').classList.add('active');
+            
+            try {
+                const response = await fetch('/api/recognize-face', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: imageData })
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('scanningIndicator').classList.remove('active');
+                
+                if (data.success && data.employee) {
+                    handleRecognitionSuccess(data.employee, data.time_in, data.message);
+                } else {
+                    updateStatus(data.message || 'Face not recognized. Please try again.', false);
+                }
+            } catch (error) {
+                console.error('Recognition error:', error);
+                document.getElementById('scanningIndicator').classList.remove('active');
+                updateStatus('Error processing face recognition. Please try again.', false);
+            }
+        }
+
+        // Handle successful recognition
+        function handleRecognitionSuccess(employee, timeIn, message) {
+            // Stop scanning temporarily
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            scanning = false;
+            
+            // Show success status
+            document.getElementById('welcomeName').textContent = `Welcome, ${employee.full_name}!`;
+            document.getElementById('checkinTime').textContent = `Check-in recorded at ${timeIn}`;
+            document.getElementById('scanStatus').classList.add('active', 'success');
+            
+            updateStatus(message || 'Face recognized successfully!', true);
+            
+            // Reload history
+            loadHistory(currentFilter);
+            
+            // Hide success message after 5 seconds and resume scanning
+            setTimeout(() => {
+                document.getElementById('scanStatus').classList.remove('active');
+                setTimeout(() => {
+                    startScanning();
+                }, 1000);
+            }, 5000);
+        }
+
+        // Update status message
+        function updateStatus(message, isSuccess) {
+            document.getElementById('statusText').textContent = message;
+            const statusDot = document.getElementById('statusDot');
+            if (isSuccess) {
+                statusDot.classList.remove('error');
+            } else {
+                statusDot.classList.add('error');
+            }
+        }
+
+        // Load attendance history
+        async function loadHistory(filter) {
+            currentFilter = filter;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event?.target?.classList.add('active');
+            
+            try {
+                const response = await fetch(`/api/attendance-history?filter=${filter}`);
+                const data = await response.json();
+                
+                const historyList = document.getElementById('historyList');
+                
+                if (data.success && data.records && data.records.length > 0) {
+                    historyList.innerHTML = data.records.map(record => `
+                        <div class="history-item">
+                            <div class="history-date">${record.date_label}</div>
+                            <div class="history-badges">
+                                ${record.morning_in ? `<span class="badge badge-in">↓ In: ${record.morning_in}</span>` : ''}
+                                ${record.lunch_out ? `<span class="badge badge-out">↑ Out: ${record.lunch_out}</span>` : ''}
+                                ${record.afternoon_in ? `<span class="badge badge-in">↓ In: ${record.afternoon_in}</span>` : ''}
+                                ${record.time_out ? `<span class="badge badge-out">↑ Out: ${record.time_out}</span>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    historyList.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">No attendance records found.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+                document.getElementById('historyList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading attendance history.</div>';
+            }
+        }
+
+        // Initialize
+        startCamera();
+        loadHistory('week');
+    </script>
+</body>
+</html>

@@ -1,28 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Admin{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
 </head>
 <body>
 
+<!-- SIDEBAR -->
 <div class="sidebar">
-    <ul>
-        <li><a href="{{ url_for('admin_dashboard') }}">📊 Dashboard</a></li>
-        <li><a href="{{ url_for('admin_register') }}">➕ Register Employee</a></li>
-        <li><a href="{{ url_for('admin_employees') }}">👥 All Employees</a></li>
-        <li><a href="{{ url_for('admin_employee_info') }}">📄 Employee Information</a></li>
-        <li><a href="{{ url_for('admin_attendance') }}">📅 Attendance</a></li>
-        <li><a href="{{ url_for('admin_reports') }}">📈 Reports</a></li>
-        <li><a href="{{ url_for('admin_logout') }}">🔒 Logout</a></li>
-    </ul>
+  <div class="logo">
+    <img src="{{ url_for('static', filename='Department_of_Transportation_(Philippines).svg-CnZCv33r.png') }}" 
+         alt="Department of Transportation Logo" 
+         class="logo-img">
+    <div class="logo-text">Admin Panel</div>
+  </div>
+
+  <ul class="nav-menu">
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+    <li><a href="{{ url_for('admin_register') }}" class="nav-link">➕ Register Employee</a></li>
+    <li><a href="{{ url_for('admin_employees') }}" class="nav-link">👥 All Employees</a></li>
+    <li><a href="{{ url_for('admin_attendance') }}" class="nav-link">📅 Attendance</a></li>
+    <li><a href="{{ url_for('admin_reports') }}" class="nav-link">📈 Reports</a></li>
+    <li><a href="{{ url_for('admin_employee_info') }}" class="nav-link">📄 Employee Info</a></li>
+  </ul>
+
+  <div class="logout-box">
+    <a href="{{ url_for('admin_logout') }}" class="logout-btn">🔒 Logout</a>
+  </div>
 </div>
 
+<!-- MAIN CONTENT -->
 <div class="main">
-    <h2>{% block page_title %}{% endblock %}</h2>
-    {% block content %}{% endblock %}
+  <div class="topbar">
+    <div class="page-title">{% block title %}{% endblock %}</div>
+
+    <div class="admin-profile">
+      <div class="admin-info">
+        <strong>DOTR Admin</strong>
+        <small>System Administrator</small>
+      </div>
+      <div class="admin-avatar">Dotr</div>
+    </div>
+  </div>
+
+  {% block content %}{% endblock %}
 </div>
+
 
 </body>
 </html>

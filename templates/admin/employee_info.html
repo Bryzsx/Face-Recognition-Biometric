@@ -1,10 +1,384 @@
 {% extends "admin/base.html" %}
 
 {% block title %}Employee Information{% endblock %}
-{% block page_title %}Employee Information{% endblock %}
 
 {% block content %}
-<div class="card">
-  <p>Select an employee to view details.</p>
+<div class="section active">
+  {% if employee %}
+  
+  <!-- Employee Header Section -->
+  <div class="employee-header-card">
+    <div class="employee-header-pattern"></div>
+    <div class="employee-header-content">
+      <div class="employee-header-photo">
+        {% if employee.photo_path %}
+        <img src="{{ url_for('static', filename=employee.photo_path) }}" 
+             alt="{{ employee.full_name }}" 
+             class="employee-header-img">
+        <div class="photo-overlay"></div>
+        {% else %}
+        <div class="employee-header-placeholder">
+          <span class="placeholder-initials">{{ (employee.full_name or 'N/A')[0:2].upper() if employee.full_name else 'N/A' }}</span>
+        </div>
+        {% endif %}
+        <div class="photo-status-indicator {% if employee.status == 'Active' %}active-indicator{% else %}inactive-indicator{% endif %}"></div>
+      </div>
+      <div class="employee-header-info">
+        <div class="employee-name-wrapper">
+          <h2 class="employee-name">{{ employee.full_name or 'N/A' }}</h2>
+          <div class="employee-verified-badge">✓ Verified</div>
+        </div>
+        <div class="employee-header-meta">
+          <span class="employee-id-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+            ID: {{ employee.employee_code or 'N/A' }}
+          </span>
+          <span class="badge-enhanced {% if employee.status == 'Active' %}active-badge{% else %}inactive-badge{% endif %}">
+            <span class="badge-dot"></span>
+            {{ employee.status or 'Active' }}
+          </span>
+        </div>
+        <div class="employee-header-details">
+          <div class="header-detail-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <div>
+              <span class="detail-label">Position</span>
+              <span class="detail-value">{{ employee.position or 'N/A' }}</span>
+            </div>
+          </div>
+          <div class="header-detail-item">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <div>
+              <span class="detail-label">Department</span>
+              <span class="detail-value">{{ employee.department or 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Information Grid -->
+  <div class="employee-info-grid">
+    
+    <!-- Personal Information -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header personal-header">
+        <div class="card-icon-wrapper personal-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <h5>Personal Information</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">Full Name</span>
+          <span class="info-value">{{ employee.full_name or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Employee ID</span>
+          <span class="info-value">{{ employee.employee_code or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Gender</span>
+          <span class="info-value">{{ employee.gender or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Civil Status</span>
+          <span class="info-value">{{ employee.civil_status or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date of Birth</span>
+          <span class="info-value">{{ employee.date_of_birth or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Age</span>
+          <span class="info-value">{{ employee.age or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Blood Type</span>
+          <span class="info-value">{{ employee.blood_type or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Address</span>
+          <span class="info-value">{{ employee.address or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Place of Birth</span>
+          <span class="info-value">{{ employee.place_of_birth or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employment Information -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header employment-header">
+        <div class="card-icon-wrapper employment-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+          </svg>
+        </div>
+        <h5>Employment Information</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">Position</span>
+          <span class="info-value">{{ employee.position or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Department</span>
+          <span class="info-value">{{ employee.department or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Employment Status</span>
+          <span class="info-value">{{ employee.employment_status or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Place of Assignment</span>
+          <span class="info-value">{{ employee.place_of_assignment or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Original Place of Assignment</span>
+          <span class="info-value">{{ employee.original_place_of_assignment or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date Appointed</span>
+          <span class="info-value">{{ employee.date_appointed or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date of Last Promotion</span>
+          <span class="info-value">{{ employee.date_of_last_promotion or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Date of Separation</span>
+          <span class="info-value">{{ employee.date_of_separation or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Eligibility</span>
+          <span class="info-value">{{ employee.eligibility or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salary Information -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header salary-header">
+        <div class="card-icon-wrapper salary-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+        </div>
+        <h5>Salary Information</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">Salary Grade</span>
+          <span class="info-value">{{ employee.salary_grade or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Basic Salary</span>
+          <span class="info-value salary-value">{% if employee.basic_salary %}₱{{ "%.2f"|format(employee.basic_salary) }}{% else %}N/A{% endif %}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Item Number</span>
+          <span class="info-value">{{ employee.item_number or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact & Education -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header contact-header">
+        <div class="card-icon-wrapper contact-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            <path d="M12 2v20M2 12h20"></path>
+          </svg>
+        </div>
+        <h5>Contact & Education</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">Contact Number</span>
+          <span class="info-value">{{ employee.contact_number or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ employee.email or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Course</span>
+          <span class="info-value">{{ employee.course or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Entity / Office</span>
+          <span class="info-value">{{ employee.entity_office or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Government Numbers -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header government-header">
+        <div class="card-icon-wrapper government-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <h5>Government Numbers</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">TIN</span>
+          <span class="info-value">{{ employee.tin or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">PhilHealth Number</span>
+          <span class="info-value">{{ employee.philhealth_number or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Pag-IBIG Number</span>
+          <span class="info-value">{{ employee.pagibig_number or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">BP Number</span>
+          <span class="info-value">{{ employee.bp_number or 'N/A' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">ID Number</span>
+          <span class="info-value">{{ employee.id_number or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="info-card enhanced-card">
+      <div class="info-card-header system-header">
+        <div class="card-icon-wrapper system-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+          </svg>
+        </div>
+        <h5>System Information</h5>
+      </div>
+      <div class="info-card-body">
+        <div class="info-item">
+          <span class="info-label">Status</span>
+          <span class="info-value">
+            <span class="badge {% if employee.status == 'Active' %}active-b{% else %}present{% endif %}">
+              {{ employee.status or 'Active' }}
+            </span>
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Created At</span>
+          <span class="info-value">{{ employee.created_at or 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="employee-actions">
+    <a href="{{ url_for('admin_reports') }}?employee_id={{ employee.id }}" 
+       class="action-btn action-btn-secondary">
+      📊 View DTR
+    </a>
+    <a href="{{ url_for('edit_employee', employee_id=employee.id) }}" 
+       class="action-btn action-btn-edit">
+      ✏️ Edit Employee
+    </a>
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}" 
+          class="action-btn-form"
+          onsubmit="return confirm('Are you sure you want to delete {{ employee.full_name }}? This action cannot be undone!');">
+      <button type="submit" class="action-btn action-btn-delete">
+        🗑️ Delete Employee
+      </button>
+    </form>
+    <a href="{{ url_for('admin_employees') }}" 
+       class="action-btn action-btn-secondary">
+      ← Back to Employees
+    </a>
+  </div>
+
+  {% elif employees is defined %}
+  <!-- Employee Selection List -->
+  <div class="card">
+    <div class="card-title">Select Employee</div>
+    <p style="margin-bottom: 20px; color: #6b7280;">Please select an employee to view their information:</p>
+    
+    {% if employees|length > 0 %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Employee ID</th>
+          <th>Department</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emp in employees %}
+        <tr>
+          <td>{{ emp.full_name or 'N/A' }}</td>
+          <td>{{ emp.employee_code or 'N/A' }}</td>
+          <td>{{ emp.department or 'N/A' }}</td>
+          <td>
+            <a href="{{ url_for('admin_employee_info') }}?id={{ emp.id }}" 
+               style="color: #667eea; text-decoration: none; font-weight: 500;">
+              View Details
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 40px; color: #6b7280;">
+      <p style="margin-bottom: 20px;">No employees found in the database.</p>
+      <p style="margin-bottom: 20px;">Please register an employee first.</p>
+      <a href="{{ url_for('admin_register') }}" 
+         style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
+        Register Employee
+      </a>
+    </div>
+    {% endif %}
+    
+    <div style="margin-top: 20px; text-align: center;">
+      <a href="{{ url_for('admin_employees') }}" 
+         style="color: #667eea; text-decoration: none;">
+        ← Back to All Employees
+      </a>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <p style="text-align: center; color: #6b7280; padding: 40px;">
+      No employees found. Please register employees first.
+      <br><br>
+      <a href="{{ url_for('admin_register') }}" 
+         style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; margin-top: 10px;">
+        Register Employee
+      </a>
+    </p>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
