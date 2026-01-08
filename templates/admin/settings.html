@@ -1,0 +1,88 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="section active">
+  <div class="card">
+    <div class="card-title">⚙️ Settings</div>
+    
+    {% if error %}
+    <div style="margin-top: 20px; padding: 12px; background-color: #fee2e2; color: #991b1b; border-radius: 6px; margin-bottom: 20px;">
+      ✗ {{ error }}
+    </div>
+    {% endif %}
+    
+    {% if success %}
+    <div style="margin-top: 20px; padding: 12px; background-color: #d1fae5; color: #065f46; border-radius: 6px; margin-bottom: 20px;">
+      ✓ {{ success }}
+    </div>
+    {% endif %}
+
+    <!-- Holiday Section -->
+    <div style="margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 8px; margin-bottom: 30px;">
+      <h3 style="margin-bottom: 15px; color: #1f2937;">🎉 Mark Holiday</h3>
+      <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">
+        Mark all active employees as present for a holiday. This will automatically create attendance records 
+        with standard times (8:00 AM - 5:00 PM) for all employees on the selected date.
+      </p>
+      
+      <form method="POST" action="{{ url_for('admin_settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
+        <input type="hidden" name="action" value="mark_holiday">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Holiday Date:</label>
+          <input type="date" name="holiday_date" required 
+                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Reason (Optional):</label>
+          <input type="text" name="reason" value="Holiday" placeholder="e.g., National Holiday, Special Holiday"
+                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+        </div>
+        <div>
+          <button type="submit" 
+                  style="width: 100%; padding: 10px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+            Mark Holiday
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Suspension Section -->
+    <div style="padding: 20px; background: #fef3c7; border-radius: 8px; margin-bottom: 30px;">
+      <h3 style="margin-bottom: 15px; color: #1f2937;">⚠️ Mark Suspension</h3>
+      <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">
+        Mark all active employees as present for a sudden suspension or work stoppage. This will automatically 
+        create attendance records with standard times (8:00 AM - 5:00 PM) for all employees on the selected date.
+      </p>
+      
+      <form method="POST" action="{{ url_for('admin_settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
+        <input type="hidden" name="action" value="mark_suspension">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Suspension Date:</label>
+          <input type="date" name="suspension_date" required 
+                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Reason (Optional):</label>
+          <input type="text" name="reason" value="Suspension" placeholder="e.g., Work Suspension, Emergency"
+                 style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;">
+        </div>
+        <div>
+          <button type="submit" 
+                  style="width: 100%; padding: 10px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+            Mark Suspension
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div style="margin-top: 30px; padding: 15px; background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 4px;">
+      <p style="margin: 0; color: #1e40af; font-size: 14px;">
+        <strong>Note:</strong> When marking holidays or suspensions, all active employees will be automatically 
+        marked as "Present" with standard working hours. Existing attendance records for the selected date will be updated.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -570,7 +570,7 @@ def admin_attendance():
     selected_date = request.args.get("date", date.today().isoformat())
     
     cur.execute("""
-        SELECT e.id, e.full_name, a.date, a.morning_in, a.lunch_out, 
+        SELECT a.attendance_id, e.id, e.full_name, a.date, a.morning_in, a.lunch_out, 
                a.afternoon_in, a.time_out, a.attendance_status
         FROM attendance a
         JOIN employees e ON a.employee_id = e.id
@@ -580,6 +580,121 @@ def admin_attendance():
 
     records = cur.fetchall()
     return render_template("admin/attendance.html", records=records, selected_date=selected_date)
+
+
+# ================= EDIT DTR =================
+@app.route("/admin/attendance/edit/<int:attendance_id>", methods=["GET", "POST"])
+@admin_required
+def edit_dtr(attendance_id):
+    """Edit Daily Time Record for an employee"""
+    db = get_db()
+    cur = db.cursor()
+    
+    if request.method == "POST":
+        try:
+            # Get form data (handle both JSON and form data)
+            if request.is_json:
+                data = request.get_json()
+                morning_in = data.get("morning_in", "").strip() or None
+                lunch_out = data.get("lunch_out", "").strip() or None
+                afternoon_in = data.get("afternoon_in", "").strip() or None
+                time_out = data.get("time_out", "").strip() or None
+                attendance_date = data.get("date", "").strip()
+            else:
+                morning_in = request.form.get("morning_in", "").strip() or None
+                lunch_out = request.form.get("lunch_out", "").strip() or None
+                afternoon_in = request.form.get("afternoon_in", "").strip() or None
+                time_out = request.form.get("time_out", "").strip() or None
+                attendance_date = request.form.get("date", "").strip()
+            
+            # Validate date
+            if not attendance_date:
+                if request.is_json:
+                    return jsonify({"success": False, "message": "Date is required"}), 400
+                else:
+                    cur.execute("SELECT a.*, e.full_name, e.employee_code FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.attendance_id=?", (attendance_id,))
+                    record = cur.fetchone()
+                    return render_template("admin/edit_dtr.html", record=record, error="Date is required")
+            
+            # Get existing record
+            cur.execute("SELECT * FROM attendance WHERE attendance_id=?", (attendance_id,))
+            existing = cur.fetchone()
+            
+            if not existing:
+                if request.is_json:
+                    return jsonify({"success": False, "message": "Attendance record not found"}), 404
+                else:
+                    return redirect(url_for("admin_attendance"))
+            
+            # Determine attendance status based on times
+            attendance_status = "Present"
+            
+            # Check if morning time is late
+            if morning_in:
+                try:
+                    from datetime import datetime
+                    morning_time = datetime.strptime(morning_in, "%I:%M %p")
+                    late_threshold = datetime.strptime("08:30 AM", "%I:%M %p")
+                    if morning_time >= late_threshold:
+                        attendance_status = "Late"
+                except:
+                    pass
+            
+            # Check if afternoon time is late
+            if afternoon_in and attendance_status == "Present":
+                try:
+                    from datetime import datetime
+                    afternoon_time = datetime.strptime(afternoon_in, "%I:%M %p")
+                    late_threshold = datetime.strptime("01:30 PM", "%I:%M %p")
+                    if afternoon_time >= late_threshold:
+                        attendance_status = "Late"
+                except:
+                    pass
+            
+            # Update attendance record
+            cur.execute("""
+                UPDATE attendance 
+                SET morning_in=?, lunch_out=?, afternoon_in=?, time_out=?, 
+                    attendance_status=?, date=?
+                WHERE attendance_id=?
+            """, (morning_in, lunch_out, afternoon_in, time_out, attendance_status, attendance_date, attendance_id))
+            
+            db.commit()
+            
+            if request.is_json:
+                return jsonify({
+                    "success": True,
+                    "message": "DTR updated successfully"
+                })
+            else:
+                return redirect(url_for("admin_attendance", date=attendance_date))
+            
+        except Exception as e:
+            db.rollback()
+            print(f"Error updating DTR: {e}")
+            import traceback
+            traceback.print_exc()
+            if request.is_json:
+                return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
+            else:
+                cur.execute("SELECT a.*, e.full_name, e.employee_code FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.attendance_id=?", (attendance_id,))
+                record = cur.fetchone()
+                return render_template("admin/edit_dtr.html", record=record, error=f"Error: {str(e)}")
+    
+    # GET request - show edit form
+    cur.execute("""
+        SELECT a.*, e.full_name, e.employee_code
+        FROM attendance a
+        JOIN employees e ON a.employee_id = e.id
+        WHERE a.attendance_id=?
+    """, (attendance_id,))
+    
+    record = cur.fetchone()
+    
+    if not record:
+        return redirect(url_for("admin_attendance"))
+    
+    return render_template("admin/edit_dtr.html", record=record)
 
 
 # ================= REPORTS =================
@@ -648,11 +763,225 @@ def admin_reports():
     )
 
 
+# ================= SETTINGS =================
+@app.route("/admin/settings", methods=["GET", "POST"])
+@admin_required
+def admin_settings():
+    """Settings page for holidays and suspensions"""
+    db = get_db()
+    cur = db.cursor()
+    
+    if request.method == "POST":
+        try:
+            action = request.form.get("action")
+            
+            if action == "mark_holiday":
+                holiday_date = request.form.get("holiday_date", "").strip()
+                reason = request.form.get("reason", "Holiday").strip() or "Holiday"
+                
+                if not holiday_date:
+                    return render_template("admin/settings.html", 
+                                         error="Please select a date",
+                                         success=None)
+                
+                # Get all active employees
+                cur.execute("SELECT id FROM employees WHERE status='Active'")
+                employees = cur.fetchall()
+                
+                if not employees:
+                    return render_template("admin/settings.html",
+                                         error="No active employees found",
+                                         success=None)
+                
+                # Mark all employees as present for the holiday
+                from datetime import datetime
+                marked_count = 0
+                
+                for emp in employees:
+                    employee_id = emp["id"]
+                    
+                    # Check if attendance record already exists
+                    cur.execute("""
+                        SELECT attendance_id FROM attendance 
+                        WHERE employee_id=? AND date=?
+                    """, (employee_id, holiday_date))
+                    existing = cur.fetchone()
+                    
+                    if existing:
+                        # Update existing record
+                        cur.execute("""
+                            UPDATE attendance 
+                            SET morning_in='08:00 AM', 
+                                lunch_out='12:00 PM',
+                                afternoon_in='01:00 PM',
+                                time_out='05:00 PM',
+                                attendance_status='Present',
+                                verification_method=?
+                            WHERE employee_id=? AND date=?
+                        """, (f"Admin: {reason}", employee_id, holiday_date))
+                    else:
+                        # Create new record
+                        cur.execute("""
+                            INSERT INTO attendance 
+                            (employee_id, date, morning_in, lunch_out, afternoon_in, 
+                             time_out, attendance_status, verification_method)
+                            VALUES (?, ?, '08:00 AM', '12:00 PM', '01:00 PM', 
+                                    '05:00 PM', 'Present', ?)
+                        """, (employee_id, holiday_date, f"Admin: {reason}"))
+                    
+                    marked_count += 1
+                
+                db.commit()
+                
+                return render_template("admin/settings.html",
+                                     success=f"Successfully marked {marked_count} employees as present for {holiday_date} ({reason})",
+                                     error=None)
+            
+            elif action == "mark_suspension":
+                suspension_date = request.form.get("suspension_date", "").strip()
+                reason = request.form.get("reason", "Suspension").strip() or "Suspension"
+                
+                if not suspension_date:
+                    return render_template("admin/settings.html",
+                                         error="Please select a date",
+                                         success=None)
+                
+                # Get all active employees
+                cur.execute("SELECT id FROM employees WHERE status='Active'")
+                employees = cur.fetchall()
+                
+                if not employees:
+                    return render_template("admin/settings.html",
+                                         error="No active employees found",
+                                         success=None)
+                
+                # Mark all employees as present for the suspension
+                marked_count = 0
+                
+                for emp in employees:
+                    employee_id = emp["id"]
+                    
+                    # Check if attendance record already exists
+                    cur.execute("""
+                        SELECT attendance_id FROM attendance 
+                        WHERE employee_id=? AND date=?
+                    """, (employee_id, suspension_date))
+                    existing = cur.fetchone()
+                    
+                    if existing:
+                        # Update existing record
+                        cur.execute("""
+                            UPDATE attendance 
+                            SET morning_in='08:00 AM', 
+                                lunch_out='12:00 PM',
+                                afternoon_in='01:00 PM',
+                                time_out='05:00 PM',
+                                attendance_status='Present',
+                                verification_method=?
+                            WHERE employee_id=? AND date=?
+                        """, (f"Admin: {reason}", employee_id, suspension_date))
+                    else:
+                        # Create new record
+                        cur.execute("""
+                            INSERT INTO attendance 
+                            (employee_id, date, morning_in, lunch_out, afternoon_in, 
+                             time_out, attendance_status, verification_method)
+                            VALUES (?, ?, '08:00 AM', '12:00 PM', '01:00 PM', 
+                                    '05:00 PM', 'Present', ?)
+                        """, (employee_id, suspension_date, f"Admin: {reason}"))
+                    
+                    marked_count += 1
+                
+                db.commit()
+                
+                return render_template("admin/settings.html",
+                                     success=f"Successfully marked {marked_count} employees as present for {suspension_date} ({reason})",
+                                     error=None)
+        
+        except Exception as e:
+            db.rollback()
+            print(f"Error in settings: {e}")
+            import traceback
+            traceback.print_exc()
+            return render_template("admin/settings.html",
+                                 error=f"Error: {str(e)}",
+                                 success=None)
+    
+    # GET request - show settings page
+    return render_template("admin/settings.html", error=None, success=None)
+
+
 # ================= EMPLOYEE ATTENDANCE PAGE =================
 @app.route("/attendance")
 def employee_attendance():
     """Main page for employees to scan their face for attendance"""
     return render_template("employee_attendance.html")
+
+
+# ================= HELPER FUNCTIONS =================
+def check_if_late(time_str, time_type="morning"):
+    """
+    Check if a time string is late based on the time windows.
+    
+    Args:
+        time_str: Time string in format "HH:MM AM/PM" (e.g., "08:30 AM")
+        time_type: "morning" or "afternoon"
+    
+    Returns:
+        bool: True if late, False if on-time
+    """
+    try:
+        from datetime import datetime
+        
+        # Parse the time string
+        time_obj = datetime.strptime(time_str, "%I:%M %p")
+        
+        if time_type == "morning":
+            # Morning: late if >= 8:30 AM
+            late_threshold = datetime.strptime("08:30 AM", "%I:%M %p")
+            return time_obj >= late_threshold
+        elif time_type == "afternoon":
+            # Afternoon: late if >= 1:30 PM
+            late_threshold = datetime.strptime("01:30 PM", "%I:%M %p")
+            return time_obj >= late_threshold
+        
+        return False
+    except Exception as e:
+        print(f"Error checking late status: {e}")
+        return False
+
+
+def is_time_in_valid_window(time_str, time_type="morning"):
+    """
+    Check if time is within the valid time-in window.
+    
+    Args:
+        time_str: Time string in format "HH:MM AM/PM"
+        time_type: "morning" or "afternoon"
+    
+    Returns:
+        bool: True if within window, False otherwise
+    """
+    try:
+        from datetime import datetime
+        
+        time_obj = datetime.strptime(time_str, "%I:%M %p")
+        
+        if time_type == "morning":
+            # Morning window: 8:00 AM to 12:00 PM
+            start_time = datetime.strptime("08:00 AM", "%I:%M %p")
+            end_time = datetime.strptime("12:00 PM", "%I:%M %p")
+            return start_time <= time_obj <= end_time
+        elif time_type == "afternoon":
+            # Afternoon window: 1:00 PM to 5:00 PM
+            start_time = datetime.strptime("01:00 PM", "%I:%M %p")
+            end_time = datetime.strptime("05:00 PM", "%I:%M %p")
+            return start_time <= time_obj <= end_time
+        
+        return False
+    except Exception as e:
+        print(f"Error checking time window: {e}")
+        return False
 
 
 # ================= FACE RECOGNITION API =================
@@ -726,46 +1055,118 @@ def recognize_face():
         if existing:
             # Determine which time slot to update
             if not existing["morning_in"]:
-                # Morning time in
+                # Morning time in (8:00 AM to 12:00 PM)
+                if not is_time_in_valid_window(current_time, "morning"):
+                    return jsonify({
+                        "success": False,
+                        "message": f"Morning time-in window is 8:00 AM to 12:00 PM. Current time: {current_time}"
+                    })
+                
+                # Check if late (>= 8:30 AM)
+                is_late = check_if_late(current_time, "morning")
+                attendance_status = "Late" if is_late else "Present"
+                
                 cur.execute("""
                     UPDATE attendance 
-                    SET morning_in=?, attendance_status='Present'
+                    SET morning_in=?, attendance_status=?
                     WHERE employee_id=? AND date=?
-                """, (current_time, employee_id, today))
-                message = f"Good morning! Time in recorded at {current_time}"
+                """, (current_time, attendance_status, employee_id, today))
+                
+                late_msg = " (Late)" if is_late else ""
+                message = f"Good morning! Time in recorded at {current_time}{late_msg}"
+                
             elif not existing["lunch_out"] and existing["morning_in"]:
-                # Lunch out
-                cur.execute("""
-                    UPDATE attendance 
-                    SET lunch_out=?
-                    WHERE employee_id=? AND date=?
-                """, (current_time, employee_id, today))
-                message = f"Lunch break recorded at {current_time}"
+                # Lunch out (should be around 12:00 PM)
+                # Allow lunch out between 11:30 AM and 1:00 PM for flexibility
+                time_obj = datetime.strptime(current_time, "%I:%M %p")
+                lunch_start = datetime.strptime("11:30 AM", "%I:%M %p")
+                lunch_end = datetime.strptime("01:00 PM", "%I:%M %p")
+                
+                if lunch_start <= time_obj <= lunch_end:
+                    cur.execute("""
+                        UPDATE attendance 
+                        SET lunch_out=?
+                        WHERE employee_id=? AND date=?
+                    """, (current_time, employee_id, today))
+                    message = f"Lunch break recorded at {current_time}"
+                else:
+                    return jsonify({
+                        "success": False,
+                        "message": f"Lunch break time should be between 11:30 AM and 1:00 PM. Current time: {current_time}"
+                    })
+                    
             elif not existing["afternoon_in"] and existing["lunch_out"]:
-                # Afternoon in
+                # Afternoon time in (1:00 PM to 5:00 PM)
+                if not is_time_in_valid_window(current_time, "afternoon"):
+                    return jsonify({
+                        "success": False,
+                        "message": f"Afternoon time-in window is 1:00 PM to 5:00 PM. Current time: {current_time}"
+                    })
+                
+                # Check if late (>= 1:30 PM)
+                is_late_afternoon = check_if_late(current_time, "afternoon")
+                
+                # Check if morning was late by checking morning_in time
+                morning_was_late = False
+                if existing["morning_in"]:
+                    morning_was_late = check_if_late(existing["morning_in"], "morning")
+                
+                # Update status: if afternoon is late OR morning was late, mark as Late
+                if is_late_afternoon or morning_was_late:
+                    attendance_status = "Late"
+                else:
+                    attendance_status = "Present"
+                
                 cur.execute("""
                     UPDATE attendance 
-                    SET afternoon_in=?
+                    SET afternoon_in=?, attendance_status=?
                     WHERE employee_id=? AND date=?
-                """, (current_time, employee_id, today))
-                message = f"Afternoon time in recorded at {current_time}"
+                """, (current_time, attendance_status, employee_id, today))
+                
+                late_msg = " (Late)" if is_late_afternoon else ""
+                message = f"Afternoon time in recorded at {current_time}{late_msg}"
+                
             elif not existing["time_out"]:
-                # Time out
-                cur.execute("""
-                    UPDATE attendance 
-                    SET time_out=?
-                    WHERE employee_id=? AND date=?
-                """, (current_time, employee_id, today))
-                message = f"Time out recorded at {current_time}. Have a great day!"
+                # Time out (should be around 5:00 PM)
+                # Allow time out between 4:30 PM and 7:00 PM for flexibility
+                time_obj = datetime.strptime(current_time, "%I:%M %p")
+                out_start = datetime.strptime("04:30 PM", "%I:%M %p")
+                out_end = datetime.strptime("07:00 PM", "%I:%M %p")
+                
+                if out_start <= time_obj <= out_end:
+                    cur.execute("""
+                        UPDATE attendance 
+                        SET time_out=?
+                        WHERE employee_id=? AND date=?
+                    """, (current_time, employee_id, today))
+                    message = f"Time out recorded at {current_time}. Have a great day!"
+                else:
+                    return jsonify({
+                        "success": False,
+                        "message": f"Time out should be between 4:30 PM and 7:00 PM. Current time: {current_time}"
+                    })
             else:
                 message = f"All attendance records for today are complete. Last update: {current_time}"
         else:
             # Create new attendance record (morning time in)
+            # Check if within morning window (8:00 AM to 12:00 PM)
+            if not is_time_in_valid_window(current_time, "morning"):
+                return jsonify({
+                    "success": False,
+                    "message": f"Morning time-in window is 8:00 AM to 12:00 PM. Current time: {current_time}"
+                })
+            
+            # Check if late (>= 8:30 AM)
+            is_late = check_if_late(current_time, "morning")
+            attendance_status = "Late" if is_late else "Present"
+            
             cur.execute("""
                 INSERT INTO attendance (employee_id, date, morning_in, attendance_status, verification_method)
-                VALUES (?, ?, ?, 'Present', 'Face Recognition')
-            """, (employee_id, today, current_time))
-            message = f"Good morning! Time in recorded at {current_time}"
+                VALUES (?, ?, ?, ?, 'Face Recognition')
+            """, (employee_id, today, current_time, attendance_status))
+            
+            late_msg = " (Late)" if is_late else ""
+            message = f"Good morning! Time in recorded at {current_time}{late_msg}"
         
         db.commit()
         
