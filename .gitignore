@@ -1,0 +1,14 @@
+# Virtual environments
+venv310/
+venv/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database
+*.db
+
+# SSL private keys
+*.key

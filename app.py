@@ -17,8 +17,15 @@ DATABASE = "biometric.db"
 # ================= DATABASE =================
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(DATABASE)
+        # Enable WAL mode for better concurrent access and performance
+        g.db = sqlite3.connect(DATABASE, timeout=20.0)
         g.db.row_factory = sqlite3.Row
+        # Enable WAL mode for concurrent reads (allows multiple readers simultaneously)
+        g.db.execute("PRAGMA journal_mode=WAL")
+        # Optimize for better performance
+        g.db.execute("PRAGMA synchronous=NORMAL")  # Faster than FULL, still safe
+        g.db.execute("PRAGMA cache_size=-64000")  # 64MB cache
+        g.db.execute("PRAGMA temp_store=MEMORY")  # Store temp tables in memory
     return g.db
 
 
@@ -86,34 +93,31 @@ def api_dashboard_stats():
     cur = db.cursor()
     today = date.today().isoformat()
 
-    cur.execute("SELECT COUNT(*) FROM employees")
-    total_employees = cur.fetchone()[0]
+    # Optimized: Get all stats in a single query using conditional aggregation
+    # Use COALESCE to handle NULL values when attendance table is empty
+    cur.execute("""
+        SELECT 
+            (SELECT COUNT(*) FROM employees) as total_employees,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Present' THEN 1 ELSE 0 END), 0) as present,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Absent' THEN 1 ELSE 0 END), 0) as absent,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Late' THEN 1 ELSE 0 END), 0) as late
+        FROM attendance
+    """, (today, today, today))
+    
+    stats = cur.fetchone()
+    total_employees = stats[0] or 0
+    present = stats[1] or 0
+    absent = stats[2] or 0
+    late = stats[3] or 0
 
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Present'",
-        (today,),
-    )
-    present = cur.fetchone()[0]
-
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Absent'",
-        (today,),
-    )
-    absent = cur.fetchone()[0]
-
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Late'",
-        (today,),
-    )
-    late = cur.fetchone()[0]
-
-    # Get recent attendance records (last 10 records)
+    # Optimized: Get recent attendance records with better ordering
+    # Use attendance_id DESC for faster ordering (primary key index)
     cur.execute("""
         SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
                a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
         FROM attendance a
         JOIN employees e ON a.employee_id = e.id
-        ORDER BY a.date DESC, a.morning_in DESC
+        ORDER BY a.attendance_id DESC
         LIMIT 10
     """)
     recent_attendance = cur.fetchall()
@@ -192,34 +196,31 @@ def admin_dashboard():
     cur = db.cursor()
     today = date.today().isoformat()
 
-    cur.execute("SELECT COUNT(*) FROM employees")
-    total_employees = cur.fetchone()[0]
+    # Optimized: Get all stats in a single query using conditional aggregation
+    # Use COALESCE to handle NULL values when attendance table is empty
+    cur.execute("""
+        SELECT 
+            (SELECT COUNT(*) FROM employees) as total_employees,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Present' THEN 1 ELSE 0 END), 0) as present,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Absent' THEN 1 ELSE 0 END), 0) as absent,
+            COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Late' THEN 1 ELSE 0 END), 0) as late
+        FROM attendance
+    """, (today, today, today))
+    
+    stats = cur.fetchone()
+    total_employees = stats[0] or 0
+    present = stats[1] or 0
+    absent = stats[2] or 0
+    late = stats[3] or 0
 
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Present'",
-        (today,),
-    )
-    present = cur.fetchone()[0]
-
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Absent'",
-        (today,),
-    )
-    absent = cur.fetchone()[0]
-
-    cur.execute(
-        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Late'",
-        (today,),
-    )
-    late = cur.fetchone()[0]
-
-    # Get recent attendance records (last 10 records)
+    # Optimized: Get recent attendance records with better ordering
+    # Use attendance_id DESC for faster ordering (primary key index)
     cur.execute("""
         SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
                a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
         FROM attendance a
         JOIN employees e ON a.employee_id = e.id
-        ORDER BY a.date DESC, a.morning_in DESC
+        ORDER BY a.attendance_id DESC
         LIMIT 10
     """)
     recent_attendance = cur.fetchall()
@@ -1030,7 +1031,7 @@ def check_if_late(time_str, time_type="morning"):
     """
     Check if a time string is late based on the time windows.
     
-    Morning: 6:00 AM - 8:00 AM (on-time), 8:01 AM onwards (late)
+    Morning: 5:00 AM - 8:00 AM (on-time), 8:01 AM onwards (late)
     Afternoon: 12:00 PM - 1:00 PM (on-time), 1:01 PM onwards (late)
     
     Args:
@@ -1048,7 +1049,7 @@ def check_if_late(time_str, time_type="morning"):
         
         if time_type == "morning":
             # Morning: late if >= 8:01 AM
-            # 6:00 AM - 8:00 AM: on-time
+            # 5:00 AM - 8:00 AM: on-time
             # 8:01 AM onwards: late
             late_threshold = datetime.strptime("08:01 AM", "%I:%M %p")
             return time_obj >= late_threshold
@@ -1066,8 +1067,8 @@ def check_if_late(time_str, time_type="morning"):
 def is_morning_time_in_allowed(time_str):
     """
     Check if morning time-in is allowed.
-    Employees can time in from 6:00 AM onwards.
-    - 6:00 AM - 8:00 AM: on-time (not late)
+    Employees can time in from 5:00 AM onwards.
+    - 5:00 AM - 8:00 AM: on-time (not late)
     - 8:01 AM onwards: can time in but marked as late
     
     Args:
@@ -1080,10 +1081,10 @@ def is_morning_time_in_allowed(time_str):
         from datetime import datetime
         
         time_obj = datetime.strptime(time_str, "%I:%M %p")
-        # Minimum allowed time: 6:00 AM
-        min_time = datetime.strptime("06:00 AM", "%I:%M %p")
+        # Minimum allowed time: 5:00 AM
+        min_time = datetime.strptime("05:00 AM", "%I:%M %p")
         
-        # Can time in from 6:00 AM onwards (anytime after 6:00 AM)
+        # Can time in from 5:00 AM onwards (anytime after 5:00 AM)
         return time_obj >= min_time
     except Exception as e:
         print(f"Error checking morning time-in: {e}")
@@ -1093,7 +1094,7 @@ def is_morning_time_in_allowed(time_str):
 def is_afternoon_time_in_allowed(time_str):
     """
     Check if afternoon time-in is allowed.
-    Employees can time in from 12:00 PM (noon) onwards.
+    Employees can time in at any time (no restriction).
     - 12:00 PM - 1:00 PM: on-time (not late)
     - 1:01 PM onwards: can time in but marked as late
     
@@ -1101,20 +1102,10 @@ def is_afternoon_time_in_allowed(time_str):
         time_str: Time string in format "HH:MM AM/PM"
     
     Returns:
-        bool: True if allowed, False otherwise
+        bool: True (always allowed, no time restriction)
     """
-    try:
-        from datetime import datetime
-        
-        time_obj = datetime.strptime(time_str, "%I:%M %p")
-        # Minimum allowed time: 12:00 PM (noon)
-        min_time = datetime.strptime("12:00 PM", "%I:%M %p")
-        
-        # Can time in from 12:00 PM onwards
-        return time_obj >= min_time
-    except Exception as e:
-        print(f"Error checking afternoon time-in: {e}")
-        return False
+    # No time restriction - employees can time in at any time
+    return True
 
 
 # ================= FACE RECOGNITION API =================
@@ -1233,13 +1224,7 @@ def recognize_face():
             if time_obj >= afternoon_start:
                 # It's afternoon time
                 if not existing["afternoon_in"]:
-                    # Afternoon time in (can time in from 12:00 PM onwards)
-                    if not is_afternoon_time_in_allowed(current_time):
-                        return jsonify({
-                            "success": False,
-                            "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
-                        })
-                    
+                    # Afternoon time in (no time restriction)
                     # Check if late (>= 1:01 PM)
                     is_late_afternoon = check_if_late(current_time, "afternoon")
                     
@@ -1275,11 +1260,11 @@ def recognize_face():
             else:
                 # It's morning time (before 12:00 PM)
                 if not existing["morning_in"]:
-                    # Morning time in (can time in from 6:00 AM onwards)
+                    # Morning time in (can time in from 5:00 AM onwards)
                     if not is_morning_time_in_allowed(current_time):
                         return jsonify({
                             "success": False,
-                            "message": f"Morning time-in is allowed from 6:00 AM onwards. Current time: {current_time}"
+                            "message": f"Morning time-in is allowed from 5:00 AM onwards. Current time: {current_time}"
                         })
                     
                     # Check if late (>= 8:01 AM)
@@ -1313,14 +1298,7 @@ def recognize_face():
                             "message": f"Lunch break time should be between 11:30 AM and 1:00 PM. Current time: {current_time}"
                         })
                 elif not existing["afternoon_in"]:
-                    # Afternoon time in (can time in from 12:00 PM onwards)
-                    # This shouldn't happen if we're in morning time, but handle it anyway
-                    if not is_afternoon_time_in_allowed(current_time):
-                        return jsonify({
-                            "success": False,
-                            "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
-                        })
-                    
+                    # Afternoon time in (no time restriction)
                     # Check if late (>= 1:01 PM)
                     is_late_afternoon = check_if_late(current_time, "afternoon")
                     
@@ -1360,13 +1338,7 @@ def recognize_face():
             afternoon_start = datetime.strptime("12:00 PM", "%I:%M %p")
             
             if time_obj >= afternoon_start:
-                # It's afternoon time - record as afternoon_in
-                if not is_afternoon_time_in_allowed(current_time):
-                    return jsonify({
-                        "success": False,
-                        "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
-                    })
-                
+                # It's afternoon time - record as afternoon_in (no time restriction)
                 # Check if late (>= 1:01 PM)
                 is_late = check_if_late(current_time, "afternoon")
                 attendance_status = "Late" if is_late else "Present"
@@ -1383,7 +1355,7 @@ def recognize_face():
                 if not is_morning_time_in_allowed(current_time):
                     return jsonify({
                         "success": False,
-                        "message": f"Morning time-in is allowed from 6:00 AM onwards. Current time: {current_time}"
+                        "message": f"Morning time-in is allowed from 5:00 AM onwards. Current time: {current_time}"
                     })
                 
                 # Check if late (>= 8:01 AM)
@@ -1487,5 +1459,29 @@ def attendance_history():
 
 # ================= RUN =================
 if __name__ == "__main__":
+    # Check if SSL certificates exist for HTTPS
+    ssl_context = None
+    cert_path = os.path.join('certs', 'server.crt')
+    key_path = os.path.join('certs', 'server.key')
+    
+    if os.path.exists(cert_path) and os.path.exists(key_path):
+        ssl_context = (cert_path, key_path)
+        print("=" * 50)
+        print("🔒 HTTPS Enabled - Using SSL certificates")
+        print("=" * 50)
+        print(f"Access the app via: https://YOUR_IP:5000")
+    else:
+        print("=" * 50)
+        print("⚠️  HTTP Mode - Camera may not work from remote devices")
+        print("=" * 50)
+        print("To enable HTTPS (required for camera access from IP address):")
+        print("  1. Run: ./setup_https.sh")
+        print("  2. Restart the app")
+        print("  3. Access via: https://YOUR_IP:5000")
+        print("=" * 50)
+    
     # Run with threading enabled to handle concurrent requests
-    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)
+    if ssl_context:
+        app.run(host="0.0.0.0", port=5000, debug=True, threaded=True, ssl_context=ssl_context)
+    else:
+        app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

@@ -181,9 +181,23 @@
             background: #10b981;
             flex-shrink: 0;
         }
-
+        
         .status-dot.error {
             background: #ef4444;
+        }
+        
+        .status-dot.warning {
+            background: #f59e0b;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
         }
 
         .status-text {
@@ -398,6 +412,46 @@
         // Start camera - keep it running continuously
         async function startCamera() {
             try {
+                // Check if we're on HTTP (not HTTPS) and not localhost
+                const isLocalhost = window.location.hostname === 'localhost' || 
+                                   window.location.hostname === '127.0.0.1' ||
+                                   window.location.hostname === '[::1]';
+                const isHTTPS = window.location.protocol === 'https:';
+                
+                if (!isHTTPS && !isLocalhost) {
+                    // HTTP access from IP address - browsers block camera
+                    const errorMsg = '⚠️ HTTPS Required: Camera access requires HTTPS when accessing via IP address. Please contact administrator to set up HTTPS, or access via localhost if on the same machine.';
+                    console.error('[CAMERA] HTTPS required for camera access');
+                    updateStatus(errorMsg, false);
+                    document.getElementById('statusDot').classList.add('error');
+                    
+                    // Show detailed instructions
+                    const statusText = document.getElementById('statusText');
+                    statusText.innerHTML = `
+                        <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                            <strong style="color: #ef4444; display: block; margin-bottom: 10px;">⚠️ Camera Access Blocked</strong>
+                            <p style="margin-bottom: 10px;">Modern browsers require HTTPS for camera access when accessing via IP address.</p>
+                            <p style="margin-bottom: 10px;"><strong>Solutions:</strong></p>
+                            <ol style="text-align: left; margin-left: 20px; margin-bottom: 10px;">
+                                <li>Set up HTTPS on the server (recommended for production)</li>
+                                <li>Use localhost if accessing from the server machine</li>
+                                <li>Try Chrome with: <code>chrome://flags/#unsafely-treat-insecure-origin-as-secure</code> (not recommended)</li>
+                            </ol>
+                            <p style="font-size: 12px; color: #666;">Error: HTTPS_REQUIRED</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Check if getUserMedia is available
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    const errorMsg = 'Camera API not available. Please use a modern browser (Chrome, Firefox, Edge).';
+                    console.error('[CAMERA] getUserMedia not available');
+                    updateStatus(errorMsg, false);
+                    document.getElementById('statusDot').classList.add('error');
+                    return;
+                }
+                
                 console.log('[CAMERA] Requesting camera access...');
                 updateStatus('Requesting camera access...', false);
                 
@@ -447,8 +501,48 @@
                 
             } catch (err) {
                 console.error('[CAMERA] Error accessing camera:', err);
-                updateStatus('Camera access denied. Please allow camera permissions.', false);
+                
+                // Provide specific error messages based on error type
+                let errorMsg = 'Camera access denied. Please allow camera permissions.';
+                
+                if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                    errorMsg = 'Camera permission denied. Please allow camera access in your browser settings and refresh the page.';
+                } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                    errorMsg = 'No camera found. Please connect a camera to your device.';
+                } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                    errorMsg = 'Camera is being used by another application. Please close other apps using the camera.';
+                } else if (err.name === 'OverconstrainedError' || err.name === 'ConstraintNotSatisfiedError') {
+                    errorMsg = 'Camera constraints not satisfied. Trying with default settings...';
+                    // Try again with default settings
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        cameraStream = stream;
+                        video.srcObject = stream;
+                        video.play();
+                        updateStatus('Camera ready. Positioning face...', false);
+                        video.onloadedmetadata = () => {
+                            setTimeout(() => startScanning(), 1000);
+                        };
+                        return;
+                    } catch (retryErr) {
+                        errorMsg = 'Camera access failed. Please check your camera settings.';
+                    }
+                } else if (err.message && err.message.includes('secure context')) {
+                    errorMsg = '⚠️ HTTPS Required: Camera access requires a secure connection (HTTPS) when accessing via IP address.';
+                }
+                
+                updateStatus(errorMsg, false);
                 document.getElementById('statusDot').classList.add('error');
+                
+                // Show detailed error in status text
+                const statusText = document.getElementById('statusText');
+                statusText.innerHTML = `
+                    <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                        <strong style="color: #ef4444; display: block; margin-bottom: 10px;">⚠️ Camera Error</strong>
+                        <p style="margin-bottom: 10px;">${errorMsg}</p>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">Error: ${err.name || 'UNKNOWN'} - ${err.message || 'Unknown error'}</p>
+                    </div>
+                `;
             }
         }
 
@@ -516,6 +610,9 @@
             updateStatus('Capturing face...', false);
             document.getElementById('scanningIndicator').classList.add('active');
             
+            let timeoutId = null;
+            let recognitionController = null;
+            
             try {
                 console.log('[RECOGNITION] Capturing frame...');
                 // Capture single frame with reduced size for faster transmission
@@ -535,20 +632,24 @@
                 updateStatus('Recognizing face...', false);
                 
                 // Cancel any previous request
-                if (recognitionController) {
-                    recognitionController.abort();
+                if (window.recognitionController) {
+                    window.recognitionController.abort();
                 }
                 
                 // Create new AbortController for this request
                 recognitionController = new AbortController();
-                const timeoutId = setTimeout(() => recognitionController.abort(), 8000); // 8 second timeout (reduced)
+                window.recognitionController = recognitionController;
+                timeoutId = setTimeout(() => {
+                    console.log('[RECOGNITION] Request timeout - aborting...');
+                    recognitionController.abort();
+                }, 10000); // 10 second timeout
                 
                 // Double-check page is still visible and has focus before sending large request
                 if (document.hidden || !document.hasFocus()) {
-                    clearTimeout(timeoutId);
+                    if (timeoutId) clearTimeout(timeoutId);
                     recognitionController.abort();
                     isProcessing = false;
-                    recognitionController = null;
+                    window.recognitionController = null;
                     return;
                 }
                 
@@ -564,10 +665,15 @@
                     priority: 'low' // Low priority to not block other requests
                 });
                 
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const data = await response.json();
                 console.log('[RECOGNITION] Response:', data);
                 
-                clearTimeout(timeoutId);
+                if (timeoutId) clearTimeout(timeoutId);
                 document.getElementById('scanningIndicator').classList.remove('active');
                 
                 // Check if page is still visible and has focus before processing result
@@ -579,21 +685,66 @@
                 if (data.success && data.employee) {
                     handleRecognitionSuccess(data.employee, data.time_in, data.message);
                 } else {
-                    updateStatus(data.message || 'Face not recognized. Please try again.', false);
+                    // Handle different error types
+                    const errorMessage = data.message || 'Face not recognized. Please try again.';
+                    const statusDot = document.getElementById('statusDot');
+                    const statusText = document.getElementById('statusText');
+                    
+                    // Check if it's a "no face detected" error
+                    if (errorMessage.toLowerCase().includes('no face detected') || 
+                        errorMessage.toLowerCase().includes('no face') ||
+                        errorMessage.toLowerCase().includes('face is clearly visible')) {
+                        // No face detected - show warning, not error
+                        statusText.textContent = '👤 No face detected. Please position your face in the camera frame and ensure good lighting.';
+                        statusDot.classList.remove('error');
+                        statusDot.classList.add('warning');
+                        
+                        // Reset to normal state after 3 seconds to allow retry
+                        setTimeout(() => {
+                            statusDot.classList.remove('warning', 'error');
+                            statusText.textContent = 'Ready to Scan - Position your face in the frame';
+                        }, 3000);
+                    } else {
+                        // Other errors (face not recognized, etc.)
+                        statusText.textContent = errorMessage;
+                        statusDot.classList.remove('warning');
+                        statusDot.classList.add('error');
+                    }
                 }
             } catch (error) {
-                clearTimeout(timeoutId);
-                // Don't log abort errors
-                if (error.name !== 'AbortError') {
+                // Always clear timeout and indicator
+                if (timeoutId) clearTimeout(timeoutId);
+                document.getElementById('scanningIndicator').classList.remove('active');
+                
+                // Don't log abort errors (these are expected when requests are cancelled)
+                if (error.name === 'AbortError') {
+                    console.log('[RECOGNITION] Request aborted (timeout or cancelled)');
+                    if (!document.hidden) {
+                        updateStatus('Request timeout. Please try again.', false);
+                    }
+                } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    console.error('[RECOGNITION] Network error:', error);
+                    if (!document.hidden) {
+                        updateStatus('Network error. Please check your connection and try again.', false);
+                    }
+                } else {
                     console.error('[RECOGNITION] Error:', error);
                     if (!document.hidden) {
-                        document.getElementById('scanningIndicator').classList.remove('active');
                         updateStatus('Error processing face recognition. Please try again.', false);
                     }
                 }
             } finally {
+                // Always reset processing flag and cleanup
                 isProcessing = false;
-                recognitionController = null;
+                if (window.recognitionController === recognitionController) {
+                    window.recognitionController = null;
+                }
+                
+                // Ensure scanning indicator is removed
+                const indicator = document.getElementById('scanningIndicator');
+                if (indicator) {
+                    indicator.classList.remove('active');
+                }
             }
         }
 
@@ -627,12 +778,24 @@
 
         // Update status message
         function updateStatus(message, isSuccess) {
-            document.getElementById('statusText').textContent = message;
+            const statusText = document.getElementById('statusText');
             const statusDot = document.getElementById('statusDot');
-            if (isSuccess) {
-                statusDot.classList.remove('error');
+            
+            if (typeof message === 'string') {
+                statusText.textContent = message;
             } else {
-                statusDot.classList.add('error');
+                // If message is HTML, use innerHTML
+                statusText.innerHTML = message;
+            }
+            
+            if (isSuccess) {
+                statusDot.classList.remove('error', 'warning');
+            } else {
+                // Only add error class if warning is not already set
+                // This allows specific error handling in captureAndRecognize to set warning instead
+                if (!statusDot.classList.contains('warning')) {
+                    statusDot.classList.add('error');
+                }
             }
         }
 
