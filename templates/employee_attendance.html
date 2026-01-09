@@ -139,6 +139,11 @@
             width: 100%;
             display: block;
             transform: scaleX(-1);
+            background: #000;
+        }
+        
+        #video:not([srcObject]) {
+            background: #000;
         }
 
         .face-guide {
@@ -340,7 +345,7 @@
                 </div>
                 <div class="status-item">
                     <div class="status-dot"></div>
-                    <div class="status-text">👤 Look directly at the camera and stay still for recognition</div>
+                    <div class="status-text">👤 Look directly at the camera and keep your face clearly visible</div>
                 </div>
             </div>
         </div>
@@ -367,6 +372,10 @@
         let scanning = false;
         let scanInterval = null;
         let currentFilter = 'week';
+        let isProcessing = false; // Prevent multiple simultaneous recognition attempts
+        let cameraStream = null; // Track camera stream for cleanup
+        let recognitionController = null; // AbortController for face recognition requests
+        let historyController = null; // AbortController for history requests
 
         // Update date and time
         function updateDateTime() {
@@ -386,9 +395,12 @@
         updateDateTime();
         setInterval(updateDateTime, 1000);
 
-        // Start camera
+        // Start camera - keep it running continuously
         async function startCamera() {
             try {
+                console.log('[CAMERA] Requesting camera access...');
+                updateStatus('Requesting camera access...', false);
+                
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { 
                         facingMode: 'user',
@@ -396,55 +408,173 @@
                         height: { ideal: 480 }
                     } 
                 });
+                
+                // Store stream reference for cleanup
+                cameraStream = stream;
                 video.srcObject = stream;
                 
-                // Start scanning after camera is ready
-                setTimeout(() => {
-                    startScanning();
-                }, 1000);
+                // Ensure video is playing
+                video.play().catch(err => {
+                    console.error('[CAMERA] Error playing video:', err);
+                });
+                
+                console.log('[CAMERA] Camera stream started');
+                updateStatus('Camera ready. Positioning face...', false);
+                
+                // Wait for video to be ready
+                video.onloadedmetadata = () => {
+                    console.log('[CAMERA] Video metadata loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
+                    // Ensure video is playing
+                    video.play().catch(err => {
+                        console.error('[CAMERA] Error playing video after metadata:', err);
+                    });
+                    // Start scanning after camera is ready
+                    setTimeout(() => {
+                        console.log('[CAMERA] Starting face recognition scanning...');
+                        startScanning();
+                    }, 1000);
+                };
+                
+                // Keep video playing even if it pauses (only if page is visible)
+                video.addEventListener('pause', () => {
+                    if (!document.hidden) {
+                        console.log('[CAMERA] Video paused, resuming...');
+                        video.play().catch(err => {
+                            console.error('[CAMERA] Error resuming video:', err);
+                        });
+                    }
+                });
+                
             } catch (err) {
-                console.error('Error accessing camera:', err);
-                document.getElementById('statusText').textContent = 'Camera access denied. Please allow camera permissions.';
+                console.error('[CAMERA] Error accessing camera:', err);
+                updateStatus('Camera access denied. Please allow camera permissions.', false);
                 document.getElementById('statusDot').classList.add('error');
             }
         }
+
+        // Liveness detection removed - simple single frame capture
 
         // Start face recognition scanning
         function startScanning() {
             if (scanning) return;
             scanning = true;
             
+            console.log('[SCANNING] Starting face recognition scanning...');
             scanInterval = setInterval(async () => {
+                // Don't scan if page is hidden or window doesn't have focus
+                if (document.hidden || !document.hasFocus()) {
+                    console.log('[SCANNING] Page hidden or lost focus, skipping scan...');
+                    return;
+                }
+                
+                // Add a small delay to allow cancellation if page becomes hidden
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Check again after delay
+                if (document.hidden || !document.hasFocus()) {
+                    console.log('[SCANNING] Page hidden or lost focus during delay, cancelling...');
+                    return;
+                }
+                
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     await captureAndRecognize();
+                } else {
+                    console.log('[SCANNING] Video not ready, waiting...');
                 }
-            }, 2000); // Scan every 2 seconds
+            }, 3000); // Scan every 3 seconds (reduced frequency to reduce load)
         }
 
-        // Capture frame and send for recognition
+        // Capture frame and send for recognition (liveness detection removed)
         async function captureAndRecognize() {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
+            // Don't process if page is hidden or window doesn't have focus
+            if (document.hidden || !document.hasFocus()) {
+                console.log('[RECOGNITION] Page hidden or lost focus, stopping recognition...');
+                return;
+            }
             
-            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            // Prevent multiple simultaneous recognition attempts
+            if (isProcessing) {
+                console.log('[RECOGNITION] Already processing, skipping...');
+                return;
+            }
             
+            // Ensure video is ready
+            if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+                console.log('[RECOGNITION] Video not ready');
+                updateStatus('Camera not ready. Please wait...', false);
+                return;
+            }
+            
+            // Check if video has valid dimensions
+            if (video.videoWidth === 0 || video.videoHeight === 0) {
+                console.log('[RECOGNITION] Video dimensions invalid');
+                updateStatus('Camera initializing...', false);
+                return;
+            }
+            
+            isProcessing = true;
+            updateStatus('Capturing face...', false);
             document.getElementById('scanningIndicator').classList.add('active');
             
             try {
+                console.log('[RECOGNITION] Capturing frame...');
+                // Capture single frame with reduced size for faster transmission
+                const canvas = document.createElement('canvas');
+                // Reduce image size to max 640x480 for faster processing and transmission
+                const maxWidth = 640;
+                const maxHeight = 480;
+                const scale = Math.min(maxWidth / video.videoWidth, maxHeight / video.videoHeight, 1);
+                canvas.width = video.videoWidth * scale;
+                canvas.height = video.videoHeight * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                // Use lower quality (0.7) for faster transmission
+                const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                
+                console.log('[RECOGNITION] Sending to server...');
+                updateStatus('Recognizing face...', false);
+                
+                // Cancel any previous request
+                if (recognitionController) {
+                    recognitionController.abort();
+                }
+                
+                // Create new AbortController for this request
+                recognitionController = new AbortController();
+                const timeoutId = setTimeout(() => recognitionController.abort(), 8000); // 8 second timeout (reduced)
+                
+                // Double-check page is still visible and has focus before sending large request
+                if (document.hidden || !document.hasFocus()) {
+                    clearTimeout(timeoutId);
+                    recognitionController.abort();
+                    isProcessing = false;
+                    recognitionController = null;
+                    return;
+                }
+                
                 const response = await fetch('/api/recognize-face', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ image: imageData })
+                    body: JSON.stringify({ 
+                        image: imageData
+                    }),
+                    signal: recognitionController.signal,
+                    priority: 'low' // Low priority to not block other requests
                 });
                 
                 const data = await response.json();
+                console.log('[RECOGNITION] Response:', data);
                 
+                clearTimeout(timeoutId);
                 document.getElementById('scanningIndicator').classList.remove('active');
+                
+                // Check if page is still visible and has focus before processing result
+                if (document.hidden || !document.hasFocus()) {
+                    console.log('[RECOGNITION] Page hidden or lost focus, ignoring response');
+                    return;
+                }
                 
                 if (data.success && data.employee) {
                     handleRecognitionSuccess(data.employee, data.time_in, data.message);
@@ -452,9 +582,18 @@
                     updateStatus(data.message || 'Face not recognized. Please try again.', false);
                 }
             } catch (error) {
-                console.error('Recognition error:', error);
-                document.getElementById('scanningIndicator').classList.remove('active');
-                updateStatus('Error processing face recognition. Please try again.', false);
+                clearTimeout(timeoutId);
+                // Don't log abort errors
+                if (error.name !== 'AbortError') {
+                    console.error('[RECOGNITION] Error:', error);
+                    if (!document.hidden) {
+                        document.getElementById('scanningIndicator').classList.remove('active');
+                        updateStatus('Error processing face recognition. Please try again.', false);
+                    }
+                }
+            } finally {
+                isProcessing = false;
+                recognitionController = null;
             }
         }
 
@@ -507,9 +646,27 @@
             });
             event?.target?.classList.add('active');
             
+            // Cancel any previous history request
+            if (historyController) {
+                historyController.abort();
+            }
+            
+            // Don't load if page is hidden or doesn't have focus
+            if (document.hidden || !document.hasFocus()) {
+                return;
+            }
+            
             try {
-                const response = await fetch(`/api/attendance-history?filter=${filter}`);
+                historyController = new AbortController();
+                const timeoutId = setTimeout(() => historyController.abort(), 5000); // 5 second timeout
+                
+                const response = await fetch(`/api/attendance-history?filter=${filter}`, {
+                    signal: historyController.signal,
+                    priority: 'low' // Low priority to not block other requests
+                });
                 const data = await response.json();
+                
+                clearTimeout(timeoutId);
                 
                 const historyList = document.getElementById('historyList');
                 
@@ -529,11 +686,91 @@
                     historyList.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">No attendance records found.</div>';
                 }
             } catch (error) {
-                console.error('Error loading history:', error);
-                document.getElementById('historyList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading attendance history.</div>';
+                if (error.name !== 'AbortError') {
+                    console.error('Error loading history:', error);
+                    if (!document.hidden) {
+                        document.getElementById('historyList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading attendance history.</div>';
+                    }
+                }
+            } finally {
+                historyController = null;
             }
         }
 
+        // Function to stop camera and cleanup
+        function stopCamera() {
+            console.log('[CAMERA] Stopping camera...');
+            
+            // Stop scanning
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            scanning = false;
+            isProcessing = false; // Reset processing flag
+            
+            // Cancel any ongoing fetch requests
+            if (recognitionController) {
+                recognitionController.abort();
+                recognitionController = null;
+            }
+            if (historyController) {
+                historyController.abort();
+                historyController = null;
+            }
+            
+            // Stop video tracks
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => {
+                    track.stop();
+                    console.log('[CAMERA] Stopped track:', track.kind);
+                });
+                cameraStream = null;
+            }
+            
+            // Clear video source
+            if (video && video.srcObject) {
+                video.srcObject = null;
+            }
+        }
+        
+        // Stop camera when page becomes hidden (user navigated away or tab switched)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                console.log('[CAMERA] Page hidden, stopping camera to free resources...');
+                stopCamera();
+            } else {
+                // Page visible again - restart camera if needed
+                console.log('[CAMERA] Page visible again, restarting camera...');
+                if (!cameraStream) {
+                    startCamera();
+                } else if (!scanning) {
+                    startScanning();
+                }
+            }
+        });
+        
+        // Also stop when window loses focus (switching to another tab/window)
+        window.addEventListener('blur', () => {
+            console.log('[CAMERA] Window lost focus, stopping camera...');
+            if (document.hidden) {
+                stopCamera();
+            }
+        });
+        
+        // Resume when window gains focus (but only if page is visible)
+        window.addEventListener('focus', () => {
+            if (!document.hidden && !cameraStream) {
+                console.log('[CAMERA] Window gained focus, restarting camera...');
+                startCamera();
+            }
+        });
+        
+        // Cleanup camera when page is completely unloaded
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+        
         // Initialize
         startCamera();
         loadHistory('week');

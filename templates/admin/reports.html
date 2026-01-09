@@ -142,10 +142,10 @@
 </div>
 
 <style>
-/* DTR Styles - 3.5" x 7.5" */
+/* DTR Styles - Original Compact Format on Bond Paper */
 @page {
-  size: 3.5in 7.5in;
-  margin: 0;
+  size: letter;  /* 8.5" x 11" standard bond paper */
+  margin: 0.2in;  /* Small margins to center content */
 }
 
 .dtr-container {
@@ -154,14 +154,17 @@
   width: 100%;
   height: auto;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 8px;
+  font-size: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .dtr-wrapper {
-  width: 3.5in;
-  height: 7.5in;
+  width: 3.2in;
+  height: 8.5in;
   border: 1px solid #000;
-  padding: 4px;
+  padding: 2px;
   box-sizing: border-box;
   margin: 0 auto;
   display: flex;
@@ -180,17 +183,19 @@
 .dtr-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 4px;
+  margin-top: 2px;
+  margin-bottom: 0;
+  font-size: 6px;
   flex: 1;
   overflow-y: auto;
 }
 
 .dtr-table th, .dtr-table td {
   border: 1px solid #000;
-  padding: 1px;
+  padding: 0px;
   text-align: center;
-  height: 11px;
-  font-size: 7px;
+  height: 10px;
+  font-size: 6px;
 }
 
 .dtr-left {
@@ -198,22 +203,22 @@
 }
 
 .dtr-signature {
-  margin-top: 4px;
+  margin-top: 2px;
   text-align: center;
   font-size: 6px;
 }
 
 .dtr-line {
   border-bottom: 1px solid #000;
-  width: 140px;
+  width: 120px;
   margin: 2px auto;
 }
 
 p.dtr-cert {
   font-size: 6px;
-  margin: 2px 0;
+  margin: 2px;
   padding: 0;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 /* Screen view */
@@ -231,8 +236,8 @@ p.dtr-cert {
 /* Print Styles */
 @media print {
   @page {
-    size: 3.5in 7.5in;
-    margin: 0;
+    size: letter;  /* 8.5" x 11" standard bond paper */
+    margin: 0.2in;  /* Small margins to center the compact DTR */
   }
   
   * {
@@ -241,8 +246,8 @@ p.dtr-cert {
   }
   
   html, body {
-    width: 3.5in;
-    height: 7.5in;
+    width: 8.5in;
+    height: 11in;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible;
@@ -267,46 +272,64 @@ p.dtr-cert {
     box-shadow: none !important;
   }
   
-  /* DTR Container */
+  /* DTR Container - Center on page */
   .dtr-container {
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
-    height: auto !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    page-break-inside: avoid;
   }
   
+  /* DTR Wrapper - Original compact format */
   .dtr-wrapper {
-    width: 3.5in !important;
-    height: 7.5in !important;
-    margin: 0 !important;
-    padding: 4px !important;
+    width: 3.2in !important;
+    height: 8.5in !important;
+    max-height: 10.6in !important;  /* Fit within page with margins */
+    margin: 0 auto !important;
+    padding: 2px !important;
     border: 1px solid #000 !important;
     box-shadow: none !important;
+    page-break-inside: avoid;
+    display: flex !important;
+    flex-direction: column !important;
   }
   
   .dtr-table {
-    font-size: 6.5px !important;
+    font-size: 6px !important;
+    margin-top: 2px !important;
+    margin-bottom: 0 !important;
   }
   
   .dtr-table th, .dtr-table td {
-    font-size: 6.5px !important;
+    font-size: 6px !important;
     height: 10px !important;
-    padding: 0.5px !important;
+    padding: 0px !important;
+    line-height: 1 !important;
   }
   
   p.dtr-cert {
-    font-size: 5.5px !important;
-    margin: 1px 0 !important;
+    font-size: 6px !important;
+    margin: 2px !important;
+    line-height: 1 !important;
   }
   
   .dtr-signature {
-    font-size: 5.5px !important;
-    margin-top: 3px !important;
+    font-size: 6px !important;
+    margin-top: 2px !important;
   }
   
   .dtr-line {
-    width: 130px !important;
-    margin: 1px auto !important;
+    width: 120px !important;
+    margin: 2px auto !important;
+  }
+  
+  /* Reduce br spacing */
+  br {
+    line-height: 0.3 !important;
   }
 }
 </style>

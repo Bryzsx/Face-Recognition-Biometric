@@ -4,6 +4,49 @@
   <meta charset="UTF-8">
   <title>Admin Panel</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+  <style>
+    /* Prevent loading indicators and ensure smooth navigation */
+    .nav-link {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      /* Ensure links are always ready for immediate navigation */
+      pointer-events: auto !important;
+    }
+    
+    /* Prevent browser loading spinner on navigation */
+    body:not(.loading) {
+      opacity: 1 !important;
+    }
+    
+    /* Smooth transitions for navigation */
+    .nav-link {
+      transition: opacity 0.1s ease, background 0.2s ease;
+    }
+    
+    /* Hide any loading overlays */
+    .loading-overlay,
+    .page-loader,
+    .spinner,
+    .loading {
+      display: none !important;
+    }
+    
+    /* Ensure navigation doesn't wait for resources */
+    .nav-link:active {
+      opacity: 0.7;
+    }
+    
+    /* Optimize rendering performance */
+    .main {
+      will-change: contents;
+    }
+    
+    /* Prevent layout shifts during navigation */
+    .nav-link {
+      contain: layout style paint;
+    }
+  </style>
 </head>
 <body>
 
@@ -48,6 +91,443 @@
   {% block content %}{% endblock %}
 </div>
 
+<!-- Auto-Refresh Script -->
+<script>
+// Auto-refresh functionality
+let autoRefreshEnabled = false; // Disabled by default - user must enable in settings
+let refreshInterval = null;
+let REFRESH_INTERVAL = 30000; // Default: 30 seconds
+let isRefreshing = false; // Prevent multiple simultaneous refreshes
+let refreshThrottle = null; // Throttle rapid refresh requests
+
+function startAutoRefresh() {
+    // Always clear existing interval first
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+    }
+    
+    // Load settings from localStorage
+    const savedEnabled = localStorage.getItem('autoRefreshEnabled');
+    const savedInterval = localStorage.getItem('autoRefreshInterval');
+    
+    if (savedEnabled !== null) {
+        autoRefreshEnabled = savedEnabled === 'true';
+    }
+    
+    if (savedInterval !== null) {
+        REFRESH_INTERVAL = parseInt(savedInterval);
+    }
+    
+    // Only start if enabled and on a page that supports auto-refresh
+    const currentPath = window.location.pathname;
+    const supportsAutoRefresh = currentPath.includes('/admin/dashboard') || 
+                                currentPath.includes('/admin/attendance');
+    
+    if (autoRefreshEnabled && supportsAutoRefresh) {
+        refreshInterval = setInterval(() => {
+            // Don't refresh if navigating
+            if (isNavigating) {
+                return;
+            }
+            
+            // Check current path again in case user navigated
+            const currentPathNow = window.location.pathname;
+            
+            // Only refresh if still on a supported page
+            if (!currentPathNow.includes('/admin/dashboard') && 
+                !currentPathNow.includes('/admin/attendance')) {
+                // User navigated away, stop auto-refresh
+                stopAutoRefresh();
+                return;
+            }
+            
+            // Prevent multiple simultaneous refreshes
+            if (isRefreshing) {
+                return; // Silently skip if already refreshing
+            }
+            
+            // Only refresh if page is visible (not hidden)
+            if (document.hidden) {
+                return; // Don't refresh when tab is hidden
+            }
+            
+            if (currentPathNow.includes('/admin/dashboard')) {
+                refreshDashboard();
+            } else if (currentPathNow.includes('/admin/attendance')) {
+                refreshAttendance();
+            }
+        }, REFRESH_INTERVAL);
+        
+        console.log('[AUTO-REFRESH] Started with interval:', REFRESH_INTERVAL, 'ms');
+    } else {
+        // Auto-refresh disabled or not on supported page - that's fine
+        if (supportsAutoRefresh) {
+            console.log('[AUTO-REFRESH] Disabled by user settings');
+        }
+    }
+}
+
+function stopAutoRefresh() {
+    if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+    }
+    // Clear any pending refresh throttles
+    if (refreshThrottle) {
+        clearTimeout(refreshThrottle);
+        refreshThrottle = null;
+    }
+    // Reset refreshing flag
+    isRefreshing = false;
+}
+
+function refreshDashboard() {
+    if (isRefreshing) {
+        console.log('[AUTO-REFRESH] Dashboard refresh already in progress, skipping...');
+        return;
+    }
+    
+    // Throttle rapid refresh requests (prevent multiple calls within 2 seconds)
+    if (refreshThrottle) {
+        clearTimeout(refreshThrottle);
+    }
+    
+    refreshThrottle = setTimeout(() => {
+        performDashboardRefresh();
+    }, 2000);
+}
+
+function performDashboardRefresh() {
+    if (isRefreshing) {
+        return;
+    }
+    
+    isRefreshing = true;
+    console.log('[AUTO-REFRESH] Refreshing dashboard...');
+    
+    // Use AbortController to cancel if navigation happens
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    fetch('/api/dashboard-stats', { signal: controller.signal })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stats
+                const stats = document.querySelectorAll('.stat h2');
+                if (stats.length >= 4) {
+                    stats[0].textContent = data.total_employees;
+                    stats[1].textContent = data.present;
+                    stats[2].textContent = data.absent;
+                    stats[3].textContent = data.late;
+                }
+                
+                // Update recent attendance
+                const attendanceGrid = document.querySelector('.attendance-grid');
+                if (attendanceGrid && data.recent_attendance) {
+                    attendanceGrid.innerHTML = data.recent_attendance.map(record => {
+                        const initials = record.full_name ? record.full_name.substring(0, 2).toUpperCase() : 'N/A';
+                        const statusClass = record.attendance_status === 'Present' ? 'ontime' : 
+                                          record.attendance_status === 'Late' ? 'late' : 'absent';
+                        return `
+                            <div class="attendance-card">
+                                <div class="att-left">
+                                    <div class="att-avatar">${initials}</div>
+                                    <div>
+                                        <strong>${record.full_name || 'N/A'}</strong><br>
+                                        <small>${record.employee_code || 'N/A'} • ${record.date}</small>
+                                    </div>
+                                </div>
+                                <div class="att-right">
+                                    ${record.morning_in ? `<span class="att-time">${record.morning_in}</span><br>` : ''}
+                                    <span class="att-badge ${statusClass}">
+                                        ${record.attendance_status || 'Pending'}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+                
+                // Show update indicator
+                showUpdateIndicator();
+            }
+        })
+        .catch(error => {
+            if (error.name !== 'AbortError') {
+                console.error('[AUTO-REFRESH] Error refreshing dashboard:', error);
+            }
+        })
+        .finally(() => {
+            clearTimeout(timeoutId);
+            isRefreshing = false;
+        });
+}
+
+function refreshAttendance() {
+    if (isRefreshing) {
+        console.log('[AUTO-REFRESH] Attendance refresh already in progress, skipping...');
+        return;
+    }
+    
+    // Throttle rapid refresh requests (prevent multiple calls within 2 seconds)
+    if (refreshThrottle) {
+        clearTimeout(refreshThrottle);
+    }
+    
+    refreshThrottle = setTimeout(() => {
+        performAttendanceRefresh();
+    }, 2000);
+}
+
+function performAttendanceRefresh() {
+    if (isRefreshing) {
+        return;
+    }
+    
+    isRefreshing = true;
+    console.log('[AUTO-REFRESH] Refreshing attendance...');
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedDate = urlParams.get('date') || new Date().toISOString().split('T')[0];
+    
+    // Use AbortController to cancel if navigation happens
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    
+    fetch(`/api/attendance-records?date=${selectedDate}`, { signal: controller.signal })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const table = document.querySelector('.table');
+                const card = document.querySelector('.card');
+                
+                if (data.records && data.records.length > 0) {
+                    // Update table
+                    if (table) {
+                        const tbody = table.querySelector('tbody');
+                        if (tbody) {
+                            tbody.innerHTML = data.records.map(record => {
+                                const statusBadge = record.attendance_status === 'Present' 
+                                    ? '<span class="badge present">Present</span>'
+                                    : record.attendance_status === 'Late'
+                                    ? '<span style="color: #f59e0b; font-weight: 500;">Late</span>'
+                                    : record.attendance_status === 'Absent'
+                                    ? '<span style="color: #ef4444; font-weight: 500;">Absent</span>'
+                                    : '<span style="color: #6b7280;">--</span>';
+                                
+                                return `
+                                    <tr>
+                                        <td>${record.full_name}</td>
+                                        <td>${record.date}</td>
+                                        <td>${record.morning_in || '--'}</td>
+                                        <td>${record.lunch_out || '--'}</td>
+                                        <td>${record.afternoon_in || '--'}</td>
+                                        <td>${record.time_out || '--'}</td>
+                                        <td>${statusBadge}</td>
+                                        <td>
+                                            <a href="/admin/attendance/edit/${record.attendance_id}" 
+                                               class="btn-edit" 
+                                               style="padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-block;">
+                                                ✏️ Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('');
+                        }
+                    }
+                    
+                    // Remove "no records" message if exists
+                    const noRecordsMsg = card.querySelector('p[style*="text-align: center"]');
+                    if (noRecordsMsg && noRecordsMsg.textContent.includes('No attendance records')) {
+                        noRecordsMsg.remove();
+                    }
+                    
+                    // Show table if hidden
+                    if (table) table.style.display = '';
+                } else {
+                    // No records - show message
+                    if (card && !card.querySelector('p[style*="text-align: center"]')) {
+                        const noRecordsMsg = document.createElement('p');
+                        noRecordsMsg.style.cssText = 'margin-top: 20px; color: #6b7280; text-align: center; padding: 40px;';
+                        noRecordsMsg.textContent = `No attendance records for ${selectedDate}`;
+                        card.appendChild(noRecordsMsg);
+                    }
+                    
+                    // Hide table
+                    if (table) table.style.display = 'none';
+                }
+                
+                // Show update indicator
+                showUpdateIndicator();
+            }
+        })
+        .catch(error => {
+            if (error.name !== 'AbortError') {
+                console.error('[AUTO-REFRESH] Error refreshing attendance:', error);
+            }
+        })
+        .finally(() => {
+            clearTimeout(timeoutId);
+            isRefreshing = false;
+        });
+}
+
+function showUpdateIndicator() {
+    // Only show indicator if auto-refresh is enabled (to avoid annoying users)
+    if (!autoRefreshEnabled) return;
+    
+    // Create or update indicator
+    let indicator = document.getElementById('auto-refresh-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'auto-refresh-indicator';
+        indicator.style.cssText = 'position: fixed; top: 10px; right: 10px; background: #10b981; color: white; padding: 6px 10px; border-radius: 6px; font-size: 11px; z-index: 1000; box-shadow: 0 2px 8px rgba(0,0,0,0.2); opacity: 0.9;';
+        document.body.appendChild(indicator);
+    }
+    
+    const now = new Date();
+    indicator.textContent = `✓ ${now.toLocaleTimeString()}`;
+    indicator.style.display = 'block';
+    
+    // Hide after 1.5 seconds (shorter to be less annoying)
+    setTimeout(() => {
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
+    }, 1500);
+}
+
+// Prevent multiple initializations
+let autoRefreshInitialized = false;
+
+// Track navigation state to prevent multiple clicks
+let isNavigating = false;
+let navigationLinksInitialized = false;
+
+function initializeNavigationLinks() {
+    if (navigationLinksInitialized) return;
+    navigationLinksInitialized = true;
+    
+    document.querySelectorAll('.nav-link').forEach(link => {
+        // Use capture phase to handle early, before any other handlers
+        link.addEventListener('click', function(e) {
+            // If already navigating, prevent multiple clicks
+            if (isNavigating) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }
+            
+            // Mark as navigating immediately (before any async operations)
+            isNavigating = true;
+            
+            // Stop auto-refresh immediately (synchronous, no waiting)
+            // Also abort any ongoing fetch requests
+            try {
+                stopAutoRefresh();
+                // Cancel any pending refresh operations
+                if (refreshThrottle) {
+                    clearTimeout(refreshThrottle);
+                    refreshThrottle = null;
+                }
+            } catch(err) {
+                // Ignore errors - navigation should proceed regardless
+            }
+            
+            // Allow navigation to proceed naturally, but ensure cleanup happens first
+            // The browser will handle navigation, we just ensure resources are freed
+            
+            // Minimal visual feedback - just slight opacity change
+            const originalOpacity = this.style.opacity || '';
+            this.style.opacity = '0.8';
+            
+            // Reset flag after navigation starts
+            setTimeout(() => {
+                isNavigating = false;
+                if (this.style) {
+                    this.style.opacity = originalOpacity || '';
+                }
+            }, 100);
+            
+        }, { capture: true, passive: false }); // Use capture phase, allow preventDefault
+    });
+}
+
+// Start auto-refresh when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Reset navigation state immediately
+    isNavigating = false;
+    
+    // Initialize navigation links immediately (don't wait for anything)
+    initializeNavigationLinks();
+    
+    // Initialize auto-refresh separately (non-blocking)
+    if (!autoRefreshInitialized) {
+        autoRefreshInitialized = true;
+        // Use requestIdleCallback if available, otherwise setTimeout
+        const initAutoRefresh = () => {
+            const currentPath = window.location.pathname;
+            const supportsAutoRefresh = currentPath.includes('/admin/dashboard') || 
+                                        currentPath.includes('/admin/attendance');
+            
+            if (supportsAutoRefresh) {
+                startAutoRefresh();
+            }
+        };
+        
+        if (window.requestIdleCallback) {
+            requestIdleCallback(initAutoRefresh, { timeout: 1000 });
+        } else {
+            setTimeout(initAutoRefresh, 100);
+        }
+    }
+});
+
+// Reset navigation state when page is fully loaded
+window.addEventListener('load', () => {
+    isNavigating = false;
+});
+
+// Stop auto-refresh when page is hidden (tab switch)
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        stopAutoRefresh();
+    } else {
+        // Restart when tab becomes visible again
+        if (autoRefreshInitialized) {
+            startAutoRefresh();
+        }
+    }
+});
+
+// Stop auto-refresh before page unloads
+window.addEventListener('beforeunload', () => {
+    stopAutoRefresh();
+    isNavigating = false; // Reset navigation state
+});
+
+// Reset navigation state on page show (back/forward navigation)
+window.addEventListener('pageshow', (event) => {
+    isNavigating = false;
+    // If page was loaded from cache, reinitialize
+    if (event.persisted) {
+        autoRefreshInitialized = false;
+        initializeNavigationLinks();
+        setTimeout(() => {
+            const currentPath = window.location.pathname;
+            const supportsAutoRefresh = currentPath.includes('/admin/dashboard') || 
+                                        currentPath.includes('/admin/attendance');
+            if (supportsAutoRefresh) {
+                startAutoRefresh();
+            }
+        }, 300);
+    }
+});
+</script>
 
 </body>
 </html>

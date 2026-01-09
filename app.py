@@ -77,6 +77,113 @@ def admin_logout():
     return redirect(url_for("admin_login"))
 
 
+# ================= API ENDPOINTS FOR AUTO-REFRESH =================
+@app.route("/api/dashboard-stats")
+@admin_required
+def api_dashboard_stats():
+    """API endpoint to get dashboard statistics for auto-refresh"""
+    db = get_db()
+    cur = db.cursor()
+    today = date.today().isoformat()
+
+    cur.execute("SELECT COUNT(*) FROM employees")
+    total_employees = cur.fetchone()[0]
+
+    cur.execute(
+        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Present'",
+        (today,),
+    )
+    present = cur.fetchone()[0]
+
+    cur.execute(
+        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Absent'",
+        (today,),
+    )
+    absent = cur.fetchone()[0]
+
+    cur.execute(
+        "SELECT COUNT(*) FROM attendance WHERE date=? AND attendance_status='Late'",
+        (today,),
+    )
+    late = cur.fetchone()[0]
+
+    # Get recent attendance records (last 10 records)
+    cur.execute("""
+        SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
+               a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
+        FROM attendance a
+        JOIN employees e ON a.employee_id = e.id
+        ORDER BY a.date DESC, a.morning_in DESC
+        LIMIT 10
+    """)
+    recent_attendance = cur.fetchall()
+    
+    # Convert to list of dicts
+    recent_list = []
+    for record in recent_attendance:
+        recent_list.append({
+            "full_name": record["full_name"],
+            "employee_code": record["employee_code"],
+            "date": record["date"],
+            "morning_in": record["morning_in"],
+            "lunch_out": record["lunch_out"],
+            "afternoon_in": record["afternoon_in"],
+            "time_out": record["time_out"],
+            "attendance_status": record["attendance_status"]
+        })
+
+    return jsonify({
+        "success": True,
+        "total_employees": total_employees,
+        "present": present,
+        "absent": absent,
+        "late": late,
+        "recent_attendance": recent_list
+    })
+
+
+@app.route("/api/attendance-records")
+@admin_required
+def api_attendance_records():
+    """API endpoint to get attendance records for auto-refresh"""
+    db = get_db()
+    cur = db.cursor()
+    
+    # Get selected date or use today
+    selected_date = request.args.get("date", date.today().isoformat())
+    
+    cur.execute("""
+        SELECT a.attendance_id, e.id, e.full_name, a.date, a.morning_in, a.lunch_out, 
+               a.afternoon_in, a.time_out, a.attendance_status
+        FROM attendance a
+        JOIN employees e ON a.employee_id = e.id
+        WHERE a.date=?
+        ORDER BY e.full_name
+    """, (selected_date,))
+
+    records = cur.fetchall()
+    
+    # Convert to list of dicts
+    records_list = []
+    for record in records:
+        records_list.append({
+            "attendance_id": record["attendance_id"],
+            "full_name": record["full_name"],
+            "date": record["date"],
+            "morning_in": record["morning_in"],
+            "lunch_out": record["lunch_out"],
+            "afternoon_in": record["afternoon_in"],
+            "time_out": record["time_out"],
+            "attendance_status": record["attendance_status"]
+        })
+    
+    return jsonify({
+        "success": True,
+        "selected_date": selected_date,
+        "records": records_list
+    })
+
+
 # ================= DASHBOARD =================
 @app.route("/admin/dashboard")
 @admin_required
@@ -632,22 +739,22 @@ def edit_dtr(attendance_id):
             # Check if morning time is late
             if morning_in:
                 try:
-                    from datetime import datetime
-                    morning_time = datetime.strptime(morning_in, "%I:%M %p")
-                    late_threshold = datetime.strptime("08:30 AM", "%I:%M %p")
-                    if morning_time >= late_threshold:
+                    morning_was_late = check_if_late(morning_in, "morning")
+                    if morning_was_late:
                         attendance_status = "Late"
                 except:
                     pass
             
             # Check if afternoon time is late
-            if afternoon_in and attendance_status == "Present":
+            if afternoon_in:
                 try:
-                    from datetime import datetime
-                    afternoon_time = datetime.strptime(afternoon_in, "%I:%M %p")
-                    late_threshold = datetime.strptime("01:30 PM", "%I:%M %p")
-                    if afternoon_time >= late_threshold:
+                    afternoon_was_late = check_if_late(afternoon_in, "afternoon")
+                    # If morning was already late, keep as Late; otherwise check afternoon
+                    if attendance_status != "Late" and afternoon_was_late:
                         attendance_status = "Late"
+                    elif attendance_status == "Late":
+                        # Already late from morning, keep as Late
+                        pass
                 except:
                     pass
             
@@ -923,8 +1030,11 @@ def check_if_late(time_str, time_type="morning"):
     """
     Check if a time string is late based on the time windows.
     
+    Morning: 6:00 AM - 8:00 AM (on-time), 8:01 AM onwards (late)
+    Afternoon: 12:00 PM - 1:00 PM (on-time), 1:01 PM onwards (late)
+    
     Args:
-        time_str: Time string in format "HH:MM AM/PM" (e.g., "08:30 AM")
+        time_str: Time string in format "HH:MM AM/PM" (e.g., "08:01 AM")
         time_type: "morning" or "afternoon"
     
     Returns:
@@ -937,12 +1047,14 @@ def check_if_late(time_str, time_type="morning"):
         time_obj = datetime.strptime(time_str, "%I:%M %p")
         
         if time_type == "morning":
-            # Morning: late if >= 8:30 AM
-            late_threshold = datetime.strptime("08:30 AM", "%I:%M %p")
+            # Morning: late if >= 8:01 AM
+            # 6:00 AM - 8:00 AM: on-time
+            # 8:01 AM onwards: late
+            late_threshold = datetime.strptime("08:01 AM", "%I:%M %p")
             return time_obj >= late_threshold
         elif time_type == "afternoon":
-            # Afternoon: late if >= 1:30 PM
-            late_threshold = datetime.strptime("01:30 PM", "%I:%M %p")
+            # Afternoon: 12:00 PM - 1:00 PM (on-time), 1:01 PM onwards (late)
+            late_threshold = datetime.strptime("01:01 PM", "%I:%M %p")
             return time_obj >= late_threshold
         
         return False
@@ -951,36 +1063,57 @@ def check_if_late(time_str, time_type="morning"):
         return False
 
 
-def is_time_in_valid_window(time_str, time_type="morning"):
+def is_morning_time_in_allowed(time_str):
     """
-    Check if time is within the valid time-in window.
+    Check if morning time-in is allowed.
+    Employees can time in from 6:00 AM onwards.
+    - 6:00 AM - 8:00 AM: on-time (not late)
+    - 8:01 AM onwards: can time in but marked as late
     
     Args:
         time_str: Time string in format "HH:MM AM/PM"
-        time_type: "morning" or "afternoon"
     
     Returns:
-        bool: True if within window, False otherwise
+        bool: True if allowed, False otherwise
     """
     try:
         from datetime import datetime
         
         time_obj = datetime.strptime(time_str, "%I:%M %p")
+        # Minimum allowed time: 6:00 AM
+        min_time = datetime.strptime("06:00 AM", "%I:%M %p")
         
-        if time_type == "morning":
-            # Morning window: 8:00 AM to 12:00 PM
-            start_time = datetime.strptime("08:00 AM", "%I:%M %p")
-            end_time = datetime.strptime("12:00 PM", "%I:%M %p")
-            return start_time <= time_obj <= end_time
-        elif time_type == "afternoon":
-            # Afternoon window: 1:00 PM to 5:00 PM
-            start_time = datetime.strptime("01:00 PM", "%I:%M %p")
-            end_time = datetime.strptime("05:00 PM", "%I:%M %p")
-            return start_time <= time_obj <= end_time
-        
-        return False
+        # Can time in from 6:00 AM onwards (anytime after 6:00 AM)
+        return time_obj >= min_time
     except Exception as e:
-        print(f"Error checking time window: {e}")
+        print(f"Error checking morning time-in: {e}")
+        return False
+
+
+def is_afternoon_time_in_allowed(time_str):
+    """
+    Check if afternoon time-in is allowed.
+    Employees can time in from 12:00 PM (noon) onwards.
+    - 12:00 PM - 1:00 PM: on-time (not late)
+    - 1:01 PM onwards: can time in but marked as late
+    
+    Args:
+        time_str: Time string in format "HH:MM AM/PM"
+    
+    Returns:
+        bool: True if allowed, False otherwise
+    """
+    try:
+        from datetime import datetime
+        
+        time_obj = datetime.strptime(time_str, "%I:%M %p")
+        # Minimum allowed time: 12:00 PM (noon)
+        min_time = datetime.strptime("12:00 PM", "%I:%M %p")
+        
+        # Can time in from 12:00 PM onwards
+        return time_obj >= min_time
+    except Exception as e:
+        print(f"Error checking afternoon time-in: {e}")
         return False
 
 
@@ -993,40 +1126,78 @@ def recognize_face():
         image_data = data.get("image")
         
         if not image_data:
+            print("[FACE RECOGNITION] Error: No image provided")
             return jsonify({"success": False, "message": "No image provided"}), 400
+        
+        print("[FACE RECOGNITION] Starting face recognition...")
         
         # Encode face from base64 image
         face_encoding = face_utils.encode_face_from_base64(image_data)
         
         if face_encoding is None:
-            return jsonify({"success": False, "message": "No face detected. Please position your face in the frame."})
+            print("[FACE RECOGNITION] Error: No face detected in image")
+            return jsonify({"success": False, "message": "No face detected. Please ensure your face is clearly visible in the camera frame and well-lit."})
+        
+        print("[FACE RECOGNITION] Face encoding successful")
         
         # Load known faces
         employee_ids, known_encodings = face_utils.load_known_faces()
         
         if not known_encodings:
-            return jsonify({"success": False, "message": "No registered employees found."})
+            print("[FACE RECOGNITION] Error: No registered employees found")
+            return jsonify({"success": False, "message": "No registered employees found. Please contact administrator."})
+        
+        print(f"[FACE RECOGNITION] Loaded {len(known_encodings)} known face encodings")
         
         # Compare with known faces
         import face_recognition
-        matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=0.6)
         face_distances = face_recognition.face_distance(known_encodings, face_encoding)
         
-        # Find best match
-        best_match_index = None
-        if True in matches:
-            best_match_index = matches.index(True)
-            # Use the closest match if multiple matches
-            if len([m for m in matches if m]) > 1:
-                best_match_index = min(range(len(matches)), key=lambda i: face_distances[i] if matches[i] else float('inf'))
-        elif len(face_distances) > 0:
-            # If no exact match, try with lower tolerance
+        if len(face_distances) > 0:
+            min_distance = min(face_distances)
             best_match_index = min(range(len(face_distances)), key=lambda i: face_distances[i])
-            if face_distances[best_match_index] > 0.6:
-                return jsonify({"success": False, "message": "Face not recognized. Please ensure you are registered."})
+            print(f"[FACE RECOGNITION] Minimum face distance: {min_distance:.4f} (threshold: 0.6)")
+            
+            # Try with standard tolerance first (0.6)
+            matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=0.6)
+            
+            # If no match with standard tolerance, try with more lenient tolerance (0.65)
+            if not any(matches) and min_distance <= 0.65:
+                print(f"[FACE RECOGNITION] No match with tolerance 0.6, trying 0.65...")
+                matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=0.65)
+            
+            # If still no match, try even more lenient (0.7)
+            if not any(matches) and min_distance <= 0.7:
+                print(f"[FACE RECOGNITION] No match with tolerance 0.65, trying 0.7...")
+                matches = face_recognition.compare_faces(known_encodings, face_encoding, tolerance=0.7)
+            
+            print(f"[FACE RECOGNITION] Face comparison results: {len([m for m in matches if m])} matches found")
+            
+            if any(matches):
+                # Find the best matching index
+                if len([m for m in matches if m]) > 1:
+                    # Multiple matches, use the one with smallest distance
+                    best_match_index = min(range(len(matches)), key=lambda i: face_distances[i] if matches[i] else float('inf'))
+                else:
+                    # Single match
+                    best_match_index = matches.index(True)
+                print(f"[FACE RECOGNITION] Match found at index {best_match_index}")
+            elif min_distance > 0.7:
+                # Distance is too high, face doesn't match
+                return jsonify({
+                    "success": False, 
+                    "message": f"Face not recognized. Your face doesn't match any registered employee. Please ensure you are registered in the system. (Similarity: {(1-min_distance)*100:.1f}%)"
+                })
+            else:
+                # Distance is acceptable but no match found (shouldn't happen, but handle it)
+                print(f"[FACE RECOGNITION] Warning: Acceptable distance ({min_distance:.4f}) but no match found")
+        else:
+            print("[FACE RECOGNITION] Error: No face distances calculated")
+            return jsonify({"success": False, "message": "Error processing face recognition. Please try again."})
         
         if best_match_index is None:
-            return jsonify({"success": False, "message": "Face not recognized. Please try again."})
+            print("[FACE RECOGNITION] Error: No match found")
+            return jsonify({"success": False, "message": "Face not recognized. Please ensure you are registered in the system."})
         
         employee_id = employee_ids[best_match_index]
         
@@ -1053,87 +1224,46 @@ def recognize_face():
         existing = cur.fetchone()
         
         if existing:
-            # Determine which time slot to update
-            if not existing["morning_in"]:
-                # Morning time in (8:00 AM to 12:00 PM)
-                if not is_time_in_valid_window(current_time, "morning"):
-                    return jsonify({
-                        "success": False,
-                        "message": f"Morning time-in window is 8:00 AM to 12:00 PM. Current time: {current_time}"
-                    })
-                
-                # Check if late (>= 8:30 AM)
-                is_late = check_if_late(current_time, "morning")
-                attendance_status = "Late" if is_late else "Present"
-                
-                cur.execute("""
-                    UPDATE attendance 
-                    SET morning_in=?, attendance_status=?
-                    WHERE employee_id=? AND date=?
-                """, (current_time, attendance_status, employee_id, today))
-                
-                late_msg = " (Late)" if is_late else ""
-                message = f"Good morning! Time in recorded at {current_time}{late_msg}"
-                
-            elif not existing["lunch_out"] and existing["morning_in"]:
-                # Lunch out (should be around 12:00 PM)
-                # Allow lunch out between 11:30 AM and 1:00 PM for flexibility
-                time_obj = datetime.strptime(current_time, "%I:%M %p")
-                lunch_start = datetime.strptime("11:30 AM", "%I:%M %p")
-                lunch_end = datetime.strptime("01:00 PM", "%I:%M %p")
-                
-                if lunch_start <= time_obj <= lunch_end:
+            # Parse current time to determine which slot to fill
+            time_obj = datetime.strptime(current_time, "%I:%M %p")
+            afternoon_start = datetime.strptime("12:00 PM", "%I:%M %p")
+            
+            # Determine which time slot to update based on current time
+            # If it's afternoon time (12:00 PM onwards), prioritize afternoon_in
+            if time_obj >= afternoon_start:
+                # It's afternoon time
+                if not existing["afternoon_in"]:
+                    # Afternoon time in (can time in from 12:00 PM onwards)
+                    if not is_afternoon_time_in_allowed(current_time):
+                        return jsonify({
+                            "success": False,
+                            "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
+                        })
+                    
+                    # Check if late (>= 1:01 PM)
+                    is_late_afternoon = check_if_late(current_time, "afternoon")
+                    
+                    # Check if morning was late by checking morning_in time
+                    morning_was_late = False
+                    if existing["morning_in"]:
+                        morning_was_late = check_if_late(existing["morning_in"], "morning")
+                    
+                    # Update status: if afternoon is late OR morning was late, mark as Late
+                    if is_late_afternoon or morning_was_late:
+                        attendance_status = "Late"
+                    else:
+                        attendance_status = "Present"
+                    
                     cur.execute("""
                         UPDATE attendance 
-                        SET lunch_out=?
+                        SET afternoon_in=?, attendance_status=?
                         WHERE employee_id=? AND date=?
-                    """, (current_time, employee_id, today))
-                    message = f"Lunch break recorded at {current_time}"
-                else:
-                    return jsonify({
-                        "success": False,
-                        "message": f"Lunch break time should be between 11:30 AM and 1:00 PM. Current time: {current_time}"
-                    })
+                    """, (current_time, attendance_status, employee_id, today))
                     
-            elif not existing["afternoon_in"] and existing["lunch_out"]:
-                # Afternoon time in (1:00 PM to 5:00 PM)
-                if not is_time_in_valid_window(current_time, "afternoon"):
-                    return jsonify({
-                        "success": False,
-                        "message": f"Afternoon time-in window is 1:00 PM to 5:00 PM. Current time: {current_time}"
-                    })
-                
-                # Check if late (>= 1:30 PM)
-                is_late_afternoon = check_if_late(current_time, "afternoon")
-                
-                # Check if morning was late by checking morning_in time
-                morning_was_late = False
-                if existing["morning_in"]:
-                    morning_was_late = check_if_late(existing["morning_in"], "morning")
-                
-                # Update status: if afternoon is late OR morning was late, mark as Late
-                if is_late_afternoon or morning_was_late:
-                    attendance_status = "Late"
-                else:
-                    attendance_status = "Present"
-                
-                cur.execute("""
-                    UPDATE attendance 
-                    SET afternoon_in=?, attendance_status=?
-                    WHERE employee_id=? AND date=?
-                """, (current_time, attendance_status, employee_id, today))
-                
-                late_msg = " (Late)" if is_late_afternoon else ""
-                message = f"Afternoon time in recorded at {current_time}{late_msg}"
-                
-            elif not existing["time_out"]:
-                # Time out (should be around 5:00 PM)
-                # Allow time out between 4:30 PM and 7:00 PM for flexibility
-                time_obj = datetime.strptime(current_time, "%I:%M %p")
-                out_start = datetime.strptime("04:30 PM", "%I:%M %p")
-                out_end = datetime.strptime("07:00 PM", "%I:%M %p")
-                
-                if out_start <= time_obj <= out_end:
+                    late_msg = " (Late)" if is_late_afternoon else ""
+                    message = f"Afternoon time in recorded at {current_time}{late_msg}"
+                elif not existing["time_out"]:
+                    # Time out - allow at any time (employees can leave early if needed)
                     cur.execute("""
                         UPDATE attendance 
                         SET time_out=?
@@ -1141,32 +1271,132 @@ def recognize_face():
                     """, (current_time, employee_id, today))
                     message = f"Time out recorded at {current_time}. Have a great day!"
                 else:
+                    message = f"All attendance records for today are complete. Last update: {current_time}"
+            else:
+                # It's morning time (before 12:00 PM)
+                if not existing["morning_in"]:
+                    # Morning time in (can time in from 6:00 AM onwards)
+                    if not is_morning_time_in_allowed(current_time):
+                        return jsonify({
+                            "success": False,
+                            "message": f"Morning time-in is allowed from 6:00 AM onwards. Current time: {current_time}"
+                        })
+                    
+                    # Check if late (>= 8:01 AM)
+                    is_late = check_if_late(current_time, "morning")
+                    attendance_status = "Late" if is_late else "Present"
+                    
+                    cur.execute("""
+                        UPDATE attendance 
+                        SET morning_in=?, attendance_status=?
+                        WHERE employee_id=? AND date=?
+                    """, (current_time, attendance_status, employee_id, today))
+                    
+                    late_msg = " (Late)" if is_late else ""
+                    message = f"Good morning! Time in recorded at {current_time}{late_msg}"
+                elif not existing["lunch_out"] and existing["morning_in"]:
+                    # Lunch out (should be around 12:00 PM)
+                    # Allow lunch out between 11:30 AM and 1:00 PM for flexibility
+                    lunch_start = datetime.strptime("11:30 AM", "%I:%M %p")
+                    lunch_end = datetime.strptime("01:00 PM", "%I:%M %p")
+                    
+                    if lunch_start <= time_obj <= lunch_end:
+                        cur.execute("""
+                            UPDATE attendance 
+                            SET lunch_out=?
+                            WHERE employee_id=? AND date=?
+                        """, (current_time, employee_id, today))
+                        message = f"Lunch break recorded at {current_time}"
+                    else:
+                        return jsonify({
+                            "success": False,
+                            "message": f"Lunch break time should be between 11:30 AM and 1:00 PM. Current time: {current_time}"
+                        })
+                elif not existing["afternoon_in"]:
+                    # Afternoon time in (can time in from 12:00 PM onwards)
+                    # This shouldn't happen if we're in morning time, but handle it anyway
+                    if not is_afternoon_time_in_allowed(current_time):
+                        return jsonify({
+                            "success": False,
+                            "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
+                        })
+                    
+                    # Check if late (>= 1:01 PM)
+                    is_late_afternoon = check_if_late(current_time, "afternoon")
+                    
+                    # Check if morning was late by checking morning_in time
+                    morning_was_late = False
+                    if existing["morning_in"]:
+                        morning_was_late = check_if_late(existing["morning_in"], "morning")
+                    
+                    # Update status: if afternoon is late OR morning was late, mark as Late
+                    if is_late_afternoon or morning_was_late:
+                        attendance_status = "Late"
+                    else:
+                        attendance_status = "Present"
+                    
+                    cur.execute("""
+                        UPDATE attendance 
+                        SET afternoon_in=?, attendance_status=?
+                        WHERE employee_id=? AND date=?
+                    """, (current_time, attendance_status, employee_id, today))
+                    
+                    late_msg = " (Late)" if is_late_afternoon else ""
+                    message = f"Afternoon time in recorded at {current_time}{late_msg}"
+                elif not existing["time_out"]:
+                    # Time out - allow at any time (employees can leave early if needed)
+                    cur.execute("""
+                        UPDATE attendance 
+                        SET time_out=?
+                        WHERE employee_id=? AND date=?
+                    """, (current_time, employee_id, today))
+                    message = f"Time out recorded at {current_time}. Have a great day!"
+                else:
+                    message = f"All attendance records for today are complete. Last update: {current_time}"
+        else:
+            # Create new attendance record
+            # Check current time to determine if it's morning or afternoon
+            time_obj = datetime.strptime(current_time, "%I:%M %p")
+            afternoon_start = datetime.strptime("12:00 PM", "%I:%M %p")
+            
+            if time_obj >= afternoon_start:
+                # It's afternoon time - record as afternoon_in
+                if not is_afternoon_time_in_allowed(current_time):
                     return jsonify({
                         "success": False,
-                        "message": f"Time out should be between 4:30 PM and 7:00 PM. Current time: {current_time}"
+                        "message": f"Afternoon time-in is allowed from 12:00 PM onwards. Current time: {current_time}"
                     })
+                
+                # Check if late (>= 1:01 PM)
+                is_late = check_if_late(current_time, "afternoon")
+                attendance_status = "Late" if is_late else "Present"
+                
+                cur.execute("""
+                    INSERT INTO attendance (employee_id, date, afternoon_in, attendance_status, verification_method)
+                    VALUES (?, ?, ?, ?, 'Face Recognition')
+                """, (employee_id, today, current_time, attendance_status))
+                
+                late_msg = " (Late)" if is_late else ""
+                message = f"Afternoon time in recorded at {current_time}{late_msg}"
             else:
-                message = f"All attendance records for today are complete. Last update: {current_time}"
-        else:
-            # Create new attendance record (morning time in)
-            # Check if within morning window (8:00 AM to 12:00 PM)
-            if not is_time_in_valid_window(current_time, "morning"):
-                return jsonify({
-                    "success": False,
-                    "message": f"Morning time-in window is 8:00 AM to 12:00 PM. Current time: {current_time}"
-                })
-            
-            # Check if late (>= 8:30 AM)
-            is_late = check_if_late(current_time, "morning")
-            attendance_status = "Late" if is_late else "Present"
-            
-            cur.execute("""
-                INSERT INTO attendance (employee_id, date, morning_in, attendance_status, verification_method)
-                VALUES (?, ?, ?, ?, 'Face Recognition')
-            """, (employee_id, today, current_time, attendance_status))
-            
-            late_msg = " (Late)" if is_late else ""
-            message = f"Good morning! Time in recorded at {current_time}{late_msg}"
+                # It's morning time - record as morning_in
+                if not is_morning_time_in_allowed(current_time):
+                    return jsonify({
+                        "success": False,
+                        "message": f"Morning time-in is allowed from 6:00 AM onwards. Current time: {current_time}"
+                    })
+                
+                # Check if late (>= 8:01 AM)
+                is_late = check_if_late(current_time, "morning")
+                attendance_status = "Late" if is_late else "Present"
+                
+                cur.execute("""
+                    INSERT INTO attendance (employee_id, date, morning_in, attendance_status, verification_method)
+                    VALUES (?, ?, ?, ?, 'Face Recognition')
+                """, (employee_id, today, current_time, attendance_status))
+                
+                late_msg = " (Late)" if is_late else ""
+                message = f"Good morning! Time in recorded at {current_time}{late_msg}"
         
         db.commit()
         
@@ -1257,4 +1487,5 @@ def attendance_history():
 
 # ================= RUN =================
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Run with threading enabled to handle concurrent requests
+    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

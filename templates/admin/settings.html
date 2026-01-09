@@ -19,8 +19,46 @@
     </div>
     {% endif %}
 
+    <!-- Auto-Refresh Settings Section -->
+    <div style="margin-top: 20px; padding: 20px; background: #f0f9ff; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #3b82f6;">
+      <h3 style="margin-bottom: 15px; color: #1f2937;">🔄 Auto-Refresh Settings</h3>
+      <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">
+        Configure automatic data refresh for Dashboard and Attendance pages. When enabled, data will update automatically without manual refresh.
+      </p>
+      
+      <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Auto-Refresh Status:</label>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+              <input type="checkbox" id="auto-refresh-enabled" checked style="width: 20px; height: 20px; margin-right: 8px; cursor: pointer;">
+              <span id="auto-refresh-status-text">Enabled</span>
+            </label>
+          </div>
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Refresh Interval (seconds):</label>
+          <select id="auto-refresh-interval" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <option value="15000">15 seconds</option>
+            <option value="30000" selected>30 seconds</option>
+            <option value="60000">1 minute</option>
+            <option value="120000">2 minutes</option>
+            <option value="300000">5 minutes</option>
+          </select>
+        </div>
+        <div>
+          <button type="button" id="save-auto-refresh-btn" 
+                  style="width: 100%; padding: 10px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+            Save Settings
+          </button>
+        </div>
+      </div>
+      
+      <div id="auto-refresh-save-message" style="margin-top: 15px; display: none; padding: 10px; border-radius: 6px; font-size: 14px;"></div>
+    </div>
+
     <!-- Holiday Section -->
-    <div style="margin-top: 30px; padding: 20px; background: #f9fafb; border-radius: 8px; margin-bottom: 30px;">
+    <div style="margin-top: 20px; padding: 20px; background: #f9fafb; border-radius: 8px; margin-bottom: 30px;">
       <h3 style="margin-bottom: 15px; color: #1f2937;">🎉 Mark Holiday</h3>
       <p style="color: #6b7280; margin-bottom: 20px; font-size: 14px;">
         Mark all active employees as present for a holiday. This will automatically create attendance records 
@@ -85,4 +123,75 @@
     </div>
   </div>
 </div>
+
+<script>
+// Auto-Refresh Settings Management
+document.addEventListener('DOMContentLoaded', () => {
+    // Load saved settings
+    const savedEnabled = localStorage.getItem('autoRefreshEnabled');
+    const savedInterval = localStorage.getItem('autoRefreshInterval');
+    
+    const enabledCheckbox = document.getElementById('auto-refresh-enabled');
+    const intervalSelect = document.getElementById('auto-refresh-interval');
+    const statusText = document.getElementById('auto-refresh-status-text');
+    const saveBtn = document.getElementById('save-auto-refresh-btn');
+    const messageDiv = document.getElementById('auto-refresh-save-message');
+    
+    // Set saved values
+    if (savedEnabled !== null) {
+        enabledCheckbox.checked = savedEnabled === 'true';
+        updateStatusText();
+    }
+    
+    if (savedInterval !== null) {
+        intervalSelect.value = savedInterval;
+    }
+    
+    // Update status text when checkbox changes
+    enabledCheckbox.addEventListener('change', updateStatusText);
+    
+    function updateStatusText() {
+        statusText.textContent = enabledCheckbox.checked ? 'Enabled' : 'Disabled';
+        statusText.style.color = enabledCheckbox.checked ? '#10b981' : '#6b7280';
+    }
+    
+    // Save settings
+    saveBtn.addEventListener('click', () => {
+        const enabled = enabledCheckbox.checked;
+        const interval = intervalSelect.value;
+        
+        localStorage.setItem('autoRefreshEnabled', enabled);
+        localStorage.setItem('autoRefreshInterval', interval);
+        
+        // Show success message
+        messageDiv.style.display = 'block';
+        messageDiv.style.backgroundColor = '#d1fae5';
+        messageDiv.style.color = '#065f46';
+        messageDiv.textContent = '✓ Auto-refresh settings saved successfully!';
+        
+        // Hide message after 3 seconds
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 3000);
+        
+        // Restart auto-refresh with new settings (no page reload needed)
+        if (window.location.pathname.includes('/admin/dashboard') || 
+            window.location.pathname.includes('/admin/attendance')) {
+            // Stop current auto-refresh and restart with new settings
+            if (typeof stopAutoRefresh === 'function') {
+                stopAutoRefresh();
+            }
+            if (typeof startAutoRefresh === 'function') {
+                setTimeout(() => {
+                    startAutoRefresh();
+                }, 500);
+            }
+        }
+    });
+    
+    // Initialize status text
+    updateStatusText();
+});
+</script>
+
 {% endblock %}
