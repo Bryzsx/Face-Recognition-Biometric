@@ -9,7 +9,7 @@
     
     <!-- Search Bar -->
     <div class="search">
-      <form method="GET" action="{{ url_for('admin_employees') }}" style="display: flex; gap: 10px; align-items: center;">
+      <form method="GET" action="{{ url_for('admin.employees') }}" style="display: flex; gap: 10px; align-items: center;">
         <input type="text" 
                name="search" 
                placeholder="Search employee..." 
@@ -17,7 +17,7 @@
                style="flex: 1;">
         <button type="submit">Search</button>
         {% if search_query %}
-        <a href="{{ url_for('admin_employees') }}" class="btn-secondary" style="padding: 12px 20px; text-decoration: none; display: inline-block; white-space: nowrap;">Clear</a>
+        <a href="{{ url_for('admin.employees') }}" class="btn-secondary" style="padding: 12px 20px; text-decoration: none; display: inline-block; white-space: nowrap;">Clear</a>
         {% endif %}
       </form>
     </div>
@@ -38,7 +38,7 @@
         {% for emp in employees %}
         <tr>
           <td>
-            <a href="{{ url_for('admin_employee_info') }}?id={{ emp.id }}" style="color: #667eea; text-decoration: none; font-weight: 500;">
+            <a href="{{ url_for('admin.employee_info') }}?id={{ emp.id }}" style="color: #667eea; text-decoration: none; font-weight: 500;">
               {{ emp.full_name or 'N/A' }}
             </a>
           </td>

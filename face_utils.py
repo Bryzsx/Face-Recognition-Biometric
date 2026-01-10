@@ -5,11 +5,14 @@ import cv2
 import base64
 from io import BytesIO
 from PIL import Image
+from utils.logger import get_logger
+from config import DATABASE
 
-DB = "biometric.db"
+logger = get_logger(__name__)
 
 def get_db():
-    return sqlite3.connect(DB)
+    """Get database connection - use standalone connection for face utils"""
+    return sqlite3.connect(DATABASE, timeout=20.0)
 
 def encode_face_from_frame(frame):
     rgb = frame[:, :, ::-1]
@@ -51,27 +54,25 @@ def encode_face_from_base64(base64_string):
         
         # If no face found with hog, try with cnn model (more accurate but slower)
         if not locations:
-            print("[FACE ENCODING] No face found with 'hog' model, trying 'cnn' model...")
+            logger.debug("No face found with 'hog' model, trying 'cnn' model...")
             locations = face_recognition.face_locations(rgb_image, model='cnn')
         
         if not locations:
-            print("[FACE ENCODING] No face detected in image")
+            logger.warning("No face detected in image")
             return None
         
-        print(f"[FACE ENCODING] Face detected at location: {locations[0]}")
+        logger.debug(f"Face detected at location: {locations[0]}")
         
         # Get face encodings
         encodings = face_recognition.face_encodings(rgb_image, locations)
         if not encodings:
-            print("[FACE ENCODING] Failed to generate face encoding")
+            logger.warning("Failed to generate face encoding")
             return None
         
-        print("[FACE ENCODING] Face encoding generated successfully")
+        logger.debug("Face encoding generated successfully")
         return encodings[0]
     except Exception as e:
-        print(f"[FACE ENCODING] Error encoding face from base64: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Error encoding face from base64: {str(e)}", exc_info=True)
         return None
 
 
@@ -107,7 +108,7 @@ def get_face_location_from_base64(base64_string):
         # Return the first face location (top, right, bottom, left)
         return locations[0]
     except Exception as e:
-        print(f"Error getting face location: {e}")
+        logger.error(f"Error getting face location: {str(e)}", exc_info=True)
         return None
 
 
@@ -126,7 +127,7 @@ def detect_liveness(image_frames):
     if len(image_frames) < 5:
         return False, 0.0, "Need at least 5 frames for liveness detection"
     
-    print(f"[LIVENESS] Starting detection with {len(image_frames)} frames")
+    logger.debug(f"Starting liveness detection with {len(image_frames)} frames")
     
     try:
         # First check: Compare images pixel-by-pixel to detect identical frames (photos are identical)
@@ -157,7 +158,7 @@ def detect_liveness(image_frames):
             # Real faces have much more variation due to natural movements, lighting changes, etc.
             # Made extremely lenient - only catch completely identical frames
             if min_diff < 2.0:
-                print(f"[LIVENESS] FAILED: Frames too similar (min_diff: {min_diff:.2f})")
+                logger.warning(f"Liveness check failed: Frames too similar (min_diff: {min_diff:.2f})")
                 return False, 0.0, "Liveness check failed: Frames too similar. Photos and pictures cannot be used. Please use a real face and move naturally."
             
             # Check for screen refresh artifacts (photos on screens have specific patterns)
@@ -176,7 +177,7 @@ def detect_liveness(image_frames):
                 # Check that differences are significant (real faces have larger variations)
                 # Made extremely lenient - only reject if differences are essentially zero
                 if diff_mean < 1.0:
-                    print(f"[LIVENESS] FAILED: Insufficient frame variation (diff_mean: {diff_mean:.2f})")
+                    logger.warning(f"Liveness check failed: Insufficient frame variation (diff_mean: {diff_mean:.2f})")
                     return False, 0.0, "Liveness check failed: Insufficient frame-to-frame variation. Photos and pictures cannot be used. Please move naturally."
             
             # Additional check: Color and brightness variations
@@ -229,7 +230,7 @@ def detect_liveness(image_frames):
                         return False, 0.0, "Liveness check failed: Static image pattern detected. Photos and pictures cannot be used. Please use a real face."
                     
         except Exception as e:
-            print(f"Warning: Could not perform pixel comparison: {e}")
+            logger.warning(f"Could not perform pixel comparison: {str(e)}")
             # Continue with other checks but be more strict
         
         # Second check: Get face locations for each frame
@@ -239,7 +240,7 @@ def detect_liveness(image_frames):
             if location:
                 face_locations.append(location)
             else:
-                print(f"[LIVENESS] WARNING: Face not detected in frame {i+1}")
+                logger.debug(f"Face not detected in frame {i+1}")
                 # Don't fail immediately - continue with available frames
                 # Only fail if too many frames are missing
                 if len(face_locations) < 3:
@@ -248,7 +249,7 @@ def detect_liveness(image_frames):
         if len(face_locations) < 3:  # Reduced requirement - only need 3 frames with face
             return False, 0.0, f"Face not detected in enough frames. Only detected in {len(face_locations)} out of {len(image_frames)} frames."
         
-        print(f"[LIVENESS] Face detected in {len(face_locations)} out of {len(image_frames)} frames")
+        logger.debug(f"Face detected in {len(face_locations)} out of {len(image_frames)} frames")
         
         # Calculate face position variations
         # Face location format: (top, right, bottom, left)
@@ -288,12 +289,12 @@ def detect_liveness(image_frames):
         min_variance = min(variances)
         total_variance = (position_variation + size_variation) / 6
         
-        print(f"[LIVENESS] Movement check - total_variance: {total_variance:.2f}, max_variance: {max_variance:.2f}, min_variance: {min_variance:.2f}")
+        logger.debug(f"Movement check - total_variance: {total_variance:.2f}, max_variance: {max_variance:.2f}, min_variance: {min_variance:.2f}")
         
         # PRIMARY CHECK: If there's ANY movement in any direction, pass
         # Only reject if ALL variances are essentially zero (photos)
         if max_variance < 0.2:  # Extremely lenient - only reject if completely static
-            print(f"[LIVENESS] FAILED: No movement detected (max_variance: {max_variance:.2f})")
+            logger.warning(f"Liveness check failed: No movement detected (max_variance: {max_variance:.2f})")
             return False, 0.0, "Liveness check failed: No movement detected. Photos and pictures cannot be used. Please use a real face and move slightly or blink."
         
         # Calculate confidence score (0-1) - extremely lenient
@@ -302,7 +303,7 @@ def detect_liveness(image_frames):
         # SECONDARY CHECK: Only reject if movement is completely uniform (all directions same)
         variance_range = max_variance - min_variance
         if variance_range < 0.05:  # Only reject if all directions have identical variance (essentially zero)
-            print(f"[LIVENESS] FAILED: Uniform movement pattern (range: {variance_range:.2f})")
+            logger.warning(f"Liveness check failed: Uniform movement pattern (range: {variance_range:.2f})")
             return False, 0.0, "Liveness check failed: Uniform movement pattern detected. Photos and pictures cannot be used. Please move naturally."
         
         # Final check: Ensure movement is consistent across frames (real faces have natural variation)
@@ -322,13 +323,13 @@ def detect_liveness(image_frames):
             # Photos have very low or zero movement variance
             # Made extremely lenient - only reject if completely uniform
             if movement_variance < 0.1:
-                print(f"[LIVENESS] FAILED: Uniform frame movement (variance: {movement_variance:.2f})")
+                logger.warning(f"Liveness check failed: Uniform frame movement (variance: {movement_variance:.2f})")
                 return False, 0.0, "Liveness check failed: Uniform movement pattern detected. Photos and pictures cannot be used. Please move naturally."
             
             # Photos have very low average movement
             # Made extremely lenient - only reject if completely static
             if movement_mean < 0.5:
-                print(f"[LIVENESS] FAILED: Insufficient frame movement (mean: {movement_mean:.2f})")
+                logger.warning(f"Liveness check failed: Insufficient frame movement (mean: {movement_mean:.2f})")
                 return False, 0.0, "Liveness check failed: Insufficient movement between frames. Photos and pictures cannot be used. Please move naturally."
         
         # Additional check: Face detection consistency
@@ -340,11 +341,11 @@ def detect_liveness(image_frames):
         
         # Made extremely lenient - only reject if completely consistent
         if area_variance < 1.0:  # Only reject if area is essentially constant
-            print(f"[LIVENESS] FAILED: Face area too consistent (variance: {area_variance:.2f})")
+            logger.warning(f"Liveness check failed: Face area too consistent (variance: {area_variance:.2f})")
             return False, 0.0, "Liveness check failed: Too consistent face detection. Photos and pictures cannot be used. Please move naturally."
         
         if area_range < 0.5:  # Only reject if area range is essentially zero
-            print(f"[LIVENESS] FAILED: Face size too consistent (range: {area_range:.2f})")
+            logger.warning(f"Liveness check failed: Face size too consistent (range: {area_range:.2f})")
             return False, 0.0, "Liveness check failed: Face size too consistent. Photos and pictures cannot be used. Please move naturally."
         
         # Check for temporal movement pattern (real faces have natural acceleration/deceleration)
@@ -365,27 +366,41 @@ def detect_liveness(image_frames):
                 # Real faces have natural acceleration patterns, photos have zero or uniform acceleration
                 # Made extremely lenient
                 if acceleration_variance < 0.1:
-                    print(f"[LIVENESS] FAILED: Artificial movement pattern (accel variance: {acceleration_variance:.2f})")
+                    logger.warning(f"Liveness check failed: Artificial movement pattern (accel variance: {acceleration_variance:.2f})")
                     return False, 0.0, "Liveness check failed: Artificial movement pattern detected. Photos and pictures cannot be used. Please use a real face."
         
-        print(f"[LIVENESS] SUCCESS: All checks passed with confidence {confidence:.2f}")
+        logger.info(f"Liveness check passed with confidence {confidence:.2f}")
         return True, confidence, "Liveness detected successfully"
         
     except Exception as e:
-        print(f"[LIVENESS] ERROR: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Liveness detection error: {str(e)}", exc_info=True)
         return False, 0.0, f"Liveness detection error: {str(e)}"
 
 def save_face(employee_id, encoding):
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute(
-        "INSERT OR REPLACE INTO facial_data (employee_id, face_encoding) VALUES (?, ?)",
-        (employee_id, encoding.tobytes())
-    )
-    db.commit()
-    db.close()
+    """Save face encoding to database - ensure float32 format"""
+    try:
+        # Ensure encoding is float32 (face_recognition uses float32)
+        if encoding.dtype != np.float32:
+            encoding = encoding.astype(np.float32)
+        
+        # Verify encoding shape (should be 128 for face_recognition)
+        if encoding.shape[0] != 128:
+            logger.error(f"Invalid encoding shape: {encoding.shape}, expected 128. Cannot save for employee {employee_id}")
+            return False
+        
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute(
+            "INSERT OR REPLACE INTO facial_data (employee_id, face_encoding) VALUES (?, ?)",
+            (employee_id, encoding.tobytes())
+        )
+        db.commit()
+        db.close()
+        logger.info(f"Face encoding saved for employee {employee_id}, dtype: {encoding.dtype}, shape: {encoding.shape}, size: {encoding.nbytes} bytes")
+        return True
+    except Exception as e:
+        logger.error(f"Error saving face encoding for employee {employee_id}: {str(e)}", exc_info=True)
+        return False
 
 def load_known_faces():
     """Load all known face encodings from the database"""
@@ -401,19 +416,57 @@ def load_known_faces():
 
         for r in rows:
             try:
-                ids.append(r[0])
-                # Use frombuffer to convert bytes back to numpy array
-                encoding = np.frombuffer(r[1], dtype=np.float64)
+                employee_id = r[0]
+                face_encoding_bytes = r[1]
+                
+                if not face_encoding_bytes:
+                    logger.warning(f"Empty face encoding for employee_id {employee_id}")
+                    continue
+                
+                # Try to determine the correct dtype based on size
+                # face_recognition uses float32 (128 elements = 512 bytes)
+                # But old encodings might be float64 (128 elements = 1024 bytes)
+                encoding_size = len(face_encoding_bytes)
+                
+                # Try float32 first (correct format - 512 bytes)
+                if encoding_size == 512:
+                    encoding = np.frombuffer(face_encoding_bytes, dtype=np.float32)
+                # Try float64 (old format - 1024 bytes)
+                elif encoding_size == 1024:
+                    logger.warning(f"Converting float64 encoding to float32 for employee_id {employee_id}")
+                    encoding_float64 = np.frombuffer(face_encoding_bytes, dtype=np.float64)
+                    # Convert to float32 (face_recognition expects float32)
+                    encoding = encoding_float64.astype(np.float32)
+                else:
+                    logger.warning(f"Unexpected encoding size {encoding_size} bytes for employee_id {employee_id}. Expected 512 (float32) or 1024 (float64)")
+                    # Try to guess - if divisible by 8, might be float64
+                    if encoding_size % 8 == 0 and encoding_size // 8 == 128:
+                        encoding_float64 = np.frombuffer(face_encoding_bytes, dtype=np.float64)
+                        encoding = encoding_float64.astype(np.float32)
+                    elif encoding_size % 4 == 0 and encoding_size // 4 == 128:
+                        encoding = np.frombuffer(face_encoding_bytes, dtype=np.float32)
+                    else:
+                        logger.error(f"Cannot determine encoding format for employee_id {employee_id}. Size: {encoding_size} bytes")
+                        continue
+                
+                # Verify encoding shape (should be 128 for face_recognition)
+                if encoding.shape[0] != 128:
+                    logger.warning(f"Invalid encoding shape for employee_id {employee_id}: {encoding.shape}, expected 128. Skipping.")
+                    continue
+                
+                # Ensure it's float32
+                if encoding.dtype != np.float32:
+                    encoding = encoding.astype(np.float32)
+                
+                ids.append(employee_id)
                 encodings.append(encoding)
-                print(f"[LOAD FACES] Loaded encoding for employee_id: {r[0]}, shape: {encoding.shape}")
+                logger.debug(f"Loaded encoding for employee_id: {employee_id}, dtype: {encoding.dtype}, shape: {encoding.shape}, size: {encoding.nbytes} bytes")
             except Exception as e:
-                print(f"[LOAD FACES] Error loading encoding for employee_id {r[0]}: {e}")
+                logger.warning(f"Error loading encoding for employee_id {r[0]}: {str(e)}", exc_info=True)
                 continue
 
-        print(f"[LOAD FACES] Successfully loaded {len(encodings)} face encodings")
+        logger.info(f"Successfully loaded {len(encodings)} face encodings")
         return ids, encodings
     except Exception as e:
-        print(f"[LOAD FACES] Error in load_known_faces: {e}")
-        import traceback
-        traceback.print_exc()
+        logger.error(f"Error in load_known_faces: {str(e)}", exc_info=True)
         return [], []

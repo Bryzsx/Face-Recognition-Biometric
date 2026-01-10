@@ -1,0 +1,559 @@
+2026-01-10 18:23:21 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:21 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:21 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:23:49 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:49 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:49 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:30:08 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:30:08 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:30:08 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:33:34 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:40 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:46 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:49 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:21 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:24 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:45 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:48 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:51 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:54 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:18 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:37:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:38:11 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:38:11 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:21 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:24 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:44 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:40:58 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:01 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:04 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:07 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:10 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:26 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:26 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:41:41 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:46 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:42:00 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:42:11 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:44:52 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:56:23 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    except (ValueError, TypeError):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('admin.delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:57:26 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:29 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:32 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:59 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:58:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:03:45 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:03:55 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:03:58 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:01 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:20 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:20 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:34 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:35 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:36 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:39 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:42 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:51 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:54 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:57 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:33 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:56 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:02 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:05 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:08 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:15 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:41 - blueprints.api - ERROR - api.py:159 - No registered employees found in database

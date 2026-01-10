@@ -1,0 +1,1599 @@
+2026-01-10 18:21:46 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 18:21:46 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 18:21:46 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 18:21:46 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 18:21:46 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 18:21:46 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 18:21:46 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:22:07 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:22:07 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:22:50 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 18:22:50 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 18:22:50 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 18:22:50 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 18:22:50 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 18:22:50 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 18:22:51 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:23:07 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:23:07 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:23:07 - blueprints.admin - WARNING - admin.py:30 - Unauthorized access attempt to admin route
+2026-01-10 18:23:07 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:23:21 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:23:21 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:23:21 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 18:23:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:23:21 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:23:21 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:21 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:21 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:23:35 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:23:35 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:23:35 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:23:49 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:23:49 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:23:49 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 18:23:49 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:23:49 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:49 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin_dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:23:49 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:23:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:24:02 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:24:02 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:24:02 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:30:08 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 18:30:08 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:30:08 - blueprints.admin - ERROR - admin.py:81 - Dashboard error: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:30:08 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 72, in dashboard
+    return render_template(
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 82, in dashboard
+    return render_template("admin/dashboard.html",
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/dashboard.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 63, in top-level template code
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+2026-01-10 18:30:08 - db - ERROR - db.py:49 - Exception in teardown: Could not build url for endpoint 'admin_dashboard'. Did you mean 'admin.dashboard' instead?
+NoneType: None
+2026-01-10 18:30:49 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 18:30:49 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 18:30:49 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 18:30:49 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 18:30:49 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 18:30:49 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 18:30:57 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 18:30:58 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:31:01 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:33:26 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:33:34 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:34 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:34 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:34 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:37 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:37 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:40 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:40 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:40 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:43 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:43 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:43 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:46 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:46 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:46 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:33:49 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:33:49 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:33:49 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:33:52 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:34:06 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:34:06 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:34:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:34:20 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:34:20 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:34:20 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:34:35 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:34:35 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:34:35 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:34:49 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:34:49 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:34:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:34:49 - blueprints.admin - INFO - admin.py:507 - DTR 14 updated successfully
+2026-01-10 18:35:01 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:35:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:35:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:13 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:35:13 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:35:13 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:35:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:21 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:21 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:21 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:24 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:24 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:24 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:27 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:27 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:43 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:43 - blueprints.api - INFO - api.py:194 - Face match found at index 1, employee_id: 10
+2026-01-10 18:35:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:43 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:43 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:43 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:43 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:45 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:45 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:45 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:48 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:48 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:48 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:51 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:51 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:51 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:51 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:54 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:35:54 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:35:54 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:35:54 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:35:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:36:18 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:36:18 - blueprints.api - INFO - api.py:194 - Face match found at index 1, employee_id: 10
+2026-01-10 18:36:18 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:36:37 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:36:37 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:36:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:36:37 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:36:37 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:36:37 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    if employee.get("status") != "Active":
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:36:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:37:06 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:37:06 - blueprints.api - WARNING - api.py:197 - Face not recognized - distance too high: 0.7611, similarity: 23.9%
+2026-01-10 18:37:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:37:27 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:37:27 - blueprints.api - INFO - api.py:194 - Face match found at index 1, employee_id: 10
+2026-01-10 18:37:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:37:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:37:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:38:11 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:38:11 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:38:11 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:38:11 - blueprints.api - INFO - api.py:194 - Face match found at index 1, employee_id: 10
+2026-01-10 18:38:11 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:38:11 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:14 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:39:20 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:39:21 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:39:21 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:39:21 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:23 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:39:24 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:39:24 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:39:24 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:39:27 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:39:27 - blueprints.api - INFO - api.py:194 - Face match found at index 2, employee_id: 12
+2026-01-10 18:39:27 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:39:44 - face_utils - INFO - face_utils.py:411 - Successfully loaded 3 face encodings
+2026-01-10 18:39:44 - blueprints.api - INFO - api.py:194 - Face match found at index 1, employee_id: 10
+2026-01-10 18:39:44 - blueprints.api - ERROR - api.py:381 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/api.py", line 227, in recognize_face
+    # sqlite3.Row objects use bracket notation, not .get()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-10 18:39:44 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:39:59 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:39:59 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:39:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:40:14 - face_utils - WARNING - face_utils.py:60 - No face detected in image
+2026-01-10 18:40:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:40:14 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:40:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:40:38 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 18:40:38 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 18:40:38 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 18:40:38 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 18:40:38 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 18:40:38 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 18:40:38 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:40:52 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 18:40:52 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 18:40:52 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:40:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:40:58 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:40:58 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:40:58 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:40:58 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:40:58 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:01 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:01 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:01 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:01 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:01 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:03 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:04 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:04 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:04 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:04 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:04 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:07 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:07 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:07 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:07 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:07 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:10 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:10 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:10 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:10 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:10 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:26 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:26 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:26 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:41:26 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:41:41 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:41:41 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:41:41 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:41:41 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:41:41 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:41:46 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:41:55 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:42:00 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:42:11 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:44:52 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    return render_template("admin/employee_info.html", employee=employee, employees=None)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:56:23 - blueprints.admin - ERROR - admin.py:254 - Error in employee_info route: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+Traceback (most recent call last):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/blueprints/admin.py", line 248, in employee_info
+    except (ValueError, TypeError):
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/templating.py", line 131, in _render
+    rv = template.render(context)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/base.html", line 91, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/templates/admin/employee_info.html", line 308, in block 'content'
+    <form method="POST" action="{{ url_for('admin.delete_employee', employee_id=employee.id) }}"
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/flask/app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "/home/zupteddy/Documents/Face-Recognition-Biometric/venv310/lib/python3.10/site-packages/werkzeug/routing/map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete_employee' with values ['employee_id']. Did you mean 'admin.delete_employee' instead?
+2026-01-10 18:56:46 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 18:56:46 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 18:56:46 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 18:56:46 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 18:56:46 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 18:56:46 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 18:56:54 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 18:56:54 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:56:58 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=12, Name=Bryce A. Corvera
+2026-01-10 18:57:03 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 18:57:15 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:57:26 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:57:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:57:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:57:26 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:57:26 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:57:26 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:28 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:57:29 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:57:29 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:57:29 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:57:29 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:57:29 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:31 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:57:32 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:57:32 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:57:32 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:57:32 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:57:32 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:32 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 18:57:37 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=12, Name=Bryce A. Corvera
+2026-01-10 18:57:38 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:57:59 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:57:59 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:57:59 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 12: (256,), expected 128
+2026-01-10 18:57:59 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:57:59 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:57:59 - blueprints.admin - INFO - admin.py:306 - Photo deleted: static/photos/employee_2200017700_Bryce_A._Corvera.jpg
+2026-01-10 18:57:59 - blueprints.admin - INFO - admin.py:316 - Employee 12 deleted successfully
+2026-01-10 18:57:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 18:58:14 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 9: (256,), expected 128
+2026-01-10 18:58:14 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 10: (256,), expected 128
+2026-01-10 18:58:14 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 18:58:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 18:58:49 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=10, Name=BORDARIO, REX P.
+2026-01-10 18:58:54 - blueprints.admin - INFO - admin.py:306 - Photo deleted: static/photos/employee_2200017700_BORDARIO,_REX_P..jpg
+2026-01-10 18:58:54 - blueprints.admin - INFO - admin.py:316 - Employee 10 deleted successfully
+2026-01-10 18:58:58 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=9, Name=RAMIL P. LEONES
+2026-01-10 18:59:01 - blueprints.admin - INFO - admin.py:306 - Photo deleted: static/photos/employee_2200017700_RAMIL_P._LEONES.jpg
+2026-01-10 18:59:01 - blueprints.admin - INFO - admin.py:316 - Employee 9 deleted successfully
+2026-01-10 19:03:35 - app - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 19:03:35 - blueprints.admin - INFO - admin.py:124 - Photo saved for employee: photos/employee_202020202_Bryce_A._Corvera.jpg
+2026-01-10 19:03:35 - blueprints.admin - INFO - admin.py:176 - Employee registered successfully: ID=13, Name=Bryce A. Corvera, Code=202020202
+2026-01-10 19:03:36 - blueprints.admin - INFO - admin.py:185 - Face encoding saved for employee 13
+2026-01-10 19:03:44 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:03:45 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:03:45 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:03:45 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:03:45 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 19:03:48 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 19:03:55 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:03:55 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:03:55 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:03:55 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:03:58 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:03:58 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:03:58 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:03:58 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:04:01 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:04:01 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:04:01 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:04 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:04:20 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:04:20 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:04:20 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:20 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 19:04:20 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 19:04:20 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 19:04:20 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 19:04:22 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:34 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:34 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:34 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:34 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:35 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:35 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:35 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:35 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:36 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:36 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:36 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:38 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:39 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:39 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:39 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:41 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:42 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:42 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:42 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:43 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 07:04:50 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:51 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:51 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:51 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:53 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:54 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:54 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:54 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:56 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:04:57 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:04:57 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:04:57 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:04:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:05:14 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:05:14 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:05:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:05:14 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:05:14 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:05:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:17 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:05:33 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:05:33 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:05:33 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:33 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:05:56 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:05:56 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:05:56 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:05:56 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 07:06:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:06:02 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:06:02 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:06:02 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:04 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:06:05 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:06:05 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:06:05 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:07 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:06:08 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:06:08 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:06:08 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:06:15 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:06:15 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:06:15 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:06:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:06:41 - face_utils - WARNING - face_utils.py:410 - Invalid encoding shape for employee_id 13: (256,), expected 128
+2026-01-10 07:06:41 - face_utils - INFO - face_utils.py:419 - Successfully loaded 0 face encodings
+2026-01-10 07:06:41 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 07:13:38 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 07:13:38 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 07:13:38 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 07:13:38 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 07:13:38 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 07:13:38 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 07:13:42 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 07:13:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:13:49 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 07:13:49 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 07:13:49 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 07:13 AM
+2026-01-10 07:13:58 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 07:14:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 07:14:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 07:14:14 - blueprints.admin - WARNING - admin.py:30 - Unauthorized access attempt to admin route
+2026-01-10 07:14:20 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 07:14:20 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 07:14:27 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 07:14:34 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 23:30:10 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 23:30:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 23:30:29 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 23:30:29 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 23:30:36 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 23:30:36 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 23:30:36 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 23:30:36 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 23:30:36 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 23:30:36 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 23:30:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 23:30:50 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 23:30:50 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 23:30:50 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 23:30:55 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 23:30:56 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 23:30:56 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 23:30:56 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 11:30 PM
+2026-01-10 23:31:05 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 23:31:21 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 23:31:21 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 23:31:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 23:31:37 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 23:31:37 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 23:31:37 - blueprints.admin - INFO - admin.py:536 - DTR 16 updated successfully
+2026-01-10 23:31:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:31:10 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:31:15 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 11:31:16 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 11:31:16 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 11:31:16 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 11:31:16 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 11:31:16 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 11:31:16 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:31:31 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:31:31 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:31:31 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 11:31:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:31:36 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 11:31:36 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 11:31:36 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 11:31 AM
+2026-01-10 11:31:46 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:31:59 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:31:59 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:31:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:31:59 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 11:31:59 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 11:31:59 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 11:31 AM
+2026-01-10 11:32:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:32:22 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:32:22 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:32:22 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:32:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:32:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:32:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:32:36 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 11:32:36 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 11:32:36 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 11:32 AM
+2026-01-10 11:32:46 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:33:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:33:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:33:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:33:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:33:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:38:14 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 11:38:20 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=13, Name=Bryce A. Corvera
+2026-01-10 11:38:51 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 11:38:59 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 11:54:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:55:01 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:55:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:55:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:55:13 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:55:13 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:55:13 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:55:25 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:55:25 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:55:25 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:55:37 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:55:37 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:55:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:55:49 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:55:49 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:55:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:56:01 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:56:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:56:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:56:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:56:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:56:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:56:26 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:56:26 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:56:26 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:56:38 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:56:38 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:56:38 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:56:50 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:56:50 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:56:50 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:57:02 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:57:02 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:57:02 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:57:15 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:57:15 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:57:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:57:27 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:57:27 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:57:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:57:39 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:57:39 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 11:57:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 11:57:51 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 11:57:51 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 12:12:29 - blueprints.admin - INFO - admin.py:536 - DTR 16 updated successfully
+2026-01-10 12:12:32 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 12:12:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 12:12:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 12:12:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 12:12:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 20:14:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 20:14:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 20:14:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 17:12:01 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 17:12:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 17:12:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:00:02 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:00:02 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:00:04 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:00:17 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:00:17 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:00:27 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 08:00:27 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 08:00:27 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 08:00:27 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 08:00:27 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 08:00:27 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 08:00:54 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 08:00:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:00:59 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:00:59 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:00:59 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 08:00 AM
+2026-01-10 08:01:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:01:21 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:01:21 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:01:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:01:33 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:01:33 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:01:33 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:01:45 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:01:45 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:01:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:01:57 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:01:57 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:01:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:09 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:02:09 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:02:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:21 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:02:21 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:02:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:33 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:02:33 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:02:33 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:45 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:02:45 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:02:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:57 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:02:57 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:02:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:02:57 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:02:57 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:03:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:03:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:03:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:03:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:03:24 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:03:24 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:03:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:03:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:03:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:03:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:03:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:03:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:03:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:04:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:04:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:04:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:04:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:04:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:04:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:04:24 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:04:24 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:04:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:04:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:04:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:04:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:04:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:04:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:04:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:05:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:05:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:05:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:05:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:05:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:05:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:05:24 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:05:24 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:05:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:05:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:05:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:05:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:05:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:05:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:05:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:06:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:06:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:06:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:06:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:06:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:06:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:06:24 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:06:24 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:06:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:06:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:06:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:06:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:06:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:06:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:06:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:07:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:07:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:07:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:07:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:07:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:07:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:07:24 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:07:24 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:07:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:07:37 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:07:37 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:07:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:07:49 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:07:49 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:07:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:08:01 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:08:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:08:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:08:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:08:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:08:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:08:26 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:08:26 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:08:26 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:08:39 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:08:39 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:08:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:08:51 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:08:51 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:08:51 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:09:04 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:09:04 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:09:04 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:09:16 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:09:16 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:09:16 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:09:28 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:09:28 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:09:28 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:09:40 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:09:40 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:09:40 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:09:53 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:09:53 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:09:53 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:10:05 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:10:05 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:10:05 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:10:17 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:10:17 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:10:17 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:10:30 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:10:30 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:10:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:10:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:10:42 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:10:42 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:10:54 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:10:54 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:10:54 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:11:06 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:11:06 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:11:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:11:19 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:11:19 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:11:19 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:11:31 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:11:31 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:11:31 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:11:43 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:11:43 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:11:43 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:11:56 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:11:56 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:11:56 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:12:08 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:12:08 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:12:08 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:12:21 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:12:21 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:12:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:12:33 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:12:33 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:12:33 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:12:45 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:12:45 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:12:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:12:57 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:12:57 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:12:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:13:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:13:09 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:13:09 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:13:22 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:13:22 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:13:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:13:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:13:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:13:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:13:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:13:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:13:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:14:01 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:14:01 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:14:01 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:14:13 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:14:13 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:14:13 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:14:25 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:14:25 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:14:25 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:14:37 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:14:37 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:14:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:14:50 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:14:50 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:14:50 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:15:02 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:15:02 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:15:02 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:15:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:15:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:15:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:15:26 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:15:26 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:15:26 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:15:39 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:15:39 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:15:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:15:51 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:15:51 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:15:51 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:16:03 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:16:03 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:16:03 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:16:15 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:16:15 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:16:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:16:28 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:16:28 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:16:28 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:16:40 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:16:40 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:16:40 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:16:52 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:16:52 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:16:52 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:17:05 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:17:05 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:17:05 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:17:18 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:17:18 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:17:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:17:30 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:17:30 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:17:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:17:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:17:42 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:17:42 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:17:55 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:17:55 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:17:55 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:18:07 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:18:07 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:18:07 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:18:19 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:18:19 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:18:19 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:18:31 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:18:31 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:18:31 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:18:44 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:18:44 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:18:44 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:18:56 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:18:56 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:18:56 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:19:08 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:19:08 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:19:08 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:19:20 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:19:20 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:19:20 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:19:32 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:19:32 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:19:33 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:19:45 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:19:45 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:19:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:19:57 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:19:57 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:19:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:20:09 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:20:09 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:20:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:20:22 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:20:22 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:20:24 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:20:36 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:20:36 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:20:36 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:20:48 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:20:48 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:20:48 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:21:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:21:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:21:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:21:13 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:21:13 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:21:13 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:21:25 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:21:25 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:21:25 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:21:37 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:21:37 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:21:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:21:50 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:21:50 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:21:50 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:22:02 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:22:02 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:22:02 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:22:14 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:22:14 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:22:14 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:22:27 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:22:27 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:22:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:22:39 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:22:39 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:22:39 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:22:51 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:22:51 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:22:51 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:23:03 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:23:03 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:23:04 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:23:16 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:23:16 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:23:16 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:23:29 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:23:29 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:23:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:23:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:23:42 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:23:42 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:23:54 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:23:54 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:23:54 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:24:06 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:24:06 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:24:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:24:18 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:24:18 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:24:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:24:30 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:24:30 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:24:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:24:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:24:42 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:24:42 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:24:54 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:24:54 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:24:54 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:25:06 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:25:06 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:25:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:25:18 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:25:18 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:25:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:25:30 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:25:30 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:25:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:25:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:25:42 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:25:42 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:25:54 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:25:54 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:25:54 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:06 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:26:06 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:26:07 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:19 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:26:19 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:26:19 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:31 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:26:31 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:26:31 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:43 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:26:43 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:26:43 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:55 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:26:55 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:26:55 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:55 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:26:55 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:26:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:26:57 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:26:57 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:00 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:00 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:03 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:03 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:03 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:06 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:06 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:06 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:09 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:09 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:09 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:12 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:12 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:30 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:30 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:27:30 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:43 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:27:43 - blueprints.api - WARNING - api.py:197 - Face not recognized - distance too high: 0.7454, similarity: 25.5%
+2026-01-10 08:27:43 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:27:55 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:27:55 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:27:55 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:28:08 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:28:08 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:28:08 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:28:20 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:28:20 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:28:20 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:28:32 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:28:32 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:28:32 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:28:45 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:28:45 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:28:45 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:28:57 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:28:57 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:28:57 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:29:10 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:29:10 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:29:10 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:29:22 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:29:22 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:29:22 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:29:34 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:29:34 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:29:34 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:29:47 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:29:47 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:29:47 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:30:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:30:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:13 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:30:13 - blueprints.api - WARNING - api.py:197 - Face not recognized - distance too high: 0.7634, similarity: 23.7%
+2026-01-10 08:30:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:15 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:30:15 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:30:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:18 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:30:18 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:30:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:21 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:30:21 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 08:30:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 08:30:27 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 08:30:27 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 20:36:13 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 20:36:19 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 20:36:19 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 20:36:19 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 20:36:19 - blueprints.api - INFO - api.py:374 - Attendance recorded for employee 13 at 08:36 PM
+2026-01-10 20:36:28 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 20:36:41 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 20:36:41 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 20:36:41 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 20:36:59 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 20:36:59 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 20:36:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 20:36:59 - blueprints.admin - INFO - admin.py:536 - DTR 16 updated successfully
+2026-01-10 08:37:11 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 08:37:11 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 08:37:16 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 08:37:16 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 08:37:16 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 08:37:16 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 08:37:16 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 08:37:16 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 08:37:16 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 08:37:21 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:27:00 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:27:00 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:27:00 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:27:15 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:27:18 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-10 10:27:18 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-10 10:27:18 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-10 10:27:18 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-10 10:27:18 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-10 10:27:18 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-10 10:27:18 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:27:31 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:27:31 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:27:31 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 10:27:37 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:27:49 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:27:49 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:27:49 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:27:50 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 10:27:50 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 10:27:50 - blueprints.api - INFO - api.py:369 - Attendance recorded for employee 13 at 10:27 AM
+2026-01-10 10:27:59 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:28:12 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:28:12 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:28:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:28:25 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:28:25 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:28:59 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:29:03 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:29:15 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=13, Name=Bryce A. Corvera
+2026-01-10 10:30:23 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 10:30:35 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 10:30:35 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 10:32:34 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:39:41 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 10:39:41 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:39:43 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:39:53 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:39:58 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:40:19 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:40:48 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=13, Name=Bryce A. Corvera
+2026-01-10 10:41:36 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:41:38 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 10:41:51 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 10:41:56 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 00:02:03 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 00:02:03 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 00:02:03 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 00:02:15 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 00:02:15 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 00:02:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 00:02:15 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 00:02:15 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 00:02:15 - blueprints.api - INFO - api.py:369 - Attendance recorded for employee 13 at 12:02 AM
+2026-01-10 00:02:15 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 00:02:16 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 00:02:16 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 00:02:16 - blueprints.api - INFO - api.py:369 - Attendance recorded for employee 13 at 12:02 AM
+2026-01-10 00:02:24 - blueprints.admin - WARNING - admin.py:30 - Unauthorized access attempt to admin route
+2026-01-10 00:02:29 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-10 00:02:29 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-10 00:02:45 - blueprints.admin - INFO - admin.py:536 - DTR 16 updated successfully
+2026-01-10 12:02:07 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-10 12:02:12 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 12:02:12 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 12:02:12 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 12:02:12 - blueprints.api - INFO - api.py:369 - Attendance recorded for employee 13 at 12:02 PM
+2026-01-10 12:02:47 - blueprints.admin - INFO - admin.py:258 - Employee found: ID=13, Name=Bryce A. Corvera
+2026-01-10 16:59:05 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 16:59:17 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 16:59:17 - blueprints.api - WARNING - api.py:150 - No face detected in image
+2026-01-10 16:59:17 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 16:59:18 - face_utils - INFO - face_utils.py:468 - Successfully loaded 1 face encodings
+2026-01-10 16:59:18 - blueprints.api - INFO - api.py:194 - Face match found at index 0, employee_id: 13
+2026-01-10 16:59:18 - blueprints.api - INFO - api.py:369 - Attendance recorded for employee 13 at 04:59 PM
+2026-01-10 16:59:27 - blueprints.api - INFO - api.py:144 - Starting face recognition...
+2026-01-10 16:59:42 - face_utils - WARNING - face_utils.py:61 - No face detected in image
+2026-01-10 16:59:42 - blueprints.api - WARNING - api.py:150 - No face detected in image

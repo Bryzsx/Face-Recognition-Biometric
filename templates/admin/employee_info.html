@@ -21,7 +21,7 @@
           <span class="placeholder-initials">{{ (employee.full_name or 'N/A')[0:2].upper() if employee.full_name else 'N/A' }}</span>
         </div>
         {% endif %}
-        <div class="photo-status-indicator {% if employee.status == 'Active' %}active-indicator{% else %}inactive-indicator{% endif %}"></div>
+        <div class="photo-status-indicator {% if (employee.status or 'Active') == 'Active' %}active-indicator{% else %}inactive-indicator{% endif %}"></div>
       </div>
       <div class="employee-header-info">
         <div class="employee-name-wrapper">
@@ -35,7 +35,7 @@
             </svg>
             ID: {{ employee.employee_code or 'N/A' }}
           </span>
-          <span class="badge-enhanced {% if employee.status == 'Active' %}active-badge{% else %}inactive-badge{% endif %}">
+          <span class="badge-enhanced {% if (employee.status or 'Active') == 'Active' %}active-badge{% else %}inactive-badge{% endif %}">
             <span class="badge-dot"></span>
             {{ employee.status or 'Active' }}
           </span>
@@ -281,7 +281,7 @@
         <div class="info-item">
           <span class="info-label">Status</span>
           <span class="info-value">
-            <span class="badge {% if employee.status == 'Active' %}active-b{% else %}present{% endif %}">
+            <span class="badge {% if (employee.status or 'Active') == 'Active' %}active-b{% else %}present{% endif %}">
               {{ employee.status or 'Active' }}
             </span>
           </span>
@@ -297,22 +297,22 @@
 
   <!-- Action Buttons -->
   <div class="employee-actions">
-    <a href="{{ url_for('admin_reports') }}?employee_id={{ employee.id }}" 
+    <a href="{{ url_for('admin.reports') }}?employee_id={{ employee.id }}" 
        class="action-btn action-btn-secondary">
       📊 View DTR
     </a>
-    <a href="{{ url_for('edit_employee', employee_id=employee.id) }}" 
+    <a href="{{ url_for('admin.edit_employee', employee_id=employee.id) }}" 
        class="action-btn action-btn-edit">
       ✏️ Edit Employee
     </a>
-    <form method="POST" action="{{ url_for('delete_employee', employee_id=employee.id) }}" 
+    <form method="POST" action="{{ url_for('admin.delete_employee', employee_id=employee.id) }}" 
           class="action-btn-form"
           onsubmit="return confirm('Are you sure you want to delete {{ employee.full_name }}? This action cannot be undone!');">
       <button type="submit" class="action-btn action-btn-delete">
         🗑️ Delete Employee
       </button>
     </form>
-    <a href="{{ url_for('admin_employees') }}" 
+    <a href="{{ url_for('admin.employees') }}" 
        class="action-btn action-btn-secondary">
       ← Back to Employees
     </a>
@@ -341,7 +341,7 @@
           <td>{{ emp.employee_code or 'N/A' }}</td>
           <td>{{ emp.department or 'N/A' }}</td>
           <td>
-            <a href="{{ url_for('admin_employee_info') }}?id={{ emp.id }}" 
+            <a href="{{ url_for('admin.employee_info') }}?id={{ emp.id }}" 
                style="color: #667eea; text-decoration: none; font-weight: 500;">
               View Details
             </a>
@@ -354,7 +354,7 @@
     <div style="text-align: center; padding: 40px; color: #6b7280;">
       <p style="margin-bottom: 20px;">No employees found in the database.</p>
       <p style="margin-bottom: 20px;">Please register an employee first.</p>
-      <a href="{{ url_for('admin_register') }}" 
+      <a href="{{ url_for('admin.register') }}" 
          style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 500;">
         Register Employee
       </a>
@@ -362,7 +362,7 @@
     {% endif %}
     
     <div style="margin-top: 20px; text-align: center;">
-      <a href="{{ url_for('admin_employees') }}" 
+      <a href="{{ url_for('admin.employees') }}" 
          style="color: #667eea; text-decoration: none;">
         ← Back to All Employees
       </a>
@@ -373,7 +373,7 @@
     <p style="text-align: center; color: #6b7280; padding: 40px;">
       No employees found. Please register employees first.
       <br><br>
-      <a href="{{ url_for('admin_register') }}" 
+      <a href="{{ url_for('admin.register') }}" 
          style="display: inline-block; padding: 12px 30px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; margin-top: 10px;">
         Register Employee
       </a>

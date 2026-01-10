@@ -65,7 +65,7 @@
         with standard times (8:00 AM - 5:00 PM) for all employees on the selected date.
       </p>
       
-      <form method="POST" action="{{ url_for('admin_settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
+      <form method="POST" action="{{ url_for('admin.settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
         <input type="hidden" name="action" value="mark_holiday">
         <div>
           <label style="display: block; margin-bottom: 8px; font-weight: 500;">Holiday Date:</label>
@@ -94,7 +94,7 @@
         create attendance records with standard times (8:00 AM - 5:00 PM) for all employees on the selected date.
       </p>
       
-      <form method="POST" action="{{ url_for('admin_settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
+      <form method="POST" action="{{ url_for('admin.settings') }}" style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 15px; align-items: end;">
         <input type="hidden" name="action" value="mark_suspension">
         <div>
           <label style="display: block; margin-bottom: 8px; font-weight: 500;">Suspension Date:</label>

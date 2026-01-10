@@ -9,7 +9,7 @@
     
     <!-- Date Selector -->
     <div style="margin-bottom: 20px;">
-      <form method="GET" action="{{ url_for('admin_attendance') }}" style="display: flex; gap: 10px; align-items: center;">
+      <form method="GET" action="{{ url_for('admin.attendance') }}" style="display: flex; gap: 10px; align-items: center;">
         <label style="font-weight: 500;">Select Date:</label>
         <input type="date" name="date" value="{{ selected_date }}" style="width: auto;">
         <button type="submit">View</button>
@@ -52,7 +52,7 @@
             {% endif %}
           </td>
           <td>
-            <a href="{{ url_for('edit_dtr', attendance_id=record.attendance_id) }}" 
+            <a href="{{ url_for('admin.edit_dtr', attendance_id=record.attendance_id) }}" 
                class="btn-edit" 
                style="padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-block;">
               ✏️ Edit
