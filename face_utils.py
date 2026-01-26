@@ -11,8 +11,20 @@ from config import DATABASE
 logger = get_logger(__name__)
 
 def get_db():
-    """Get database connection - use standalone connection for face utils"""
-    return sqlite3.connect(DATABASE, timeout=20.0)
+    """Get database connection - use Flask's connection if available, otherwise standalone"""
+    try:
+        from flask import g, has_request_context
+        # If we're in a Flask request context, use Flask's database connection
+        if has_request_context() and "db" in g:
+            return g.db
+    except ImportError:
+        pass
+    except RuntimeError:
+        # Not in a request context, use standalone connection
+        pass
+    
+    # Use standalone connection with proper timeout
+    return sqlite3.connect(DATABASE, timeout=30.0)
 
 def encode_face_from_frame(frame):
     rgb = frame[:, :, ::-1]
@@ -378,7 +390,16 @@ def detect_liveness(image_frames):
 
 def save_face(employee_id, encoding):
     """Save face encoding to database - ensure float32 format"""
+    db = None
     try:
+        from flask import has_request_context, g
+        # Check if we're in a Flask request context
+        in_request_context = False
+        try:
+            in_request_context = has_request_context() and "db" in g
+        except RuntimeError:
+            pass
+        
         # Ensure encoding is float32 (face_recognition uses float32)
         if encoding.dtype != np.float32:
             encoding = encoding.astype(np.float32)
@@ -394,22 +415,50 @@ def save_face(employee_id, encoding):
             "INSERT OR REPLACE INTO facial_data (employee_id, face_encoding) VALUES (?, ?)",
             (employee_id, encoding.tobytes())
         )
-        db.commit()
-        db.close()
+        
+        # Only commit and close if we created a standalone connection
+        if not in_request_context:
+            db.commit()
+            db.close()
+            db = None
+        else:
+            # If using Flask's connection, let Flask handle commit/close
+            db.commit()
+        
         logger.info(f"Face encoding saved for employee {employee_id}, dtype: {encoding.dtype}, shape: {encoding.shape}, size: {encoding.nbytes} bytes")
         return True
     except Exception as e:
         logger.error(f"Error saving face encoding for employee {employee_id}: {str(e)}", exc_info=True)
         return False
+    finally:
+        # Ensure standalone connection is closed
+        if db is not None:
+            try:
+                db.close()
+            except Exception:
+                pass
 
 def load_known_faces():
     """Load all known face encodings from the database"""
+    db = None
     try:
+        from flask import has_request_context, g
+        # Check if we're in a Flask request context
+        in_request_context = False
+        try:
+            in_request_context = has_request_context() and "db" in g
+        except RuntimeError:
+            pass
+        
         db = get_db()
         cursor = db.cursor()
         cursor.execute("SELECT employee_id, face_encoding FROM facial_data")
         rows = cursor.fetchall()
-        db.close()
+        
+        # Only close if we created a standalone connection (not Flask's)
+        if not in_request_context:
+            db.close()
+            db = None
 
         ids = []
         encodings = []
@@ -470,3 +519,10 @@ def load_known_faces():
     except Exception as e:
         logger.error(f"Error in load_known_faces: {str(e)}", exc_info=True)
         return [], []
+    finally:
+        # Ensure standalone connection is closed
+        if db is not None:
+            try:
+                db.close()
+            except Exception:
+                pass

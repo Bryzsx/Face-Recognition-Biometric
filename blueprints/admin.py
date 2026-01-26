@@ -1,4 +1,4 @@
-"""
+﻿"""
 Admin blueprint for dashboard, employees, attendance, reports, and settings
 """
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
@@ -46,7 +46,7 @@ def dashboard():
         cur.execute("""
             SELECT 
                 (SELECT COUNT(*) FROM employees) as total_employees,
-                COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Present' THEN 1 ELSE 0 END), 0) as present,
+                COALESCE(SUM(CASE WHEN date = ? AND (attendance_status = 'Present' OR attendance_status = 'Late') THEN 1 ELSE 0 END), 0) as present,
                 COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Absent' THEN 1 ELSE 0 END), 0) as absent,
                 COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Late' THEN 1 ELSE 0 END), 0) as late
             FROM attendance
@@ -639,8 +639,30 @@ def reports():
 @admin_required
 def settings():
     """Settings page for holidays and suspensions"""
+    db = None
     try:
         from db import get_db
+        from utils.helpers import get_time_settings
+        from datetime import datetime
+        
+        # Load time settings
+        time_settings_raw = get_time_settings()
+        
+        # Convert time format from "HH:MM AM/PM" to "HH:MM" for HTML time inputs
+        def convert_time_for_html(time_str):
+            """Convert '06:00 AM' to '06:00' for HTML time input"""
+            try:
+                if time_str and ('AM' in time_str or 'PM' in time_str):
+                    time_obj = datetime.strptime(time_str, "%I:%M %p")
+                    return time_obj.strftime("%H:%M")
+                return time_str or ""
+            except:
+                return time_str or ""
+        
+        time_settings = {}
+        for key, value in time_settings_raw.items():
+            time_settings[key] = convert_time_for_html(value)
+        
         db = get_db()
         cur = db.cursor()
         
@@ -657,7 +679,8 @@ def settings():
                 if not employees:
                     return render_template("admin/settings.html", 
                                          error="No active employees found",
-                                         success=None)
+                                         success=None,
+                                         time_settings=time_settings)
                 
                 marked_count = 0
                 for emp in employees:
@@ -695,7 +718,8 @@ def settings():
                 logger.info(f"Holiday marked for {marked_count} employees on {holiday_date}")
                 return render_template("admin/settings.html",
                                      success=f"Successfully marked {marked_count} employees as present for {holiday_date} ({reason})",
-                                     error=None)
+                                     error=None,
+                                     time_settings=time_settings)
             
             elif action == "mark_suspension":
                 suspension_date = validate_required(request.form.get("suspension_date", ""), "Suspension Date")
@@ -707,7 +731,8 @@ def settings():
                 if not employees:
                     return render_template("admin/settings.html",
                                          error="No active employees found",
-                                         success=None)
+                                         success=None,
+                                         time_settings=time_settings)
                 
                 marked_count = 0
                 for emp in employees:
@@ -745,19 +770,58 @@ def settings():
                 logger.info(f"Suspension marked for {marked_count} employees on {suspension_date}")
                 return render_template("admin/settings.html",
                                      success=f"Successfully marked {marked_count} employees as present for {suspension_date} ({reason})",
-                                     error=None)
+                                     error=None,
+                                     time_settings=time_settings)
         
-        return render_template("admin/settings.html", error=None, success=None)
+        return render_template("admin/settings.html", error=None, success=None, time_settings=time_settings)
         
     except ValidationError as e:
         logger.warning(f"Validation error in settings: {str(e)}")
-        return render_template("admin/settings.html", error=str(e), success=None)
+        # Get time settings even on validation error
+        try:
+            from utils.helpers import get_time_settings
+            from datetime import datetime
+            time_settings_raw = get_time_settings()
+            def convert_time_for_html(time_str):
+                try:
+                    if time_str and ('AM' in time_str or 'PM' in time_str):
+                        time_obj = datetime.strptime(time_str, "%I:%M %p")
+                        return time_obj.strftime("%H:%M")
+                    return time_str or ""
+                except:
+                    return time_str or ""
+            time_settings = {k: convert_time_for_html(v) for k, v in time_settings_raw.items()}
+        except:
+            time_settings = {}
+        return render_template("admin/settings.html", error=str(e), success=None, time_settings=time_settings)
     except Exception as e:
-        db.rollback()
+        # Only rollback if db was created
+        try:
+            if db is not None:
+                db.rollback()
+        except:
+            pass
         logger.error(f"Error in settings: {str(e)}", exc_info=True)
+        # Get time settings even on error
+        try:
+            from utils.helpers import get_time_settings
+            from datetime import datetime
+            time_settings_raw = get_time_settings()
+            def convert_time_for_html(time_str):
+                try:
+                    if time_str and ('AM' in time_str or 'PM' in time_str):
+                        time_obj = datetime.strptime(time_str, "%I:%M %p")
+                        return time_obj.strftime("%H:%M")
+                    return time_str or ""
+                except:
+                    return time_str or ""
+            time_settings = {k: convert_time_for_html(v) for k, v in time_settings_raw.items()}
+        except:
+            time_settings = {}
         return render_template("admin/settings.html",
                              error=f"Error: {str(e)}",
-                             success=None)
+                             success=None,
+                             time_settings=time_settings)
 
 
 @admin_bp.route("/capture-face", methods=["POST"])
@@ -784,4 +848,228 @@ def capture_face():
         return jsonify({"success": True, "message": "Face captured successfully"})
     except Exception as e:
         logger.error(f"Error capturing face: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+
+# ==================== ADMIN ACCOUNT MANAGEMENT ====================
+
+@admin_bp.route("/admins")
+@admin_required
+def manage_admins():
+    """Admin account management page"""
+    try:
+        from db import get_db
+        from utils.db_helpers import execute_query_safe
+        db = get_db()
+        
+        # Get all admin accounts
+        admins = execute_query_safe(
+            db,
+            "SELECT id, username, name FROM admin ORDER BY id",
+            fetch_all=True
+        )
+        
+        logger.info(f"Admin management page accessed by: {session.get('admin_name')}")
+        return render_template("admin/admins.html", admins=admins or [])
+    except Exception as e:
+        logger.error(f"Error loading admin management page: {str(e)}", exc_info=True)
+        return render_template("admin/admins.html", admins=[], error=str(e))
+
+
+@admin_bp.route("/admins/create", methods=["POST"])
+@admin_required
+def create_admin():
+    """Create a new admin account"""
+    try:
+        username = validate_required(request.form.get("username"), "Username")
+        password = validate_required(request.form.get("password"), "Password")
+        name = validate_required(request.form.get("name"), "Name")
+        
+        # Sanitize inputs
+        username = sanitize_string(username, max_length=50)
+        password = sanitize_string(password, max_length=100)
+        name = sanitize_string(name, max_length=100)
+        
+        from db import get_db
+        from utils.db_helpers import execute_query_safe
+        db = get_db()
+        
+        # Check if username already exists
+        existing = execute_query_safe(
+            db,
+            "SELECT id FROM admin WHERE username=?",
+            (username,),
+            fetch_one=True
+        )
+        
+        if existing:
+            return jsonify({"success": False, "error": "Username already exists"}), 400
+        
+        # Create new admin
+        execute_query_safe(
+            db,
+            "INSERT INTO admin (username, password, name) VALUES (?, ?, ?)",
+            (username, password, name)
+        )
+        
+        db.commit()
+        logger.info(f"New admin account created: {username} by {session.get('admin_name')}")
+        
+        return jsonify({"success": True, "message": f"Admin account '{username}' created successfully"})
+    except ValidationError as e:
+        logger.warning(f"Admin creation validation error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 400
+    except sqlite3.IntegrityError as e:
+        logger.warning(f"Admin creation integrity error: {str(e)}")
+        return jsonify({"success": False, "error": "Username already exists"}), 400
+    except Exception as e:
+        logger.error(f"Error creating admin: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": f"Error creating admin: {str(e)}"}), 500
+
+
+@admin_bp.route("/admins/update/<int:admin_id>", methods=["POST"])
+@admin_required
+def update_admin(admin_id):
+    """Update an admin account"""
+    try:
+        username = validate_required(request.form.get("username"), "Username")
+        password = request.form.get("password")  # Optional - only update if provided
+        name = validate_required(request.form.get("name"), "Name")
+        
+        # Sanitize inputs
+        username = sanitize_string(username, max_length=50)
+        name = sanitize_string(name, max_length=100)
+        
+        from db import get_db
+        from utils.db_helpers import execute_query_safe
+        db = get_db()
+        
+        # Check if admin exists
+        existing = execute_query_safe(
+            db,
+            "SELECT id, username FROM admin WHERE id=?",
+            (admin_id,),
+            fetch_one=True
+        )
+        
+        if not existing:
+            return jsonify({"success": False, "error": "Admin account not found"}), 404
+        
+        # Check if username already exists (excluding current admin)
+        username_check = execute_query_safe(
+            db,
+            "SELECT id FROM admin WHERE username=? AND id!=?",
+            (username, admin_id),
+            fetch_one=True
+        )
+        
+        if username_check:
+            return jsonify({"success": False, "error": "Username already exists"}), 400
+        
+        # Update admin (password only if provided)
+        if password and password.strip():
+            password = sanitize_string(password, max_length=100)
+            execute_query_safe(
+                db,
+                "UPDATE admin SET username=?, password=?, name=? WHERE id=?",
+                (username, password, name, admin_id)
+            )
+        else:
+            execute_query_safe(
+                db,
+                "UPDATE admin SET username=?, name=? WHERE id=?",
+                (username, name, admin_id)
+            )
+        
+        db.commit()
+        logger.info(f"Admin account updated: ID {admin_id} by {session.get('admin_name')}")
+        
+        return jsonify({"success": True, "message": f"Admin account '{username}' updated successfully"})
+    except ValidationError as e:
+        logger.warning(f"Admin update validation error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 400
+    except sqlite3.IntegrityError as e:
+        logger.warning(f"Admin update integrity error: {str(e)}")
+        return jsonify({"success": False, "error": "Username already exists"}), 400
+    except Exception as e:
+        logger.error(f"Error updating admin: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": f"Error updating admin: {str(e)}"}), 500
+
+
+@admin_bp.route("/admins/delete/<int:admin_id>", methods=["POST"])
+@admin_required
+def delete_admin(admin_id):
+    """Delete an admin account"""
+    try:
+        from db import get_db
+        from utils.db_helpers import execute_query_safe
+        db = get_db()
+        
+        # Get admin info before deletion for logging
+        admin_info = execute_query_safe(
+            db,
+            "SELECT username FROM admin WHERE id=?",
+            (admin_id,),
+            fetch_one=True
+        )
+        
+        if not admin_info:
+            return jsonify({"success": False, "error": "Admin account not found"}), 404
+        
+        # Check if this is the only admin (prevent deleting last admin)
+        admin_count = execute_query_safe(
+            db,
+            "SELECT COUNT(*) as count FROM admin",
+            fetch_one=True
+        )
+        
+        if admin_count and admin_count.get("count", 0) <= 1:
+            return jsonify({"success": False, "error": "Cannot delete the last admin account"}), 400
+        
+        # Delete admin
+        execute_query_safe(
+            db,
+            "DELETE FROM admin WHERE id=?",
+            (admin_id,)
+        )
+        
+        db.commit()
+        logger.info(f"Admin account deleted: ID {admin_id} ({admin_info['username']}) by {session.get('admin_name')}")
+        
+        return jsonify({"success": True, "message": f"Admin account '{admin_info['username']}' deleted successfully"})
+    except Exception as e:
+        logger.error(f"Error deleting admin: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": f"Error deleting admin: {str(e)}"}), 500
+
+
+@admin_bp.route("/admins/get/<int:admin_id>")
+@admin_required
+def get_admin(admin_id):
+    """Get admin account details for editing"""
+    try:
+        from db import get_db
+        from utils.db_helpers import execute_query_safe
+        db = get_db()
+        
+        admin = execute_query_safe(
+            db,
+            "SELECT id, username, name FROM admin WHERE id=?",
+            (admin_id,),
+            fetch_one=True
+        )
+        
+        if not admin:
+            return jsonify({"success": False, "error": "Admin account not found"}), 404
+        
+        # Convert sqlite3.Row to dict
+        admin_dict = {
+            "id": admin["id"],
+            "username": admin["username"] if "username" in admin.keys() else "",
+            "name": admin["name"] if "name" in admin.keys() else ""
+        }
+        
+        return jsonify({"success": True, "admin": admin_dict})
+    except Exception as e:
+        logger.error(f"Error getting admin: {str(e)}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500

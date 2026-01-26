@@ -1,0 +1,304 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Admin Account Management{% endblock %}
+
+{% block content %}
+<div class="section active">
+  <div class="card">
+    <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>Admin Account Management</span>
+      <button onclick="openCreateModal()" class="btn-primary" style="padding: 10px 20px;">➕ Create New Admin</button>
+    </div>
+    
+    {% if error %}
+    <div style="background: #fee; border: 1px solid #fcc; color: #c33; padding: 15px; border-radius: 8px; margin: 20px 0;">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Admins Table -->
+    {% if admins %}
+    <table class="table" style="margin-top: 20px;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for admin in admins %}
+        <tr id="admin-row-{{ admin.id }}">
+          <td>{{ admin.id }}</td>
+          <td>{{ admin.username }}</td>
+          <td>{{ admin.name or 'N/A' }}</td>
+          <td>
+            <button onclick="editAdmin({{ admin.id }})" class="btn-secondary" style="padding: 6px 12px; margin-right: 5px;">✏️ Edit</button>
+            <button onclick="deleteAdmin({{ admin.id }}, '{{ admin.username }}')" class="btn-danger" style="padding: 6px 12px;">🗑️ Delete</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="margin-top: 20px; color: #6b7280; text-align: center; padding: 40px;">
+      No admin accounts found.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Create/Edit Modal -->
+<div id="adminModal" class="modal" style="display: none;">
+  <div class="modal-content" style="max-width: 500px;">
+    <div class="modal-header">
+      <h3 id="modalTitle">Create New Admin Account</h3>
+      <span class="close" onclick="closeModal()">&times;</span>
+    </div>
+    <form id="adminForm" onsubmit="saveAdmin(event)">
+      <input type="hidden" id="adminId" name="admin_id" value="">
+      
+      <div style="margin-bottom: 20px;">
+        <label for="username" style="display: block; margin-bottom: 8px; font-weight: 600;">Username *</label>
+        <input type="text" 
+               id="username" 
+               name="username" 
+               required 
+               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label for="password" style="display: block; margin-bottom: 8px; font-weight: 600;">
+          Password <span id="passwordLabel">*</span>
+        </label>
+        <input type="password" 
+               id="password" 
+               name="password" 
+               id="passwordRequired"
+               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+        <small style="color: #666; display: block; margin-top: 5px;" id="passwordHint">
+          Leave blank to keep current password when editing
+        </small>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label for="name" style="display: block; margin-bottom: 8px; font-weight: 600;">Full Name *</label>
+        <input type="text" 
+               id="name" 
+               name="name" 
+               required 
+               style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+      </div>
+      
+      <div id="formError" style="display: none; background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 8px; margin-bottom: 20px;"></div>
+      
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" onclick="closeModal()" class="btn-secondary" style="padding: 12px 24px;">Cancel</button>
+        <button type="submit" class="btn-primary" style="padding: 12px 24px;">Save Admin</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<style>
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 500px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.close {
+  font-size: 28px;
+  font-weight: bold;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close:hover {
+  color: #000;
+}
+
+.modal form {
+  padding: 20px;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+</style>
+
+<script>
+let currentEditId = null;
+
+function openCreateModal() {
+  currentEditId = null;
+  document.getElementById('modalTitle').textContent = 'Create New Admin Account';
+  document.getElementById('adminForm').reset();
+  document.getElementById('adminId').value = '';
+  document.getElementById('password').required = true;
+  document.getElementById('passwordLabel').textContent = '*';
+  document.getElementById('passwordHint').style.display = 'none';
+  document.getElementById('formError').style.display = 'none';
+  document.getElementById('adminModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('adminModal').style.display = 'none';
+  currentEditId = null;
+}
+
+function editAdmin(adminId) {
+  currentEditId = adminId;
+  document.getElementById('modalTitle').textContent = 'Edit Admin Account';
+  document.getElementById('password').required = false;
+  document.getElementById('passwordLabel').textContent = '';
+  document.getElementById('passwordHint').style.display = 'block';
+  document.getElementById('formError').style.display = 'none';
+  
+  // Fetch admin data
+  fetch(`/admin/admins/get/${adminId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('adminId').value = data.admin.id;
+        document.getElementById('username').value = data.admin.username;
+        document.getElementById('name').value = data.admin.name;
+        document.getElementById('password').value = '';
+        document.getElementById('adminModal').style.display = 'flex';
+      } else {
+        alert('Error loading admin data: ' + (data.error || 'Unknown error'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error loading admin data');
+    });
+}
+
+function deleteAdmin(adminId, username) {
+  if (!confirm(`Are you sure you want to delete admin account "${username}"?\n\nThis action cannot be undone.`)) {
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('admin_id', adminId);
+  
+  fetch(`/admin/admins/delete/${adminId}`, {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        // Remove row from table
+        const row = document.getElementById(`admin-row-${adminId}`);
+        if (row) {
+          row.remove();
+        }
+        // Reload page to refresh list
+        location.reload();
+      } else {
+        alert('Error: ' + (data.error || 'Unknown error'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error deleting admin account');
+    });
+}
+
+function saveAdmin(event) {
+  event.preventDefault();
+  
+  const formData = new FormData(document.getElementById('adminForm'));
+  const adminId = document.getElementById('adminId').value;
+  const errorDiv = document.getElementById('formError');
+  
+  // Clear previous errors
+  errorDiv.style.display = 'none';
+  
+  const url = adminId ? `/admin/admins/update/${adminId}` : '/admin/admins/create';
+  
+  fetch(url, {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert(data.message);
+        closeModal();
+        location.reload();
+      } else {
+        errorDiv.textContent = data.error || 'An error occurred';
+        errorDiv.style.display = 'block';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      errorDiv.textContent = 'Error saving admin account';
+      errorDiv.style.display = 'block';
+    });
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('adminModal');
+  if (event.target == modal) {
+    closeModal();
+  }
+}
+</script>
+{% endblock %}

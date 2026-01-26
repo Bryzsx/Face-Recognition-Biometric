@@ -9,51 +9,159 @@
   <div class="stats">
     <div class="stat">
       <small>Total Employees</small>
-      <h2>{{ total_employees }}</h2>
+      <h2 id="stat-total">0</h2>
     </div>
     <div class="stat">
       <small>Present Today</small>
-      <h2>{{ present }}</h2>
+      <h2 id="stat-present">0</h2>
     </div>
     <div class="stat">
       <small>Absent</small>
-      <h2>{{ absent }}</h2>
+      <h2 id="stat-absent">0</h2>
     </div>
     <div class="stat">
       <small>Late</small>
-      <h2>{{ late }}</h2>
+      <h2 id="stat-late">0</h2>
     </div>
   </div>
 
   <div class="card">
     <h3 class="card-title">Recent Attendance</h3>
-    {% if recent_attendance %}
-      <div class="attendance-grid">
-        {% for record in recent_attendance %}
-        <div class="attendance-card">
-          <div class="att-left">
-            <div class="att-avatar">{{ record.full_name[0:2].upper() if record.full_name else 'N/A' }}</div>
-            <div>
-              <strong>{{ record.full_name or 'N/A' }}</strong><br>
-              <small>{{ record.employee_code or 'N/A' }} • {{ record.date }}</small>
-            </div>
-          </div>
-          <div class="att-right">
-            {% if record.morning_in %}
-              <span class="att-time">{{ record.morning_in }}</span><br>
-            {% endif %}
-            <span class="att-badge {% if record.attendance_status == 'Present' %}ontime{% elif record.attendance_status == 'Late' %}late{% else %}absent{% endif %}">
-              {{ record.attendance_status or 'Pending' }}
-            </span>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <p>No records yet.</p>
-    {% endif %}
+    <div id="attendance-container">
+      <p style="text-align: center; color: #6b7280; padding: 20px;">Loading...</p>
+    </div>
   </div>
 
 </div>
+
+<script>
+// Load dashboard data immediately when page loads (non-blocking)
+(function() {
+    'use strict';
+    
+    // Load dashboard stats immediately
+    function loadDashboardData() {
+        console.log('[DASHBOARD] Loading dashboard data...');
+        fetch('/api/dashboard-stats', {
+            method: 'GET',
+            credentials: 'same-origin', // Include cookies/session for authentication
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => {
+                console.log('[DASHBOARD] Response status:', response.status, response.statusText);
+                if (!response.ok) {
+                    // Handle specific error codes
+                    if (response.status === 401) {
+                        throw new Error('Authentication required. Please log in again.');
+                    } else if (response.status === 503) {
+                        // Database busy - still try to parse response
+                        return response.json().then(data => {
+                            console.log('[DASHBOARD] Database busy response:', data);
+                            return data;
+                        }).catch(() => {
+                            throw new Error('Database is busy. Please try again.');
+                        });
+                    }
+                    // Try to get error message from response
+                    return response.text().then(text => {
+                        console.error('[DASHBOARD] Error response:', text);
+                        try {
+                            const json = JSON.parse(text);
+                            throw new Error(json.error || `Server error: ${response.status}`);
+                        } catch {
+                            throw new Error(`Server error: ${response.status}`);
+                        }
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('[DASHBOARD] Data received:', data);
+                // Update statistics even if success is false (partial data)
+                const totalEl = document.getElementById('stat-total');
+                const presentEl = document.getElementById('stat-present');
+                const absentEl = document.getElementById('stat-absent');
+                const lateEl = document.getElementById('stat-late');
+                
+                if (totalEl && data.total_employees !== undefined) totalEl.textContent = data.total_employees || 0;
+                if (presentEl && data.present !== undefined) presentEl.textContent = data.present || 0;
+                if (absentEl && data.absent !== undefined) absentEl.textContent = data.absent || 0;
+                if (lateEl && data.late !== undefined) lateEl.textContent = data.late || 0;
+                
+                // Update recent attendance
+                const container = document.getElementById('attendance-container');
+                if (container) {
+                    console.log('[DASHBOARD] Recent attendance data:', data.recent_attendance);
+                    console.log('[DASHBOARD] Success:', data.success, 'Records count:', data.recent_attendance ? data.recent_attendance.length : 0);
+                    
+                    // Check if we have recent attendance data
+                    if (data.recent_attendance && Array.isArray(data.recent_attendance) && data.recent_attendance.length > 0) {
+                        console.log('[DASHBOARD] Displaying', data.recent_attendance.length, 'attendance records');
+                        container.innerHTML = '<div class="attendance-grid">' +
+                            data.recent_attendance.map(record => {
+                                const initials = record.full_name ? record.full_name.substring(0, 2).toUpperCase() : 'N/A';
+                                const statusClass = record.attendance_status === 'Present' ? 'ontime' : 
+                                                  record.attendance_status === 'Late' ? 'late' : 'absent';
+                                return `
+                                    <div class="attendance-card">
+                                        <div class="att-left">
+                                            <div class="att-avatar">${initials}</div>
+                                            <div>
+                                                <strong>${record.full_name || 'N/A'}</strong><br>
+                                                <small>${record.employee_code || 'N/A'} • ${record.date || ''}</small>
+                                            </div>
+                                        </div>
+                                        <div class="att-right">
+                                            ${record.morning_in ? `<span class="att-time">${record.morning_in}</span><br>` : ''}
+                                            ${record.afternoon_in ? `<span class="att-time">${record.afternoon_in}</span><br>` : ''}
+                                            <span class="att-badge ${statusClass}">
+                                                ${record.attendance_status || 'Pending'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('') +
+                            '</div>';
+                    } else if (data.success && (!data.recent_attendance || data.recent_attendance.length === 0)) {
+                        console.log('[DASHBOARD] No attendance records to display');
+                        container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No records yet.</p>';
+                    } else {
+                        // Show error message but keep stats visible
+                        const errorMsg = data.error || 'Error loading recent attendance.';
+                        console.error('[DASHBOARD] Error loading attendance:', errorMsg);
+                        container.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">' + errorMsg + '</p>';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading dashboard data:', error);
+                const container = document.getElementById('attendance-container');
+                if (container) {
+                    let errorMsg = 'Error loading data. ';
+                    if (error.message.includes('Authentication')) {
+                        errorMsg += 'Please <a href="/admin/login" style="color: #3b82f6; text-decoration: underline;">log in again</a>.';
+                    } else if (error.message.includes('Database is busy')) {
+                        errorMsg += 'Database is busy. The page will auto-refresh.';
+                        // Retry after 2 seconds
+                        setTimeout(loadDashboardData, 2000);
+                    } else {
+                        errorMsg += 'Please refresh the page.';
+                    }
+                    container.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">' + errorMsg + '</p>';
+                }
+            });
+    }
+    
+    // Load data as soon as DOM is ready (non-blocking)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+    } else {
+        // DOM already loaded, load immediately
+        loadDashboardData();
+    }
+})();
+</script>
 
 {% endblock %}

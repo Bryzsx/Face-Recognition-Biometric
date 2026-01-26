@@ -557,3 +557,644 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'delete
 2026-01-10 07:06:08 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
 2026-01-10 07:06:15 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
 2026-01-10 07:06:41 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:16:35 - __main__ - ERROR - app.py:119 - Error starting Flask app: [X509: KEY_VALUES_MISMATCH] key values mismatch (_ssl.c:3921)
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\app.py", line 114, in <module>
+    app.run(host=HOST, port=PORT, debug=DEBUG, threaded=True, ssl_context=ssl_context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\flask\app.py", line 662, in run
+    run_simple(t.cast(str, host), port, self, **options)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\serving.py", line 1093, in run_simple
+    srv = make_server(
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\serving.py", line 930, in make_server
+    return ThreadedWSGIServer(
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\serving.py", line 801, in __init__
+    ssl_context = load_ssl_context(*ssl_context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\serving.py", line 644, in load_ssl_context
+    ctx.load_cert_chain(cert_file, pkey_file)
+ssl.SSLError: [X509: KEY_VALUES_MISMATCH] key values mismatch (_ssl.c:3921)
+2026-01-10 22:26:14 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:18 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:20 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:23 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:26 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:30 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:32 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:35 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:38 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:42 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:45 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:47 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-10 22:26:50 - blueprints.api - ERROR - api.py:159 - No registered employees found in database
+2026-01-12 10:49:40 - blueprints.api - ERROR - api.py:435 - Error in face recognition: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 159, in _process_face_recognition_internal
+    data = request.get_json()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\local.py", line 318, in __get__
+    obj = instance._get_current_object()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\local.py", line 519, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of request context.
+
+This typically means that you attempted to use functionality that needed
+an active HTTP request. Consult the documentation on testing for
+information about how to avoid this problem.
+2026-01-12 10:49:40 - utils.request_queue - ERROR - request_queue.py:120 - Error processing queued request: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\utils\request_queue.py", line 117, in process
+    result = item["func"](*item["args"], **item["kwargs"])
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 151, in process_request
+    return _process_face_recognition_internal()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 436, in _process_face_recognition_internal
+    return jsonify({"success": False, "message": f"Error processing face recognition: {str(e)}"}), 500
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\flask\json\__init__.py", line 170, in jsonify
+    return current_app.json.response(*args, **kwargs)  # type: ignore[return-value]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\local.py", line 318, in __get__
+    obj = instance._get_current_object()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\venv310\lib\site-packages\werkzeug\local.py", line 519, in _get_current_object
+    raise RuntimeError(unbound_message) from None
+RuntimeError: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+2026-01-13 09:39:05 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:39:16 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:39:18 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:39:38 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:39:39 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:39:52 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:40:47 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:40:49 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:40:53 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:42:44 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:42:58 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:43:01 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:43:03 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:46:56 - blueprints.api - ERROR - api.py:104 - Error in dashboard_stats API: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 74, in dashboard_stats
+    None,
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:47:29 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:47:30 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:14 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:16 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:17 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:17 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:17 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:17 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:17 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:19 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:19 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:19 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:20 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:21 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:22 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:22 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:48:22 - blueprints.api - ERROR - api.py:92 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 82, in dashboard_stats
+    "full_name": record.get("full_name", "N/A"),
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:07 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:08 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:08 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:09 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:09 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:09 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:09 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:21 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:26 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 09:52:51 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 10:02:34 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 10:02:34 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-13 10:02:35 - blueprints.api - ERROR - api.py:113 - Error fetching recent attendance: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System\blueprints\api.py", line 94, in dashboard_stats
+    full_name = record.get("full_name") or "Unknown Employee"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:29:31 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:31:34 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:36:31 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:38:19 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:43:27 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:44:58 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 09:49:33 - blueprints.api - ERROR - api.py:513 - Error in face recognition: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\api.py", line 495, in recognize_face
+    "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 11:11:06 - blueprints.admin - ERROR - admin.py:757 - Error in settings: 'time_settings' is undefined
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:11:06 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 758, in settings
+    return render_template("admin/settings.html",
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:11:06 - db - ERROR - db.py:109 - Exception in teardown: 'time_settings' is undefined
+NoneType: None
+2026-01-21 11:11:17 - blueprints.admin - ERROR - admin.py:757 - Error in settings: 'time_settings' is undefined
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:11:17 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 758, in settings
+    return render_template("admin/settings.html",
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:11:17 - db - ERROR - db.py:109 - Exception in teardown: 'time_settings' is undefined
+NoneType: None
+2026-01-21 11:13:52 - blueprints.admin - ERROR - admin.py:757 - Error in settings: 'time_settings' is undefined
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:13:52 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 758, in settings
+    if 'db' in locals():
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:13:52 - db - ERROR - db.py:109 - Exception in teardown: 'time_settings' is undefined
+NoneType: None
+2026-01-21 11:14:13 - blueprints.admin - ERROR - admin.py:762 - Error in settings: 'time_settings' is undefined
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:14:13 - __main__ - ERROR - app.py:60 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 750, in settings
+    return render_template("admin/settings.html", error=None, success=None)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 32, in wrapper
+    return f(*args, **kwargs)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 763, in settings
+    return render_template("admin/settings.html",
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 1, in top-level template code
+    {% extends "admin/base.html" %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\base.html", line 92, in top-level template code
+    {% block content %}{% endblock %}
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\templates\admin\settings.html", line 39, in block 'content'
+    <input type="time" name="morning_in_start" value="{{ time_settings.morning_in_start or '06:00' }}" required
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\venv310\lib\site-packages\jinja2\environment.py", line 490, in getattr
+    return getattr(obj, attribute)
+jinja2.exceptions.UndefinedError: 'time_settings' is undefined
+2026-01-21 11:14:13 - db - ERROR - db.py:109 - Exception in teardown: 'time_settings' is undefined
+NoneType: None
+2026-01-21 14:17:54 - blueprints.admin - ERROR - admin.py:1042 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1027, in delete_admin
+    if admin_count and admin_count.get("count", 0) <= 1:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-21 14:18:00 - blueprints.admin - ERROR - admin.py:1042 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1027, in delete_admin
+    if admin_count and admin_count.get("count", 0) <= 1:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'

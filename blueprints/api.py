@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta
 from utils.logger import get_logger
 import face_utils
 import face_recognition
+import sqlite3
 
 logger = get_logger(__name__)
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -27,50 +28,90 @@ def admin_required(f):
 @api_bp.route("/dashboard-stats")
 @admin_required
 def dashboard_stats():
-    """API endpoint to get dashboard statistics for auto-refresh"""
+    """API endpoint to get dashboard statistics - optimized for fast loading"""
     try:
         from db import get_db
+        from utils.db_helpers import execute_query_safe
         db = get_db()
-        cur = db.cursor()
         today = date.today().isoformat()
 
-        cur.execute("""
-            SELECT 
-                (SELECT COUNT(*) FROM employees) as total_employees,
-                COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Present' THEN 1 ELSE 0 END), 0) as present,
-                COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Absent' THEN 1 ELSE 0 END), 0) as absent,
-                COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Late' THEN 1 ELSE 0 END), 0) as late
-            FROM attendance
-        """, (today, today, today))
-        
-        stats = cur.fetchone()
-        total_employees = stats[0] or 0
-        present = stats[1] or 0
-        absent = stats[2] or 0
-        late = stats[3] or 0
+        # Optimized query - use safe query helper with retry
+        try:
+            stats = execute_query_safe(
+                db,
+                """SELECT 
+                      (SELECT COUNT(*) FROM employees) as total_employees,
+                      COALESCE(SUM(CASE WHEN date = ? AND (attendance_status = 'Present' OR attendance_status = 'Late') THEN 1 ELSE 0 END), 0) as present,
+                      COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Absent' THEN 1 ELSE 0 END), 0) as absent,
+                      COALESCE(SUM(CASE WHEN date = ? AND attendance_status = 'Late' THEN 1 ELSE 0 END), 0) as late
+                   FROM attendance""",
+                (today, today, today),
+                fetch_one=True
+            )
+            
+            total_employees = stats[0] or 0 if stats else 0
+            present = stats[1] or 0 if stats else 0
+            absent = stats[2] or 0 if stats else 0
+            late = stats[3] or 0 if stats else 0
+        except Exception as e:
+            logger.error(f"Error fetching stats: {str(e)}", exc_info=True)
+            total_employees = 0
+            present = 0
+            absent = 0
+            late = 0
 
-        cur.execute("""
-            SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
-                   a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
-            FROM attendance a
-            JOIN employees e ON a.employee_id = e.id
-            ORDER BY a.attendance_id DESC
-            LIMIT 10
-        """)
-        recent_attendance = cur.fetchall()
-        
+        # Optimized query for recent attendance - use safe query helper
         recent_list = []
-        for record in recent_attendance:
-            recent_list.append({
-                "full_name": record["full_name"],
-                "employee_code": record["employee_code"],
-                "date": record["date"],
-                "morning_in": record["morning_in"],
-                "lunch_out": record["lunch_out"],
-                "afternoon_in": record["afternoon_in"],
-                "time_out": record["time_out"],
-                "attendance_status": record["attendance_status"]
-            })
+        try:
+            # First, check if there are any attendance records at all
+            count_result = execute_query_safe(
+                db,
+                "SELECT COUNT(*) as count FROM attendance",
+                None,
+                fetch_one=True
+            )
+            attendance_count = count_result[0] if count_result else 0
+            logger.info(f"Total attendance records in database: {attendance_count}")
+            
+            if attendance_count > 0:
+                recent_attendance = execute_query_safe(
+                    db,
+                    """SELECT e.full_name, e.employee_code, a.date, a.morning_in, a.lunch_out,
+                              a.afternoon_in, a.time_out, a.attendance_status, a.verification_method
+                       FROM attendance a
+                       LEFT JOIN employees e ON a.employee_id = e.id
+                       ORDER BY a.attendance_id DESC
+                       LIMIT 10""",
+                    None,
+                    fetch_all=True
+                )
+                
+                logger.info(f"Recent attendance query returned {len(recent_attendance) if recent_attendance else 0} records")
+                
+                if recent_attendance:
+                    for record in recent_attendance:
+                        # SQLite Row objects support dictionary-style access with []
+                        full_name = record["full_name"] if "full_name" in record.keys() and record["full_name"] else "Unknown Employee"
+                        employee_code = record["employee_code"] if "employee_code" in record.keys() and record["employee_code"] else "N/A"
+                        
+                        recent_list.append({
+                            "full_name": full_name,
+                            "employee_code": employee_code,
+                            "date": record["date"] if "date" in record.keys() and record["date"] else "",
+                            "morning_in": record["morning_in"] if "morning_in" in record.keys() and record["morning_in"] else "",
+                            "lunch_out": record["lunch_out"] if "lunch_out" in record.keys() and record["lunch_out"] else "",
+                            "afternoon_in": record["afternoon_in"] if "afternoon_in" in record.keys() and record["afternoon_in"] else "",
+                            "time_out": record["time_out"] if "time_out" in record.keys() and record["time_out"] else "",
+                            "attendance_status": record["attendance_status"] if "attendance_status" in record.keys() and record["attendance_status"] else ""
+                        })
+                    logger.info(f"Processed {len(recent_list)} attendance records for dashboard")
+                else:
+                    logger.warning("Recent attendance query returned empty result")
+            else:
+                logger.info("No attendance records found in database")
+        except Exception as e:
+            logger.error(f"Error fetching recent attendance: {str(e)}", exc_info=True)
+            recent_list = []
 
         return jsonify({
             "success": True,
@@ -80,9 +121,28 @@ def dashboard_stats():
             "late": late,
             "recent_attendance": recent_list
         })
+    except sqlite3.OperationalError as e:
+        logger.error(f"Database error in dashboard_stats API: {str(e)}", exc_info=True)
+        return jsonify({
+            "success": False, 
+            "error": "Database is busy. Please try again.",
+            "total_employees": 0,
+            "present": 0,
+            "absent": 0,
+            "late": 0,
+            "recent_attendance": []
+        }), 503
     except Exception as e:
         logger.error(f"Error in dashboard_stats API: {str(e)}", exc_info=True)
-        return jsonify({"success": False, "error": "Error loading dashboard statistics"}), 500
+        return jsonify({
+            "success": False, 
+            "error": f"Error loading dashboard statistics: {str(e)}",
+            "total_employees": 0,
+            "present": 0,
+            "absent": 0,
+            "late": 0,
+            "recent_attendance": []
+        }), 500
 
 
 @api_bp.route("/attendance-records")
@@ -152,8 +212,9 @@ def recognize_face():
         
         logger.debug("Face encoding successful")
         
-        # Load known faces
-        employee_ids, known_encodings = face_utils.load_known_faces()
+        # Load known faces (with caching to avoid database load on every request)
+        from utils.face_cache import get_cached_or_load_faces
+        employee_ids, known_encodings = get_cached_or_load_faces()
         
         if not known_encodings:
             logger.error("No registered employees found in database")
@@ -211,13 +272,17 @@ def recognize_face():
         
         employee_id = employee_ids[best_match_index]
         
-        # Get employee info
+        # Get employee info (use safe query helper)
         from db import get_db
-        from utils.helpers import check_if_late, is_morning_time_in_allowed
+        from utils.helpers import check_if_late, is_morning_time_in_allowed, is_lunch_time_allowed, is_time_out_allowed, get_time_settings
+        from utils.db_helpers import execute_query_safe
         db = get_db()
-        cur = db.cursor()
-        cur.execute("SELECT * FROM employees WHERE id=?", (employee_id,))
-        employee = cur.fetchone()
+        employee = execute_query_safe(
+            db,
+            "SELECT * FROM employees WHERE id=?",
+            (employee_id,),
+            fetch_one=True
+        )
         
         if not employee:
             logger.error(f"Employee not found for ID: {employee_id}")
@@ -239,9 +304,13 @@ def recognize_face():
         today = date.today().isoformat()
         current_time = datetime.now().strftime("%I:%M %p")
         
-        # Check existing attendance for today
-        cur.execute("SELECT * FROM attendance WHERE employee_id=? AND date=?", (employee_id, today))
-        existing = cur.fetchone()
+        # Check existing attendance for today (use safe query helper)
+        existing = execute_query_safe(
+            db,
+            "SELECT * FROM attendance WHERE employee_id=? AND date=?",
+            (employee_id, today),
+            fetch_one=True
+        )
         
         message = ""
         if existing:
@@ -259,20 +328,33 @@ def recognize_face():
                     
                     attendance_status = "Late" if (is_late_afternoon or morning_was_late) else "Present"
                     
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET afternoon_in=?, attendance_status=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, attendance_status, employee_id, today))
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET afternoon_in=?, attendance_status=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, attendance_status, employee_id, today)
+                    )
                     
                     late_msg = " (Late)" if is_late_afternoon else ""
                     message = f"Afternoon time in recorded at {current_time}{late_msg}"
                 elif not existing["time_out"]:
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET time_out=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, employee_id, today))
+                    # Check if time-out is allowed
+                    if not is_time_out_allowed(current_time):
+                        settings = get_time_settings()
+                        start = settings.get("time_out_start", "05:00 PM")
+                        return jsonify({
+                            "success": False,
+                            "message": f"Time-out is only allowed from {start} onwards. Current time: {current_time}"
+                        })
+                    
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET time_out=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, employee_id, today)
+                    )
                     message = f"Time out recorded at {current_time}. Have a great day!"
                 else:
                     message = f"All attendance records for today are complete. Last update: {current_time}"
@@ -288,23 +370,47 @@ def recognize_face():
                     is_late = check_if_late(current_time, "morning")
                     attendance_status = "Late" if is_late else "Present"
                     
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET morning_in=?, attendance_status=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, attendance_status, employee_id, today))
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET morning_in=?, attendance_status=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, attendance_status, employee_id, today)
+                    )
                     
                     late_msg = " (Late)" if is_late else ""
                     message = f"Good morning! Time in recorded at {current_time}{late_msg}"
                 elif not existing["lunch_out"] and existing["morning_in"]:
-                    # Employees can time out for lunch at any time (no restriction)
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET lunch_out=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, employee_id, today))
+                    # Check if lunch time-out is allowed
+                    if not is_lunch_time_allowed(current_time):
+                        settings = get_time_settings()
+                        start = settings.get("lunch_out_start", "10:00 AM")
+                        end = settings.get("lunch_out_end", "12:15 PM")
+                        return jsonify({
+                            "success": False,
+                            "message": f"Lunch break time-out is only allowed from {start} to {end}. Current time: {current_time}"
+                        })
+                    
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET lunch_out=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, employee_id, today)
+                    )
                     message = f"Lunch break recorded at {current_time}"
                 elif not existing["afternoon_in"]:
+                    # Check if afternoon time-in is allowed
+                    from utils.helpers import is_afternoon_time_in_allowed
+                    if not is_afternoon_time_in_allowed(current_time):
+                        settings = get_time_settings()
+                        start = settings.get("afternoon_in_start", "12:16 PM")
+                        end = settings.get("afternoon_in_window_end", "02:00 PM")
+                        return jsonify({
+                            "success": False,
+                            "message": f"Afternoon time-in is only allowed from {start} to {end}. Current time: {current_time}"
+                        })
+                    
                     is_late_afternoon = check_if_late(current_time, "afternoon")
                     morning_was_late = False
                     if existing["morning_in"]:
@@ -312,20 +418,24 @@ def recognize_face():
                     
                     attendance_status = "Late" if (is_late_afternoon or morning_was_late) else "Present"
                     
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET afternoon_in=?, attendance_status=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, attendance_status, employee_id, today))
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET afternoon_in=?, attendance_status=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, attendance_status, employee_id, today)
+                    )
                     
                     late_msg = " (Late)" if is_late_afternoon else ""
                     message = f"Afternoon time in recorded at {current_time}{late_msg}"
                 elif not existing["time_out"]:
-                    cur.execute("""
-                        UPDATE attendance 
-                        SET time_out=?
-                        WHERE employee_id=? AND date=?
-                    """, (current_time, employee_id, today))
+                    execute_query_safe(
+                        db,
+                        """UPDATE attendance 
+                           SET time_out=?
+                           WHERE employee_id=? AND date=?""",
+                        (current_time, employee_id, today)
+                    )
                     message = f"Time out recorded at {current_time}. Have a great day!"
                 else:
                     message = f"All attendance records for today are complete. Last update: {current_time}"
@@ -339,10 +449,12 @@ def recognize_face():
                 is_late = check_if_late(current_time, "afternoon")
                 attendance_status = "Late" if is_late else "Present"
                 
-                cur.execute("""
-                    INSERT INTO attendance (employee_id, date, afternoon_in, attendance_status, verification_method)
-                    VALUES (?, ?, ?, ?, 'Face Recognition')
-                """, (employee_id, today, current_time, attendance_status))
+                execute_query_safe(
+                    db,
+                    """INSERT INTO attendance (employee_id, date, afternoon_in, attendance_status, verification_method)
+                       VALUES (?, ?, ?, ?, 'Face Recognition')""",
+                    (employee_id, today, current_time, attendance_status)
+                )
                 
                 late_msg = " (Late)" if is_late else ""
                 message = f"Afternoon time in recorded at {current_time}{late_msg}"
@@ -357,24 +469,43 @@ def recognize_face():
                 is_late = check_if_late(current_time, "morning")
                 attendance_status = "Late" if is_late else "Present"
                 
-                cur.execute("""
-                    INSERT INTO attendance (employee_id, date, morning_in, attendance_status, verification_method)
-                    VALUES (?, ?, ?, ?, 'Face Recognition')
-                """, (employee_id, today, current_time, attendance_status))
+                execute_query_safe(
+                    db,
+                    """INSERT INTO attendance (employee_id, date, morning_in, attendance_status, verification_method)
+                       VALUES (?, ?, ?, ?, 'Face Recognition')""",
+                    (employee_id, today, current_time, attendance_status)
+                )
                 
                 late_msg = " (Late)" if is_late else ""
                 message = f"Good morning! Time in recorded at {current_time}{late_msg}"
         
-        db.commit()
-        logger.info(f"Attendance recorded for employee {employee_id} at {current_time}")
+        try:
+            db.commit()
+            logger.info(f"Attendance recorded for employee {employee_id} at {current_time}")
+        except sqlite3.OperationalError as e:
+            db.rollback()
+            logger.error(f"Error committing attendance: {str(e)}")
+            return jsonify({"success": False, "message": "Database is busy. Please try again."}), 503
+        
+        # Prepare employee data for response
+        # sqlite3.Row objects use bracket notation, check if key exists first
+        employee_data = {
+            "id": employee["id"],
+            "full_name": employee["full_name"] if "full_name" in employee.keys() else "",
+            "employee_code": employee["employee_code"] if "employee_code" in employee.keys() else "",
+            "address": employee["address"] if "address" in employee.keys() and employee["address"] else "",
+            "age": employee["age"] if "age" in employee.keys() and employee["age"] is not None else None,
+            "contact_number": employee["contact_number"] if "contact_number" in employee.keys() and employee["contact_number"] else "",
+            "email": employee["email"] if "email" in employee.keys() and employee["email"] else "",
+            "department": employee["department"] if "department" in employee.keys() and employee["department"] else "",
+            "employment_status": employee["employment_status"] if "employment_status" in employee.keys() and employee["employment_status"] else "",
+            "position": employee["position"] if "position" in employee.keys() and employee["position"] else "",
+            "photo_path": employee["photo_path"] if "photo_path" in employee.keys() and employee["photo_path"] else ""
+        }
         
         return jsonify({
             "success": True,
-            "employee": {
-                "id": employee["id"],
-                "full_name": employee["full_name"],
-                "employee_code": employee["employee_code"]
-            },
+            "employee": employee_data,
             "time_in": current_time,
             "message": message
         })

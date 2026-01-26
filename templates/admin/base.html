@@ -67,6 +67,7 @@
     <li><a href="{{ url_for('admin.reports') }}" class="nav-link">📈 Reports</a></li>
     <li><a href="{{ url_for('admin.employee_info') }}" class="nav-link">📄 Employee Info</a></li>
     <li><a href="{{ url_for('admin.settings') }}" class="nav-link">⚙️ Settings</a></li>
+    <li><a href="{{ url_for('admin.manage_admins') }}" class="nav-link">👨‍💼 Admin Accounts</a></li>
   </ul>
 
   <div class="logout-box">
@@ -210,8 +211,16 @@ function performDashboardRefresh() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
     
-    fetch('/api/dashboard-stats', { signal: controller.signal })
-        .then(response => response.json())
+    fetch('/api/dashboard-stats', { 
+        signal: controller.signal,
+        credentials: 'same-origin' // Include cookies/session for authentication
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 // Update stats

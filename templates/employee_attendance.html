@@ -48,15 +48,15 @@
         }
 
         .main-container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 2fr 1fr;
             gap: 30px;
         }
 
         .card {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -71,21 +71,33 @@
         }
 
         .scan-status {
-            background: #10b981;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             border-radius: 15px;
             padding: 40px;
             text-align: center;
             margin-bottom: 30px;
             min-height: 200px;
-            display: flex;
+            display: none;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            display: none;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+            animation: slideInDown 0.5s ease-out;
         }
 
         .scan-status.active {
             display: flex;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .scan-status.success {
@@ -206,10 +218,86 @@
         }
 
         .history-section {
-            background: #f8f9fa;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
             border-radius: 20px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .employee-info-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .employee-info-section.active {
+            display: block;
+        }
+
+        .employee-info-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .employee-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: block;
+            object-fit: cover;
+            border: 4px solid #4f46e5;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .employee-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .employee-code {
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .employee-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .info-item.full-width {
+            grid-column: 1 / -1;
         }
 
         .history-header {
@@ -302,7 +390,17 @@
             color: white;
         }
 
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
+            .main-container {
+                grid-template-columns: 1fr 2fr;
+            }
+            .employee-info-section {
+                grid-column: 1 / -1;
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 1000px) {
             .main-container {
                 grid-template-columns: 1fr;
             }
@@ -331,7 +429,23 @@
     </div>
 
     <div class="main-container">
-        <!-- Left Section: Face Scanning -->
+        <!-- Left Section: Attendance History -->
+        <div class="history-section">
+            <div class="history-header">
+                <div class="history-title">
+                    📄 Your Attendance History
+                </div>
+                <div class="time-filter">
+                    <button class="filter-btn active" onclick="loadHistory('week')">This Week</button>
+                    <button class="filter-btn" onclick="loadHistory('month')">This Month</button>
+                </div>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Center Section: Camera Feed -->
         <div class="card">
             <div class="date-time" id="dateTime"></div>
 
@@ -364,19 +478,15 @@
             </div>
         </div>
 
-        <!-- Right Section: Attendance History -->
-        <div class="history-section">
-            <div class="history-header">
-                <div class="history-title">
-                    📄 Your Attendance History
-                </div>
-                <div class="time-filter">
-                    <button class="filter-btn active" onclick="loadHistory('week')">This Week</button>
-                    <button class="filter-btn" onclick="loadHistory('month')">This Month</button>
-                </div>
+        <!-- Right Section: Employee Info -->
+        <div class="employee-info-section" id="employeeInfoSection">
+            <div class="employee-info-header">
+                <img id="employeePhoto" src="" alt="Employee Photo" class="employee-photo" style="display: none;">
+                <div class="employee-name" id="employeeName"></div>
+                <div class="employee-code" id="employeeCode"></div>
             </div>
-            <div class="history-list" id="historyList">
-                <!-- History items will be loaded here -->
+            <div class="employee-info-grid" id="employeeInfoGrid">
+                <!-- Employee info will be populated here -->
             </div>
         </div>
     </div>
@@ -394,17 +504,24 @@
         // Update date and time
         function updateDateTime() {
             const now = new Date();
-            const options = { 
+            const dateOptions = { 
                 weekday: 'long', 
                 year: 'numeric', 
                 month: 'long', 
-                day: 'numeric',
+                day: 'numeric'
+            };
+            const timeOptions = {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: true
             };
-            document.getElementById('dateTime').textContent = now.toLocaleDateString('en-US', options);
+            const dateStr = now.toLocaleDateString('en-US', dateOptions);
+            const timeStr = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('dateTime').innerHTML = `
+                <div style="font-size: 16px; color: #666; margin-bottom: 5px;">${dateStr}</div>
+                <div style="font-size: 32px; color: #333; font-weight: 700;">${timeStr}</div>
+            `;
         }
         updateDateTime();
         setInterval(updateDateTime, 1000);
@@ -580,6 +697,11 @@
 
         // Capture frame and send for recognition (liveness detection removed)
         async function captureAndRecognize() {
+            console.log('[RECOGNITION] ===== STARTING CAPTURE AND RECOGNIZE =====');
+            console.log('[RECOGNITION] Document hidden:', document.hidden);
+            console.log('[RECOGNITION] Document has focus:', document.hasFocus());
+            console.log('[RECOGNITION] Is processing:', isProcessing);
+            
             // Don't process if page is hidden or window doesn't have focus
             if (document.hidden || !document.hasFocus()) {
                 console.log('[RECOGNITION] Page hidden or lost focus, stopping recognition...');
@@ -594,18 +716,19 @@
             
             // Ensure video is ready
             if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
-                console.log('[RECOGNITION] Video not ready');
+                console.log('[RECOGNITION] Video not ready, readyState:', video ? video.readyState : 'null');
                 updateStatus('Camera not ready. Please wait...', false);
                 return;
             }
             
             // Check if video has valid dimensions
             if (video.videoWidth === 0 || video.videoHeight === 0) {
-                console.log('[RECOGNITION] Video dimensions invalid');
+                console.log('[RECOGNITION] Video dimensions invalid:', video.videoWidth, 'x', video.videoHeight);
                 updateStatus('Camera initializing...', false);
                 return;
             }
             
+            console.log('[RECOGNITION] Starting face recognition process...');
             isProcessing = true;
             updateStatus('Capturing face...', false);
             document.getElementById('scanningIndicator').classList.add('active');
@@ -614,7 +737,7 @@
             let recognitionController = null;
             
             try {
-                console.log('[RECOGNITION] Capturing frame...');
+                console.log('[RECOGNITION] Step 1: Capturing frame...');
                 // Capture single frame with reduced size for faster transmission
                 const canvas = document.createElement('canvas');
                 // Reduce image size to max 640x480 for faster processing and transmission
@@ -628,7 +751,8 @@
                 // Use lower quality (0.7) for faster transmission
                 const imageData = canvas.toDataURL('image/jpeg', 0.7);
                 
-                console.log('[RECOGNITION] Sending to server...');
+                console.log('[RECOGNITION] Step 2: Frame captured, sending to server...');
+                console.log('[RECOGNITION] Image data length:', imageData.length);
                 updateStatus('Recognizing face...', false);
                 
                 // Cancel any previous request
@@ -653,6 +777,7 @@
                     return;
                 }
                 
+                console.log('[RECOGNITION] Step 3: Making fetch request to /api/recognize-face');
                 const response = await fetch('/api/recognize-face', {
                     method: 'POST',
                     headers: {
@@ -665,13 +790,22 @@
                     priority: 'low' // Low priority to not block other requests
                 });
                 
+                console.log('[RECOGNITION] Step 4: Response received, status:', response.status, response.statusText);
+                
                 // Check if response is ok
                 if (!response.ok) {
+                    console.error('[RECOGNITION] Response not OK, status:', response.status);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
+                console.log('[RECOGNITION] Step 5: Parsing JSON response...');
                 const data = await response.json();
-                console.log('[RECOGNITION] Response:', data);
+                console.log('[RECOGNITION] Step 6: JSON parsed successfully');
+                console.log('[RECOGNITION] Full Response:', JSON.stringify(data, null, 2));
+                console.log('[RECOGNITION] Success:', data.success);
+                console.log('[RECOGNITION] Employee data:', data.employee);
+                console.log('[RECOGNITION] Time in:', data.time_in);
+                console.log('[RECOGNITION] Message:', data.message);
                 
                 if (timeoutId) clearTimeout(timeoutId);
                 document.getElementById('scanningIndicator').classList.remove('active');
@@ -682,8 +816,17 @@
                     return;
                 }
                 
-                if (data.success && data.employee) {
-                    handleRecognitionSuccess(data.employee, data.time_in, data.message);
+                // Check if response indicates success
+                if (data && data.success === true) {
+                    // Verify employee data exists
+                    if (data.employee && (data.employee.full_name || data.employee.employee_code)) {
+                        console.log('[RECOGNITION] Success confirmed - calling handleRecognitionSuccess');
+                        const timeInValue = data.time_in || data.timeIn || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                        handleRecognitionSuccess(data.employee, timeInValue, data.message);
+                    } else {
+                        console.error('[RECOGNITION] Success is true but employee data is missing or incomplete:', data.employee);
+                        updateStatus('Employee data not found. Please try again.', false);
+                    }
                 } else {
                     // Handle different error types
                     const errorMessage = data.message || 'Face not recognized. Please try again.';
@@ -750,6 +893,11 @@
 
         // Handle successful recognition
         function handleRecognitionSuccess(employee, timeIn, message) {
+            console.log('[SUCCESS] ===== EMPLOYEE RECOGNIZED =====');
+            console.log('[SUCCESS] Employee object:', employee);
+            console.log('[SUCCESS] Time in:', timeIn);
+            console.log('[SUCCESS] Message:', message);
+            
             // Stop scanning temporarily
             if (scanInterval) {
                 clearInterval(scanInterval);
@@ -757,23 +905,197 @@
             }
             scanning = false;
             
-            // Show success status
-            document.getElementById('welcomeName').textContent = `Welcome, ${employee.full_name}!`;
-            document.getElementById('checkinTime').textContent = `Check-in recorded at ${timeIn}`;
-            document.getElementById('scanStatus').classList.add('active', 'success');
+            // Show success status with welcome message
+            const welcomeNameEl = document.getElementById('welcomeName');
+            const checkinTimeEl = document.getElementById('checkinTime');
+            const scanStatusEl = document.getElementById('scanStatus');
             
-            updateStatus(message || 'Face recognized successfully!', true);
+            console.log('[SUCCESS] Elements found:', {
+                welcomeName: !!welcomeNameEl,
+                checkinTime: !!checkinTimeEl,
+                scanStatus: !!scanStatusEl
+            });
             
-            // Reload history
+            if (!scanStatusEl) {
+                console.error('[SUCCESS] ERROR: scanStatus element not found!');
+                return;
+            }
+            
+            if (welcomeNameEl) {
+                const name = employee.full_name || employee.fullName || 'Employee';
+                welcomeNameEl.textContent = `Welcome, ${name}!`;
+                console.log('[SUCCESS] Set welcome name to:', name);
+            }
+            
+            if (checkinTimeEl) {
+                checkinTimeEl.textContent = `Time in recorded at ${timeIn}`;
+                console.log('[SUCCESS] Set check-in time to:', timeIn);
+            }
+            
+            // Force show the welcome banner
+            scanStatusEl.classList.add('active', 'success');
+            scanStatusEl.style.display = 'flex'; // Force display
+            console.log('[SUCCESS] Welcome banner should now be visible');
+            
+            // Update status message
+            updateStatus(message || 'Successfully timed in!', true);
+            console.log('[SUCCESS] Status message updated');
+            
+            // Display employee info in right panel
+            displayEmployeeInfo(employee);
+            console.log('[SUCCESS] Employee info display called');
+            
+            // Reload history to show the new entry
             loadHistory(currentFilter);
+            console.log('[SUCCESS] History reload called');
             
-            // Hide success message after 5 seconds and resume scanning
+            // Hide success message after 10 seconds and resume scanning
             setTimeout(() => {
-                document.getElementById('scanStatus').classList.remove('active');
+                console.log('[SUCCESS] Hiding welcome banner after 10 seconds');
+                if (scanStatusEl) {
+                    scanStatusEl.classList.remove('active');
+                    scanStatusEl.style.display = 'none';
+                }
+                // Keep employee info visible, just hide the welcome banner
                 setTimeout(() => {
                     startScanning();
                 }, 1000);
-            }, 5000);
+            }, 10000); // Increased to 10 seconds
+        }
+
+        // Display employee information in right panel
+        function displayEmployeeInfo(employee) {
+            console.log('[INFO] Displaying employee info:', employee);
+            
+            const employeeInfoSection = document.getElementById('employeeInfoSection');
+            const employeeName = document.getElementById('employeeName');
+            const employeeCode = document.getElementById('employeeCode');
+            const employeePhoto = document.getElementById('employeePhoto');
+            const employeeInfoGrid = document.getElementById('employeeInfoGrid');
+            
+            if (!employeeInfoSection) {
+                console.error('[INFO] Employee info section not found!');
+                return;
+            }
+            
+            // Set name and code
+            if (employeeName) {
+                employeeName.textContent = employee.full_name ? employee.full_name.toUpperCase() : 'EMPLOYEE';
+            }
+            if (employeeCode) {
+                employeeCode.textContent = employee.employee_code ? `(${employee.employee_code})` : '';
+            }
+            
+            // Set photo if available
+            if (employee.photo_path) {
+                // Construct photo URL - photo_path might already include photos/ prefix
+                let photoUrl = employee.photo_path;
+                if (!photoUrl.startsWith('http') && !photoUrl.startsWith('/')) {
+                    photoUrl = `/static/${photoUrl}`;
+                } else if (!photoUrl.startsWith('http')) {
+                    photoUrl = `/static${photoUrl}`;
+                }
+                employeePhoto.src = photoUrl;
+                employeePhoto.style.display = 'block';
+                employeePhoto.onerror = function() {
+                    this.style.display = 'none';
+                };
+            } else {
+                employeePhoto.style.display = 'none';
+            }
+            
+            // Build info grid
+            const infoItems = [];
+            
+            // Address (full width)
+            if (employee.address) {
+                infoItems.push(`
+                    <div class="info-item full-width">
+                        <div class="info-label">Address</div>
+                        <div class="info-value">${escapeHtml(employee.address)}</div>
+                    </div>
+                `);
+            }
+            
+            // Age and Contact Number
+            if (employee.age) {
+                infoItems.push(`
+                    <div class="info-item">
+                        <div class="info-label">Age</div>
+                        <div class="info-value">${escapeHtml(String(employee.age))}</div>
+                    </div>
+                `);
+            }
+            
+            if (employee.contact_number) {
+                infoItems.push(`
+                    <div class="info-item">
+                        <div class="info-label">Contact Number</div>
+                        <div class="info-value">${escapeHtml(employee.contact_number)}</div>
+                    </div>
+                `);
+            }
+            
+            // Department and Employment Status
+            if (employee.department) {
+                infoItems.push(`
+                    <div class="info-item">
+                        <div class="info-label">Department</div>
+                        <div class="info-value">${escapeHtml(employee.department)}</div>
+                    </div>
+                `);
+            }
+            
+            if (employee.employment_status) {
+                infoItems.push(`
+                    <div class="info-item">
+                        <div class="info-label">Employment Status</div>
+                        <div class="info-value">${escapeHtml(employee.employment_status)}</div>
+                    </div>
+                `);
+            }
+            
+            // Email (full width)
+            if (employee.email) {
+                infoItems.push(`
+                    <div class="info-item full-width">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">${escapeHtml(employee.email)}</div>
+                    </div>
+                `);
+            }
+            
+            // Position (full width if available)
+            if (employee.position) {
+                infoItems.push(`
+                    <div class="info-item full-width">
+                        <div class="info-label">Position</div>
+                        <div class="info-value">${escapeHtml(employee.position)}</div>
+                    </div>
+                `);
+            }
+            
+            // If no info items, show a message
+            if (infoItems.length === 0) {
+                employeeInfoGrid.innerHTML = '<div class="info-item full-width"><div class="info-value" style="text-align: center; color: #666;">No additional information available</div></div>';
+            } else {
+                employeeInfoGrid.innerHTML = infoItems.join('');
+            }
+            
+            // Show the employee info section (keep it visible permanently after first time-in)
+            employeeInfoSection.classList.add('active');
+            employeeInfoSection.style.display = 'block'; // Force display
+            console.log('[INFO] Employee info section made visible - class active added, display set to block');
+            console.log('[INFO] Employee info section element:', employeeInfoSection);
+            console.log('[INFO] Employee info section classes:', employeeInfoSection.className);
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Update status message
