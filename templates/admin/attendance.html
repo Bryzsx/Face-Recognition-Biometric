@@ -5,7 +5,28 @@
 {% block content %}
 <div class="section active">
   <div class="card">
-    <div class="card-title">Today's Attendance</div>
+    <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>Today's Attendance</span>
+      {% if records %}
+      <div style="display: flex; gap: 8px;">
+        <a href="{{ url_for('admin.export_attendance', format='csv') }}?date={{ selected_date }}" 
+           class="btn-export" 
+           style="padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
+          📄 CSV
+        </a>
+        <a href="{{ url_for('admin.export_attendance', format='excel') }}?date={{ selected_date }}" 
+           class="btn-export" 
+           style="padding: 8px 16px; background: #059669; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
+          📊 Excel
+        </a>
+        <a href="{{ url_for('admin.export_attendance', format='pdf') }}?date={{ selected_date }}" 
+           class="btn-export" 
+           style="padding: 8px 16px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
+          📑 PDF
+        </a>
+      </div>
+      {% endif %}
+    </div>
     
     <!-- Date Selector -->
     <div style="margin-bottom: 20px;">

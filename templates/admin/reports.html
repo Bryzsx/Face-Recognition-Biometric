@@ -31,6 +31,20 @@
       </form>
     </div>
 
+    <!-- Export/Print Button -->
+    {% if dtr_data and employee_info %}
+    <div style="margin-bottom: 20px; text-align: right;">
+      <button onclick="window.print()" 
+              style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; margin-right: 10px;">
+        🖨️ Print DTR
+      </button>
+      <a href="{{ url_for('admin.export_dtr_pdf', employee_id=employee_id, month=month_year) }}" 
+         style="padding: 10px 20px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; display: inline-block;">
+        📑 Download PDF
+      </a>
+    </div>
+    {% endif %}
+
     <!-- DTR Form -->
     {% if dtr_data and employee_info %}
     <div id="dtr-form-container" class="dtr-container">

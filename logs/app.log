@@ -3569,3 +3569,63 @@ AttributeError: 'sqlite3.Row' object has no attribute 'get'
 2026-01-26 08:58:31 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
 2026-01-26 08:58:31 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
 2026-01-26 08:58:38 - blueprints.admin - INFO - admin.py:873 - Admin management page accessed by: System Admin
+2026-01-26 13:34:46 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-26 13:34:46 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-26 13:34:46 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-26 13:34:46 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-26 13:34:46 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-26 13:34:46 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-26 13:34:49 - __main__ - WARNING - app.py:52 - 404 error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-01-26 13:34:57 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-26 13:34:57 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:34:57 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:34:57 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:34:57 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:35:03 - blueprints.admin - INFO - admin.py:873 - Admin management page accessed by: System Admin
+2026-01-26 13:35:04 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:35:04 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:35:04 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:35:04 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:35:10 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-26 13:35:24 - blueprints.admin - ERROR - admin.py:1445 - openpyxl not installed
+2026-01-26 13:35:44 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-26 13:37:55 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:37:55 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:37:55 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:37:55 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:38:19 - blueprints.admin - INFO - admin.py:873 - Admin management page accessed by: System Admin
+2026-01-26 13:38:23 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:38:23 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:38:23 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:38:23 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:38:32 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-01-26 13:38:38 - blueprints.api - INFO - api.py:204 - Starting face recognition...
+2026-01-26 13:38:39 - face_utils - INFO - face_utils.py:517 - Successfully loaded 1 face encodings
+2026-01-26 13:38:39 - blueprints.api - INFO - api.py:255 - Face match found at index 0, employee_id: 1
+2026-01-26 13:38:39 - blueprints.api - INFO - api.py:484 - Attendance recorded for employee 1 at 01:38 PM
+2026-01-26 13:40:16 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:40:16 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:40:16 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:40:16 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:40:17 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:40:17 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:40:17 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:40:17 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 13:40:18 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-26 13:40:18 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-26 13:40:18 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-26 13:40:18 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard
+2026-01-26 14:22:49 - blueprints.admin - ERROR - admin.py:1445 - openpyxl not installed
+2026-01-26 14:23:09 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-27 09:40:54 - __main__ - INFO - app.py:28 - Flask application initialized with blueprints
+2026-01-27 09:40:54 - __main__ - INFO - app.py:96 - ==================================================
+2026-01-27 09:40:54 - __main__ - INFO - app.py:97 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-01-27 09:40:54 - __main__ - INFO - app.py:98 - ==================================================
+2026-01-27 09:40:54 - __main__ - INFO - app.py:99 - Access the app via: https://YOUR_IP:5000
+2026-01-27 09:40:54 - __main__ - INFO - app.py:113 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-01-27 09:41:01 - __main__ - WARNING - app.py:52 - 404 error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-01-27 09:41:08 - blueprints.auth - INFO - auth.py:33 - Admin login successful: admin
+2026-01-27 09:41:08 - blueprints.admin - INFO - admin.py:71 - Dashboard accessed by admin: System Admin
+2026-01-27 09:41:08 - blueprints.api - INFO - api.py:74 - Total attendance records in database: 5
+2026-01-27 09:41:08 - blueprints.api - INFO - api.py:89 - Recent attendance query returned 5 records
+2026-01-27 09:41:08 - blueprints.api - INFO - api.py:107 - Processed 5 attendance records for dashboard

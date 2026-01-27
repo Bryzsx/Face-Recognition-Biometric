@@ -1073,3 +1073,637 @@ def get_admin(admin_id):
     except Exception as e:
         logger.error(f"Error getting admin: {str(e)}", exc_info=True)
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ==================== EXPORT FUNCTIONALITY ====================
+
+@admin_bp.route("/export/attendance/<format>")
+@admin_required
+def export_attendance(format):
+    """Export attendance data in CSV, Excel, or PDF format"""
+    try:
+        from db import get_db
+        from flask import Response, make_response
+        from datetime import datetime
+        import csv
+        import io
+        
+        db = get_db()
+        cur = db.cursor()
+        
+        # Get date filter if provided
+        selected_date = request.args.get("date", "")
+        
+        # Build query
+        if selected_date:
+            query = """
+                SELECT e.full_name, e.employee_code, e.department, a.date, 
+                       a.morning_in, a.lunch_out, a.afternoon_in, a.time_out, 
+                       a.attendance_status, a.verification_method
+                FROM attendance a
+                JOIN employees e ON a.employee_id = e.id
+                WHERE a.date=?
+                ORDER BY e.full_name, a.date
+            """
+            params = (selected_date,)
+        else:
+            query = """
+                SELECT e.full_name, e.employee_code, e.department, a.date, 
+                       a.morning_in, a.lunch_out, a.afternoon_in, a.time_out, 
+                       a.attendance_status, a.verification_method
+                FROM attendance a
+                JOIN employees e ON a.employee_id = e.id
+                ORDER BY a.date DESC, e.full_name
+                LIMIT 1000
+            """
+            params = None
+        
+        cur.execute(query, params) if params else cur.execute(query)
+        records = cur.fetchall()
+        
+        if format == 'csv':
+            # CSV Export
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            # Write header
+            writer.writerow([
+                'Employee Name', 'Employee Code', 'Department', 'Date',
+                'Morning In', 'Lunch Out', 'Afternoon In', 'Time Out',
+                'Status', 'Verification Method'
+            ])
+            
+            # Write data
+            for record in records:
+                writer.writerow([
+                    record["full_name"] or "",
+                    record["employee_code"] or "",
+                    record["department"] or "",
+                    record["date"] or "",
+                    record["morning_in"] or "",
+                    record["lunch_out"] or "",
+                    record["afternoon_in"] or "",
+                    record["time_out"] or "",
+                    record["attendance_status"] or "",
+                    record["verification_method"] or ""
+                ])
+            
+            output.seek(0)
+            filename = f"attendance_{selected_date or 'all'}_{datetime.now().strftime('%Y%m%d')}.csv"
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+            
+        elif format == 'excel':
+            # Excel Export
+            try:
+                from openpyxl import Workbook
+                from openpyxl.styles import Font, Alignment, PatternFill
+                
+                wb = Workbook()
+                ws = wb.active
+                ws.title = "Attendance Records"
+                
+                # Header row with styling
+                headers = [
+                    'Employee Name', 'Employee Code', 'Department', 'Date',
+                    'Morning In', 'Lunch Out', 'Afternoon In', 'Time Out',
+                    'Status', 'Verification Method'
+                ]
+                header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+                header_font = Font(bold=True, color="FFFFFF")
+                
+                for col_num, header in enumerate(headers, 1):
+                    cell = ws.cell(row=1, column=col_num, value=header)
+                    cell.fill = header_fill
+                    cell.font = header_font
+                    cell.alignment = Alignment(horizontal='center', vertical='center')
+                
+                # Data rows
+                for row_num, record in enumerate(records, 2):
+                    ws.cell(row=row_num, column=1, value=record["full_name"] or "")
+                    ws.cell(row=row_num, column=2, value=record["employee_code"] or "")
+                    ws.cell(row=row_num, column=3, value=record["department"] or "")
+                    ws.cell(row=row_num, column=4, value=record["date"] or "")
+                    ws.cell(row=row_num, column=5, value=record["morning_in"] or "")
+                    ws.cell(row=row_num, column=6, value=record["lunch_out"] or "")
+                    ws.cell(row=row_num, column=7, value=record["afternoon_in"] or "")
+                    ws.cell(row=row_num, column=8, value=record["time_out"] or "")
+                    ws.cell(row=row_num, column=9, value=record["attendance_status"] or "")
+                    ws.cell(row=row_num, column=10, value=record["verification_method"] or "")
+                
+                # Auto-adjust column widths
+                for col in ws.columns:
+                    max_length = 0
+                    col_letter = col[0].column_letter
+                    for cell in col:
+                        try:
+                            if len(str(cell.value)) > max_length:
+                                max_length = len(str(cell.value))
+                        except:
+                            pass
+                    adjusted_width = min(max_length + 2, 50)
+                    ws.column_dimensions[col_letter].width = adjusted_width
+                
+                # Save to BytesIO
+                output = io.BytesIO()
+                wb.save(output)
+                output.seek(0)
+                
+                filename = f"attendance_{selected_date or 'all'}_{datetime.now().strftime('%Y%m%d')}.xlsx"
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
+            except ImportError:
+                logger.error("openpyxl not installed. Please install it: pip install openpyxl")
+                return jsonify({"success": False, "error": "Excel export requires openpyxl library"}), 500
+                
+        elif format == 'pdf':
+            # PDF Export
+            try:
+                from reportlab.lib.pagesizes import letter, A4
+                from reportlab.lib import colors
+                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+                from reportlab.lib.units import inch
+                from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+                from reportlab.pdfbase import pdfmetrics
+                from reportlab.pdfbase.ttfonts import TTFont
+                
+                output = io.BytesIO()
+                doc = SimpleDocTemplate(output, pagesize=A4, topMargin=0.5*inch, bottomMargin=0.5*inch)
+                elements = []
+                
+                styles = getSampleStyleSheet()
+                title_style = ParagraphStyle(
+                    'CustomTitle',
+                    parent=styles['Heading1'],
+                    fontSize=16,
+                    textColor=colors.HexColor('#1f2937'),
+                    spaceAfter=20,
+                    alignment=1  # Center
+                )
+                
+                # Title
+                title_text = f"Attendance Report - {selected_date or 'All Records'}"
+                elements.append(Paragraph(title_text, title_style))
+                elements.append(Spacer(1, 0.2*inch))
+                
+                # Prepare data
+                data = [['Employee Name', 'Employee Code', 'Department', 'Date', 'Morning In', 
+                        'Lunch Out', 'Afternoon In', 'Time Out', 'Status']]
+                
+                for record in records:
+                    data.append([
+                        record["full_name"] or "",
+                        record["employee_code"] or "",
+                        record["department"] or "",
+                        record["date"] or "",
+                        record["morning_in"] or "--",
+                        record["lunch_out"] or "--",
+                        record["afternoon_in"] or "--",
+                        record["time_out"] or "--",
+                        record["attendance_status"] or ""
+                    ])
+                
+                # Create table
+                table = Table(data, colWidths=[1.5*inch, 1*inch, 1*inch, 0.8*inch, 0.8*inch, 
+                                                0.8*inch, 0.8*inch, 0.8*inch, 0.8*inch])
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#366092')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 9),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+                ]))
+                
+                elements.append(table)
+                
+                # Build PDF
+                doc.build(elements)
+                output.seek(0)
+                
+                filename = f"attendance_{selected_date or 'all'}_{datetime.now().strftime('%Y%m%d')}.pdf"
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'application/pdf'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
+            except ImportError:
+                logger.error("reportlab not installed. Please install it: pip install reportlab")
+                return jsonify({"success": False, "error": "PDF export requires reportlab library"}), 500
+        else:
+            return jsonify({"success": False, "error": "Invalid format. Use csv, excel, or pdf"}), 400
+            
+    except Exception as e:
+        logger.error(f"Error exporting attendance: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/export/employees/<format>")
+@admin_required
+def export_employees(format):
+    """Export employees data in CSV, Excel, or PDF format"""
+    try:
+        from db import get_db
+        from flask import Response, make_response
+        from datetime import datetime
+        import csv
+        import io
+        
+        db = get_db()
+        cur = db.cursor()
+        
+        # Get search filter if provided
+        search_query = request.args.get("search", "").strip()
+        
+        # Build query
+        if search_query:
+            search_pattern = f"%{search_query}%"
+            query = """
+                SELECT full_name, employee_code, department, position, 
+                       contact_number, email, employment_status, status
+                FROM employees 
+                WHERE full_name LIKE ? OR employee_code LIKE ? OR department LIKE ?
+                ORDER BY full_name
+            """
+            params = (search_pattern, search_pattern, search_pattern)
+        else:
+            query = """
+                SELECT full_name, employee_code, department, position, 
+                       contact_number, email, employment_status, status
+                FROM employees 
+                ORDER BY full_name
+            """
+            params = None
+        
+        cur.execute(query, params) if params else cur.execute(query)
+        employees = cur.fetchall()
+        
+        if format == 'csv':
+            # CSV Export
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            # Write header
+            writer.writerow([
+                'Full Name', 'Employee Code', 'Department', 'Position',
+                'Contact Number', 'Email', 'Employment Status', 'Status'
+            ])
+            
+            # Write data
+            for emp in employees:
+                writer.writerow([
+                    emp["full_name"] or "",
+                    emp["employee_code"] or "",
+                    emp["department"] or "",
+                    emp["position"] or "",
+                    emp["contact_number"] or "",
+                    emp["email"] or "",
+                    emp["employment_status"] or "",
+                    emp["status"] or "Active"
+                ])
+            
+            output.seek(0)
+            filename = f"employees_{datetime.now().strftime('%Y%m%d')}.csv"
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'text/csv; charset=utf-8'
+            response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+            
+        elif format == 'excel':
+            # Excel Export
+            try:
+                from openpyxl import Workbook
+                from openpyxl.styles import Font, Alignment, PatternFill
+                
+                wb = Workbook()
+                ws = wb.active
+                ws.title = "Employees"
+                
+                # Header row with styling
+                headers = [
+                    'Full Name', 'Employee Code', 'Department', 'Position',
+                    'Contact Number', 'Email', 'Employment Status', 'Status'
+                ]
+                header_fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+                header_font = Font(bold=True, color="FFFFFF")
+                
+                for col_num, header in enumerate(headers, 1):
+                    cell = ws.cell(row=1, column=col_num, value=header)
+                    cell.fill = header_fill
+                    cell.font = header_font
+                    cell.alignment = Alignment(horizontal='center', vertical='center')
+                
+                # Data rows
+                for row_num, emp in enumerate(employees, 2):
+                    ws.cell(row=row_num, column=1, value=emp["full_name"] or "")
+                    ws.cell(row=row_num, column=2, value=emp["employee_code"] or "")
+                    ws.cell(row=row_num, column=3, value=emp["department"] or "")
+                    ws.cell(row=row_num, column=4, value=emp["position"] or "")
+                    ws.cell(row=row_num, column=5, value=emp["contact_number"] or "")
+                    ws.cell(row=row_num, column=6, value=emp["email"] or "")
+                    ws.cell(row=row_num, column=7, value=emp["employment_status"] or "")
+                    ws.cell(row=row_num, column=8, value=emp["status"] or "Active")
+                
+                # Auto-adjust column widths
+                for col in ws.columns:
+                    max_length = 0
+                    col_letter = col[0].column_letter
+                    for cell in col:
+                        try:
+                            if len(str(cell.value)) > max_length:
+                                max_length = len(str(cell.value))
+                        except:
+                            pass
+                    adjusted_width = min(max_length + 2, 50)
+                    ws.column_dimensions[col_letter].width = adjusted_width
+                
+                # Save to BytesIO
+                output = io.BytesIO()
+                wb.save(output)
+                output.seek(0)
+                
+                filename = f"employees_{datetime.now().strftime('%Y%m%d')}.xlsx"
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
+            except ImportError:
+                logger.error("openpyxl not installed")
+                return jsonify({"success": False, "error": "Excel export requires openpyxl library"}), 500
+                
+        elif format == 'pdf':
+            # PDF Export
+            try:
+                from reportlab.lib.pagesizes import A4
+                from reportlab.lib import colors
+                from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+                from reportlab.lib.units import inch
+                from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+                
+                output = io.BytesIO()
+                doc = SimpleDocTemplate(output, pagesize=A4, topMargin=0.5*inch, bottomMargin=0.5*inch)
+                elements = []
+                
+                styles = getSampleStyleSheet()
+                title_style = ParagraphStyle(
+                    'CustomTitle',
+                    parent=styles['Heading1'],
+                    fontSize=16,
+                    textColor=colors.HexColor('#1f2937'),
+                    spaceAfter=20,
+                    alignment=1
+                )
+                
+                # Title
+                elements.append(Paragraph("Employee List", title_style))
+                elements.append(Spacer(1, 0.2*inch))
+                
+                # Prepare data
+                data = [['Full Name', 'Employee Code', 'Department', 'Position', 'Contact', 'Email', 'Status']]
+                
+                for emp in employees:
+                    data.append([
+                        emp["full_name"] or "",
+                        emp["employee_code"] or "",
+                        emp["department"] or "",
+                        emp["position"] or "",
+                        emp["contact_number"] or "",
+                        emp["email"] or "",
+                        emp["status"] or "Active"
+                    ])
+                
+                # Create table
+                table = Table(data, colWidths=[1.5*inch, 1*inch, 1*inch, 1.2*inch, 1*inch, 1.5*inch, 0.8*inch])
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#366092')),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 9),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 8),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.lightgrey]),
+                ]))
+                
+                elements.append(table)
+                doc.build(elements)
+                output.seek(0)
+                
+                filename = f"employees_{datetime.now().strftime('%Y%m%d')}.pdf"
+                
+                response = make_response(output.getvalue())
+                response.headers['Content-Type'] = 'application/pdf'
+                response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+                return response
+            except ImportError:
+                logger.error("reportlab not installed")
+                return jsonify({"success": False, "error": "PDF export requires reportlab library"}), 500
+        else:
+            return jsonify({"success": False, "error": "Invalid format. Use csv, excel, or pdf"}), 400
+            
+    except Exception as e:
+        logger.error(f"Error exporting employees: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@admin_bp.route("/export/dtr-pdf")
+@admin_required
+def export_dtr_pdf():
+    """Export DTR (Daily Time Record) as PDF"""
+    try:
+        from db import get_db
+        from flask import make_response, render_template
+        from datetime import datetime
+        import io
+        
+        employee_id = request.args.get("employee_id")
+        month_year = request.args.get("month", "")
+        
+        if not employee_id or not month_year:
+            return jsonify({"success": False, "error": "Employee ID and month are required"}), 400
+        
+        db = get_db()
+        cur = db.cursor()
+        
+        # Get employee info
+        cur.execute("SELECT * FROM employees WHERE id=?", (employee_id,))
+        employee_info = cur.fetchone()
+        
+        if not employee_info:
+            return jsonify({"success": False, "error": "Employee not found"}), 404
+        
+        # Get attendance records
+        try:
+            year, month = month_year.split("-")
+            cur.execute("""
+                SELECT date, morning_in, lunch_out, afternoon_in, time_out, attendance_status
+                FROM attendance
+                WHERE employee_id=? AND date LIKE ?
+                ORDER BY date
+            """, (employee_id, f"{year}-{month}-%"))
+            
+            attendance_records = cur.fetchall()
+            
+            dtr_data = {
+                "year": year,
+                "month": month,
+                "records": {}
+            }
+            
+            for record in attendance_records:
+                day = record["date"].split("-")[2]
+                dtr_data["records"][day] = {
+                    "morning_in": record["morning_in"] or "",
+                    "lunch_out": record["lunch_out"] or "",
+                    "afternoon_in": record["afternoon_in"] or "",
+                    "time_out": record["time_out"] or "",
+                    "status": record["attendance_status"] or ""
+                }
+        except Exception as e:
+            logger.warning(f"Error processing DTR data: {str(e)}")
+            dtr_data = {"year": year, "month": month, "records": {}}
+        
+        # Generate PDF using reportlab
+        try:
+            from reportlab.lib.pagesizes import letter
+            from reportlab.lib import colors
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.lib.units import inch
+            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+            from calendar import month_name
+            
+            output = io.BytesIO()
+            doc = SimpleDocTemplate(output, pagesize=letter, topMargin=0.3*inch, bottomMargin=0.3*inch)
+            elements = []
+            
+            styles = getSampleStyleSheet()
+            
+            # Title
+            title_style = ParagraphStyle(
+                'DTRTitle',
+                parent=styles['Heading1'],
+                fontSize=12,
+                textColor=colors.black,
+                spaceAfter=10,
+                alignment=1  # Center
+            )
+            
+            elements.append(Paragraph("CIVIL SERVICE FORM NO. 48", title_style))
+            elements.append(Paragraph("DAILY TIME RECORD", title_style))
+            elements.append(Spacer(1, 0.2*inch))
+            
+            # Employee name
+            name_style = ParagraphStyle(
+                'DTRName',
+                parent=styles['Normal'],
+                fontSize=10,
+                textColor=colors.black
+            )
+            elements.append(Paragraph(f"(Name) {employee_info['full_name'] or 'N/A'}", name_style))
+            elements.append(Spacer(1, 0.1*inch))
+            
+            # Month
+            month_name_str = month_name[int(month)]
+            elements.append(Paragraph(f"For the month of {month_name_str}, {year}", name_style))
+            elements.append(Spacer(1, 0.2*inch))
+            
+            # Create calendar table
+            days_in_month = 31  # Will be calculated properly
+            try:
+                from calendar import monthrange
+                days_in_month = monthrange(int(year), int(month))[1]
+            except:
+                pass
+            
+            # Table headers
+            table_data = [['Day', 'AM IN', 'AM OUT', 'PM IN', 'PM OUT', 'Remarks']]
+            
+            # Fill in attendance data
+            for day in range(1, days_in_month + 1):
+                day_str = str(day).zfill(2)
+                day_key = str(day)
+                
+                if day_key in dtr_data.get("records", {}):
+                    record = dtr_data["records"][day_key]
+                    table_data.append([
+                        day_str,
+                        record.get("morning_in", ""),
+                        record.get("lunch_out", ""),
+                        record.get("afternoon_in", ""),
+                        record.get("time_out", ""),
+                        record.get("status", "")
+                    ])
+                else:
+                    table_data.append([day_str, "", "", "", "", ""])
+            
+            # Create table
+            table = Table(table_data, colWidths=[0.4*inch, 0.8*inch, 0.8*inch, 0.8*inch, 0.8*inch, 1*inch])
+            table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, 0), 8),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+                ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                ('FONTSIZE', (0, 1), (-1, -1), 7),
+                ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
+            ]))
+            
+            elements.append(table)
+            elements.append(Spacer(1, 0.3*inch))
+            
+            # Certification
+            cert_style = ParagraphStyle(
+                'DTRCert',
+                parent=styles['Normal'],
+                fontSize=8,
+                textColor=colors.black
+            )
+            elements.append(Paragraph("I certify on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.", cert_style))
+            elements.append(Spacer(1, 0.3*inch))
+            
+            # Signature line
+            elements.append(Paragraph("_________________________", cert_style))
+            elements.append(Paragraph("Signature", cert_style))
+            
+            # Build PDF
+            doc.build(elements)
+            output.seek(0)
+            
+            filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+            
+            response = make_response(output.getvalue())
+            response.headers['Content-Type'] = 'application/pdf'
+            response.headers['Content-Disposition'] = f'attachment; filename="{filename}"'
+            return response
+        except ImportError:
+            logger.error("reportlab not installed")
+            return jsonify({"success": False, "error": "PDF export requires reportlab library"}), 500
+        except Exception as e:
+            logger.error(f"Error generating DTR PDF: {str(e)}", exc_info=True)
+            return jsonify({"success": False, "error": str(e)}), 500
+            
+    except Exception as e:
+        logger.error(f"Error exporting DTR: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500

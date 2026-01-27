@@ -1198,3 +1198,8 @@ Traceback (most recent call last):
   File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1027, in delete_admin
     if admin_count and admin_count.get("count", 0) <= 1:
 AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-26 13:35:10 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-26 13:35:24 - blueprints.admin - ERROR - admin.py:1445 - openpyxl not installed
+2026-01-26 13:35:44 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-26 14:22:49 - blueprints.admin - ERROR - admin.py:1445 - openpyxl not installed
+2026-01-26 14:23:09 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
