@@ -1,15 +1,17 @@
-﻿"""
+"""
 Admin blueprint for dashboard, employees, attendance, reports, and settings
 """
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
+from werkzeug.utils import secure_filename
 from functools import wraps
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from utils.logger import get_logger
 from utils.validators import (
     validate_required, validate_employee_registration_data, 
     validate_integer, validate_float, validate_date, validate_time,
     ValidationError, sanitize_string
 )
+from utils.security import hash_password
 import sqlite3
 import json
 import os
@@ -20,6 +22,66 @@ import face_utils
 
 logger = get_logger(__name__)
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+
+def _ensure_proof_file_path_column(db_cursor):
+    """Ensure attendance table has proof_file_path column (migration for existing DBs)."""
+    try:
+        db_cursor.execute("PRAGMA table_info(attendance)")
+        columns = [row[1] for row in db_cursor.fetchall()]
+        if "proof_file_path" not in columns:
+            db_cursor.execute("ALTER TABLE attendance ADD COLUMN proof_file_path TEXT")
+    except Exception:
+        pass
+
+
+def _ensure_audit_log_table(db_cursor):
+    """Ensure audit_log table exists (for tracking sensitive admin actions)."""
+    try:
+        db_cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS audit_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                admin_name TEXT,
+                action TEXT NOT NULL,
+                details TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+            """
+        )
+    except Exception:
+        # Logging is best-effort; do not break main flows
+        logger.warning("Could not ensure audit_log table exists", exc_info=True)
+
+
+def _ensure_admin_photo_column(db_cursor):
+    """Ensure admin table has photo_path column for profile photo."""
+    try:
+        db_cursor.execute("PRAGMA table_info(admin)")
+        columns = [row[1] for row in db_cursor.fetchall()]
+        if "photo_path" not in columns:
+            db_cursor.execute("ALTER TABLE admin ADD COLUMN photo_path TEXT")
+    except Exception:
+        pass
+
+
+def log_admin_action(db, action: str, details: str = "", admin_name: str | None = None):
+    """
+    Record an admin action into audit_log.
+    Safe to call inside request handlers; failures are logged but ignored.
+    """
+    try:
+        cur = db.cursor()
+        _ensure_audit_log_table(cur)
+        if admin_name is None:
+            admin_name = session.get("admin_name")
+        cur.execute(
+            "INSERT INTO audit_log (admin_name, action, details) VALUES (?, ?, ?)",
+            (admin_name, action, details[:1000]),
+        )
+        db.commit()
+    except Exception as exc:
+        logger.warning(f"Failed to write audit log entry for action '{action}': {exc}", exc_info=True)
 
 
 def admin_required(f):
@@ -38,10 +100,14 @@ def admin_required(f):
 def dashboard():
     """Admin dashboard with statistics"""
     try:
+        from utils.helpers import ensure_absent_records_for_date
         from db import get_db
         db = get_db()
         cur = db.cursor()
         today = date.today().isoformat()
+
+        # Auto-create Absent records for employees with no attendance today
+        ensure_absent_records_for_date(today)
 
         cur.execute("""
             SELECT 
@@ -293,8 +359,14 @@ def delete_employee(employee_id):
         cur = db.cursor()
         
         # Get employee info before deletion
-        cur.execute("SELECT photo_path FROM employees WHERE id=?", (employee_id,))
+        cur.execute("SELECT photo_path, full_name FROM employees WHERE id=?", (employee_id,))
         employee = cur.fetchone()
+        
+        if not employee:
+            logger.warning(f"Employee {employee_id} not found for deletion")
+            return redirect(url_for("admin.employees"))
+        
+        employee_name = employee["full_name"] if "full_name" in employee.keys() else "Unknown"
         
         # Delete photo file if exists
         # sqlite3.Row objects use bracket notation, not .get()
@@ -307,18 +379,33 @@ def delete_employee(employee_id):
             except Exception as e:
                 logger.warning(f"Could not delete photo file: {str(e)}")
         
-        # Delete employee and related data
-        cur.execute("DELETE FROM employees WHERE id=?", (employee_id,))
-        cur.execute("DELETE FROM facial_data WHERE employee_id=?", (employee_id,))
+        # IMPORTANT: Delete related data FIRST to avoid foreign key constraint errors
+        # Delete in reverse order of dependencies
+        logger.info(f"Deleting related data for employee {employee_id} ({employee_name})")
+        
+        # 1. Delete attendance records first
         cur.execute("DELETE FROM attendance WHERE employee_id=?", (employee_id,))
+        attendance_deleted = cur.rowcount
+        logger.info(f"Deleted {attendance_deleted} attendance records")
+        
+        # 2. Delete facial data
+        cur.execute("DELETE FROM facial_data WHERE employee_id=?", (employee_id,))
+        facial_deleted = cur.rowcount
+        logger.info(f"Deleted {facial_deleted} facial data records")
+        
+        # 3. Finally delete the employee record
+        cur.execute("DELETE FROM employees WHERE id=?", (employee_id,))
         
         db.commit()
-        logger.info(f"Employee {employee_id} deleted successfully")
+        logger.info(f"Employee {employee_id} ({employee_name}) deleted successfully")
         return redirect(url_for("admin.employees"))
     except Exception as e:
-        db.rollback()
+        try:
+            db.rollback()
+        except:
+            pass
         logger.error(f"Error deleting employee {employee_id}: {str(e)}", exc_info=True)
-        return redirect(url_for("admin.employee_info", id=employee_id, error="Failed to delete employee"))
+        return redirect(url_for("admin.employee_info", id=employee_id, error=f"Failed to delete employee: {str(e)}"))
 
 
 @admin_bp.route("/employee/edit/<int:employee_id>", methods=["GET", "POST"])
@@ -451,15 +538,19 @@ def edit_employee(employee_id):
 def attendance():
     """Attendance management page"""
     try:
+        from utils.helpers import ensure_absent_records_for_date
         from db import get_db
         db = get_db()
         cur = db.cursor()
         
         selected_date = request.args.get("date", date.today().isoformat())
-        
+
+        # Auto-create Absent records for employees with no attendance on the selected date
+        ensure_absent_records_for_date(selected_date)
+        _ensure_proof_file_path_column(cur)
         cur.execute("""
-            SELECT a.attendance_id, e.id, e.full_name, a.date, a.morning_in, a.lunch_out, 
-                   a.afternoon_in, a.time_out, a.attendance_status
+            SELECT a.attendance_id, e.id, e.full_name, a.date, a.morning_in, a.lunch_out,
+                   a.afternoon_in, a.time_out, a.attendance_status, a.verification_method, a.proof_file_path
             FROM attendance a
             JOIN employees e ON a.employee_id = e.id
             WHERE a.date=?
@@ -467,7 +558,11 @@ def attendance():
         """, (selected_date,))
 
         records = cur.fetchall()
-        return render_template("admin/attendance.html", records=records, selected_date=selected_date)
+        return render_template(
+            "admin/attendance.html",
+            records=records,
+            selected_date=selected_date,
+        )
     except Exception as e:
         logger.error(f"Error in attendance route: {str(e)}", exc_info=True)
         return render_template("admin/attendance.html", records=[], selected_date=date.today().isoformat())
@@ -499,7 +594,8 @@ def edit_dtr(attendance_id):
                 time_out = validate_time(request.form.get("time_out", ""), "Time Out") if request.form.get("time_out") else None
                 attendance_date = validate_required(request.form.get("date", ""), "Date")
             
-            # Get existing record
+            # Get existing record (to enforce edit window)
+            _ensure_proof_file_path_column(cur)
             cur.execute("SELECT * FROM attendance WHERE attendance_id=?", (attendance_id,))
             existing = cur.fetchone()
             
@@ -507,6 +603,45 @@ def edit_dtr(attendance_id):
                 if request.is_json:
                     return jsonify({"success": False, "message": "Attendance record not found"}), 404
                 return redirect(url_for("admin.attendance"))
+            
+            # Proof file upload (travel order, memo, etc.) - form only
+            proof_file_path = None
+            if not request.is_json:
+                from config import PROOF_UPLOADS_DIR, ALLOWED_PROOF_EXTENSIONS, MAX_PROOF_FILE_SIZE
+                os.makedirs(PROOF_UPLOADS_DIR, exist_ok=True)
+                try:
+                    existing_path = existing["proof_file_path"]
+                except (KeyError, TypeError):
+                    existing_path = None
+                proof_file_path = existing_path
+                f = request.files.get("proof_file")
+                if f and f.filename:
+                    ext = (os.path.splitext(secure_filename(f.filename))[1] or "").lstrip(".").lower()
+                    if ext not in ALLOWED_PROOF_EXTENSIONS:
+                        record = dict(existing) if existing else {}
+                        return render_template("admin/edit_dtr.html", record=record, error="Invalid file type. Allowed: PDF, JPG, PNG, DOC, DOCX")
+                    f.seek(0, 2)
+                    size = f.tell()
+                    f.seek(0)
+                    if size > MAX_PROOF_FILE_SIZE:
+                        record = dict(existing) if existing else {}
+                        return render_template("admin/edit_dtr.html", record=record, error="Proof file is too large (max 10MB)")
+                    from datetime import datetime
+                    safe_name = f"att_{attendance_id}_{datetime.now().strftime('%Y%m%d%H%M%S')}.{ext}"
+                    save_path = os.path.join(PROOF_UPLOADS_DIR, safe_name)
+                    f.save(save_path)
+                    proof_file_path = os.path.join("uploads", "proofs", safe_name).replace("\\", "/")
+            
+            # Proof/remarks when editing (e.g. employee submitted proof for forgotten attendance)
+            proof_notes = None
+            if request.is_json:
+                proof_notes = (request.get_json() or {}).get("proof_notes", "").strip() or None
+                try:
+                    proof_file_path = existing["proof_file_path"]
+                except (KeyError, TypeError):
+                    proof_file_path = None
+            else:
+                proof_notes = (request.form.get("proof_notes") or "").strip() or None
             
             # Determine attendance status
             attendance_status = "Present"
@@ -524,22 +659,34 @@ def edit_dtr(attendance_id):
                 except:
                     pass
             
-            # Update attendance record
+            # Set verification_method: "Admin edit" or "Admin edit; Proof: ..."
+            verification = "Admin edit"
+            if proof_notes:
+                from utils.validators import sanitize_string
+                verification = "Admin edit; Proof: " + sanitize_string(proof_notes, max_length=400)
+            
+            # Update attendance record (include verification_method and proof file path)
             cur.execute("""
                 UPDATE attendance 
                 SET morning_in=?, lunch_out=?, afternoon_in=?, time_out=?, 
-                    attendance_status=?, date=?
+                    attendance_status=?, date=?, verification_method=?, proof_file_path=?
                 WHERE attendance_id=?
-            """, (morning_in, lunch_out, afternoon_in, time_out, attendance_status, attendance_date, attendance_id))
+            """, (morning_in, lunch_out, afternoon_in, time_out, attendance_status, attendance_date, verification, proof_file_path, attendance_id))
             
             db.commit()
             logger.info(f"DTR {attendance_id} updated successfully")
+            log_admin_action(
+                db,
+                action="edit_dtr",
+                details=f"Edited DTR {attendance_id} for date {attendance_date}",
+            )
             
             if request.is_json:
                 return jsonify({"success": True, "message": "DTR updated successfully"})
             return redirect(url_for("admin.attendance", date=attendance_date))
         
         # GET request
+        _ensure_proof_file_path_column(cur)
         cur.execute("""
             SELECT a.*, e.full_name, e.employee_code
             FROM attendance a
@@ -547,11 +694,11 @@ def edit_dtr(attendance_id):
             WHERE a.attendance_id=?
         """, (attendance_id,))
         
-        record = cur.fetchone()
-        
-        if not record:
+        row = cur.fetchone()
+        if not row:
             return redirect(url_for("admin.attendance"))
-        
+        # Convert sqlite3.Row to dict so template/filters never call .get() on Row
+        record = dict(row) if row else None
         return render_template("admin/edit_dtr.html", record=record)
         
     except ValidationError as e:
@@ -559,7 +706,8 @@ def edit_dtr(attendance_id):
         if request.is_json:
             return jsonify({"success": False, "message": str(e)}), 400
         cur.execute("SELECT a.*, e.full_name, e.employee_code FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.attendance_id=?", (attendance_id,))
-        record = cur.fetchone()
+        row = cur.fetchone()
+        record = dict(row) if row else None
         return render_template("admin/edit_dtr.html", record=record, error=str(e))
     except Exception as e:
         db.rollback()
@@ -567,8 +715,54 @@ def edit_dtr(attendance_id):
         if request.is_json:
             return jsonify({"success": False, "message": f"Error: {str(e)}"}), 500
         cur.execute("SELECT a.*, e.full_name, e.employee_code FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.attendance_id=?", (attendance_id,))
-        record = cur.fetchone()
+        row = cur.fetchone()
+        record = dict(row) if row else None
         return render_template("admin/edit_dtr.html", record=record, error=str(e))
+
+
+@admin_bp.route("/audit-log")
+@admin_required
+def audit_log():
+    """Read-only view of recent audit log entries."""
+    try:
+        from db import get_db
+        db = get_db()
+        cur = db.cursor()
+        _ensure_audit_log_table(cur)
+        cur.execute(
+            """
+            SELECT id, admin_name, action, details, created_at
+            FROM audit_log
+            ORDER BY id DESC
+            LIMIT 200
+            """
+        )
+        logs = cur.fetchall()
+        return render_template("admin/audit_log.html", logs=logs)
+    except Exception as e:
+        logger.error(f"Error loading audit log: {str(e)}", exc_info=True)
+        return render_template("admin/audit_log.html", logs=[], error=str(e))
+
+
+@admin_bp.route("/audit-log/delete/<int:log_id>", methods=["POST"])
+@admin_required
+def delete_audit_log(log_id):
+    """Delete a single audit log entry (admin only)."""
+    from flask import jsonify
+    try:
+        from db import get_db
+        db = get_db()
+        cur = db.cursor()
+        cur.execute("DELETE FROM audit_log WHERE id = ?", (log_id,))
+        deleted = cur.rowcount
+        db.commit()
+        if deleted:
+            logger.info(f"Audit log entry {log_id} deleted by admin")
+            return jsonify({"success": True, "message": "Log entry deleted."})
+        return jsonify({"success": False, "error": "Log entry not found."}), 404
+    except Exception as e:
+        logger.error(f"Error deleting audit log {log_id}: {str(e)}", exc_info=True)
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @admin_bp.route("/reports")
@@ -607,18 +801,65 @@ def reports():
                 dtr_data = {
                     "year": year,
                     "month": month,
-                    "records": {}
+                    "records": {},
+                    "total_work_minutes": 0,
                 }
+
+                def _compute_work_minutes(morning_in, lunch_out, afternoon_in, time_out):
+                    """
+                    Compute total work minutes for the day.
+                    - Count morning segment only if BOTH morning_in AND lunch_out exist (complete morning half).
+                    - Count afternoon segment only if BOTH afternoon_in AND time_out exist (complete afternoon half).
+                    - Half-day is OK: only morning or only afternoon still gets totalled.
+                    - Do NOT total if a segment has only one punch (e.g. morning in but no lunch out).
+                    - Lunch break (12:00 PM - 1:00 PM) not counted; afternoon count starts at 1:00 PM if earlier.
+                    """
+                    try:
+                        fmt = "%I:%M %p"
+                        lunch_start = datetime.strptime("12:00 PM", fmt)
+                        afternoon_sched_start = datetime.strptime("01:00 PM", fmt)
+                        morning_minutes = 0
+                        afternoon_minutes = 0
+
+                        if morning_in and lunch_out:
+                            m_in = datetime.strptime(morning_in, fmt)
+                            l_out = datetime.strptime(lunch_out, fmt)
+                            morning_end = min(l_out, lunch_start)
+                            morning_minutes = max(
+                                0, int((morning_end - m_in).total_seconds() / 60)
+                            )
+
+                        if afternoon_in and time_out:
+                            a_in = datetime.strptime(afternoon_in, fmt)
+                            t_out = datetime.strptime(time_out, fmt)
+                            afternoon_start = max(a_in, afternoon_sched_start)
+                            afternoon_minutes = max(
+                                0, int((t_out - afternoon_start).total_seconds() / 60)
+                            )
+
+                        work_minutes = morning_minutes + afternoon_minutes
+                        return work_minutes if work_minutes > 0 else 0
+                    except Exception:
+                        return 0
                 
                 for record in attendance_records:
                     day = record["date"].split("-")[2]
+                    morning_in = record["morning_in"] or ""
+                    lunch_out = record["lunch_out"] or ""
+                    afternoon_in = record["afternoon_in"] or ""
+                    time_out = record["time_out"] or ""
+                    work_minutes = _compute_work_minutes(
+                        morning_in, lunch_out, afternoon_in, time_out
+                    )
                     dtr_data["records"][day] = {
-                        "morning_in": record["morning_in"] or "",
-                        "lunch_out": record["lunch_out"] or "",
-                        "afternoon_in": record["afternoon_in"] or "",
-                        "time_out": record["time_out"] or "",
-                        "status": record["attendance_status"] or ""
+                        "morning_in": morning_in,
+                        "lunch_out": lunch_out,
+                        "afternoon_in": afternoon_in,
+                        "time_out": time_out,
+                        "status": record["attendance_status"] or "",
+                        "work_minutes": work_minutes,
                     }
+                    dtr_data["total_work_minutes"] += work_minutes
             except Exception as e:
                 logger.warning(f"Error processing DTR data: {str(e)}")
         
@@ -642,7 +883,7 @@ def settings():
     db = None
     try:
         from db import get_db
-        from utils.helpers import get_time_settings
+        from utils.helpers import get_time_settings, clear_time_settings_cache
         from datetime import datetime
         
         # Load time settings
@@ -665,10 +906,204 @@ def settings():
         
         db = get_db()
         cur = db.cursor()
+        _ensure_admin_photo_column(cur)
+        current_admin = None
+        if session.get("admin_id"):
+            cur.execute("SELECT id, name, photo_path FROM admin WHERE id = ?", (session["admin_id"],))
+            row = cur.fetchone()
+            if row:
+                current_admin = {"id": row["id"], "name": row["name"] or "", "photo_path": (row["photo_path"] if "photo_path" in row.keys() else None) or ""}
         
         if request.method == "POST":
             action = request.form.get("action")
             
+            if action == "save_time_settings":
+                # Save attendance time settings
+                from utils.validators import ValidationError, validate_required
+
+                def parse_html_time(html_time_str, field_label):
+                    """Convert 'HH:MM' (24h) from HTML input to 'HH:MM AM/PM'."""
+                    try:
+                        value = validate_required(html_time_str, field_label)
+                        t = datetime.strptime(value, "%H:%M")
+                        return t.strftime("%I:%M %p")
+                    except ValidationError:
+                        raise
+                    except Exception:
+                        raise ValidationError(f"{field_label} must be a valid time (HH:MM)")
+
+                try:
+                    # Convert all HTML time values to AM/PM format used in helpers
+                    settings_payload = {
+                        "morning_in_start": parse_html_time(request.form.get("morning_in_start", ""), "Morning start time"),
+                        "morning_in_late": parse_html_time(request.form.get("morning_in_late", ""), "Morning late-after time"),
+                        "morning_in_window_end": parse_html_time(request.form.get("morning_in_window_end", ""), "Morning window end"),
+                        "lunch_out_start": parse_html_time(request.form.get("lunch_out_start", ""), "Lunch out start"),
+                        "lunch_out_end": parse_html_time(request.form.get("lunch_out_end", ""), "Lunch out end"),
+                        "afternoon_in_start": parse_html_time(request.form.get("afternoon_in_start", ""), "Afternoon start time"),
+                        "afternoon_in_late": parse_html_time(request.form.get("afternoon_in_late", ""), "Afternoon late-after time"),
+                        "afternoon_in_window_end": parse_html_time(request.form.get("afternoon_in_window_end", ""), "Afternoon window end"),
+                        "time_out_start": parse_html_time(request.form.get("time_out_start", ""), "Time-out start"),
+                    }
+
+                    # Upsert settings into the settings table
+                    for key, value in settings_payload.items():
+                        cur.execute(
+                            """
+                            INSERT INTO settings (setting_key, setting_value)
+                            VALUES (?, ?)
+                            ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value
+                            """,
+                            (key, value),
+                        )
+
+                    db.commit()
+                    # Clear cache so new values are used immediately
+                    clear_time_settings_cache()
+
+                    # Reload settings for display
+                    time_settings_raw = get_time_settings()
+                    time_settings = {}
+                    for key, value in time_settings_raw.items():
+                        time_settings[key] = convert_time_for_html(value)
+
+                    return render_template(
+                        "admin/settings.html",
+                        error=None,
+                        success="Time settings saved successfully.",
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                except ValidationError as e:
+                    logger.warning(f"Validation error in time settings: {str(e)}")
+                    db.rollback()
+                    # Reload settings for display even on validation error
+                    time_settings_raw = get_time_settings()
+                    time_settings = {}
+                    for key, value in time_settings_raw.items():
+                        time_settings[key] = convert_time_for_html(value)
+                    return render_template(
+                        "admin/settings.html",
+                        error=str(e),
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+            
+            if action == "update_profile":
+                admin_id = session.get("admin_id")
+                if not admin_id:
+                    return render_template(
+                        "admin/settings.html",
+                        error="Session expired. Please log in again to update your profile.",
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                from config import ADMIN_PHOTOS_DIR, ALLOWED_IMAGE_EXTENSIONS, MAX_UPLOAD_SIZE
+                display_name = (request.form.get("admin_display_name") or "").strip()
+                if not display_name:
+                    return render_template(
+                        "admin/settings.html",
+                        error="Display name is required.",
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                photo_path_value = current_admin.get("photo_path") if current_admin else ""
+                file = request.files.get("admin_photo")
+                if file and file.filename:
+                    ext = (file.filename.rsplit(".", 1)[-1] or "").lower()
+                    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+                        return render_template(
+                            "admin/settings.html",
+                            error="Invalid photo format. Allowed: " + ", ".join(sorted(ALLOWED_IMAGE_EXTENSIONS)),
+                            success=None,
+                            time_settings=time_settings,
+                            current_admin=current_admin,
+                        )
+                    file.seek(0, 2)
+                    size = file.tell()
+                    file.seek(0)
+                    if size > MAX_UPLOAD_SIZE:
+                        return render_template(
+                            "admin/settings.html",
+                            error="Photo is too large. Maximum size is 10 MB.",
+                            success=None,
+                            time_settings=time_settings,
+                            current_admin=current_admin,
+                        )
+                    os.makedirs(ADMIN_PHOTOS_DIR, exist_ok=True)
+                    safe_name = secure_filename(f"admin_{admin_id}.{ext}")
+                    filepath = os.path.join(ADMIN_PHOTOS_DIR, safe_name)
+                    file.save(filepath)
+                    photo_path_value = os.path.join("uploads", "admins", safe_name).replace("\\", "/")
+                cur.execute("UPDATE admin SET name = ?, photo_path = ? WHERE id = ?", (display_name, photo_path_value or None, admin_id))
+                db.commit()
+                session["admin_name"] = display_name
+                session["admin_photo_path"] = photo_path_value or ""
+                logger.info(f"Admin profile updated: id={admin_id}, name={display_name}")
+                return render_template(
+                    "admin/settings.html",
+                    error=None,
+                    success="Profile updated successfully. Your name and photo are updated.",
+                    time_settings=time_settings,
+                    current_admin={"id": admin_id, "name": display_name, "photo_path": photo_path_value},
+                )
+
+            if action == "update_logo":
+                from config import LOGO_UPLOADS_DIR, ALLOWED_IMAGE_EXTENSIONS, MAX_UPLOAD_SIZE
+                file = request.files.get("organization_logo")
+                if not file or not file.filename:
+                    return render_template(
+                        "admin/settings.html",
+                        error="Please select an image file for the organization logo.",
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                ext = (file.filename.rsplit(".", 1)[-1] or "").lower()
+                if ext not in ALLOWED_IMAGE_EXTENSIONS:
+                    return render_template(
+                        "admin/settings.html",
+                        error="Invalid logo format. Allowed: " + ", ".join(sorted(ALLOWED_IMAGE_EXTENSIONS)),
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                file.seek(0, 2)
+                size = file.tell()
+                file.seek(0)
+                if size > MAX_UPLOAD_SIZE:
+                    return render_template(
+                        "admin/settings.html",
+                        error="Logo is too large. Maximum size is 10 MB.",
+                        success=None,
+                        time_settings=time_settings,
+                        current_admin=current_admin,
+                    )
+                os.makedirs(LOGO_UPLOADS_DIR, exist_ok=True)
+                safe_name = "logo." + ext
+                filepath = os.path.join(LOGO_UPLOADS_DIR, safe_name)
+                file.save(filepath)
+                logo_static_path = os.path.join("uploads", "logo", safe_name).replace("\\", "/")
+                cur.execute(
+                    """
+                    INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
+                    ON CONFLICT(setting_key) DO UPDATE SET setting_value=excluded.setting_value
+                    """,
+                    ("organization_logo", logo_static_path),
+                )
+                db.commit()
+                logger.info("Organization logo updated")
+                return render_template(
+                    "admin/settings.html",
+                    error=None,
+                    success="Organization logo updated successfully.",
+                    time_settings=time_settings,
+                    current_admin=current_admin,
+                )
+
             if action == "mark_holiday":
                 holiday_date = validate_required(request.form.get("holiday_date", ""), "Holiday Date")
                 reason = sanitize_string(request.form.get("reason", "Holiday"), max_length=200) or "Holiday"
@@ -677,10 +1112,11 @@ def settings():
                 employees = cur.fetchall()
                 
                 if not employees:
-                    return render_template("admin/settings.html", 
+                    return render_template("admin/settings.html",
                                          error="No active employees found",
                                          success=None,
-                                         time_settings=time_settings)
+                                         time_settings=time_settings,
+                                         current_admin=current_admin)
                 
                 marked_count = 0
                 for emp in employees:
@@ -719,7 +1155,8 @@ def settings():
                 return render_template("admin/settings.html",
                                      success=f"Successfully marked {marked_count} employees as present for {holiday_date} ({reason})",
                                      error=None,
-                                     time_settings=time_settings)
+                                     time_settings=time_settings,
+                                     current_admin=current_admin)
             
             elif action == "mark_suspension":
                 suspension_date = validate_required(request.form.get("suspension_date", ""), "Suspension Date")
@@ -732,7 +1169,8 @@ def settings():
                     return render_template("admin/settings.html",
                                          error="No active employees found",
                                          success=None,
-                                         time_settings=time_settings)
+                                         time_settings=time_settings,
+                                         current_admin=current_admin)
                 
                 marked_count = 0
                 for emp in employees:
@@ -771,9 +1209,10 @@ def settings():
                 return render_template("admin/settings.html",
                                      success=f"Successfully marked {marked_count} employees as present for {suspension_date} ({reason})",
                                      error=None,
-                                     time_settings=time_settings)
+                                     time_settings=time_settings,
+                                     current_admin=current_admin)
         
-        return render_template("admin/settings.html", error=None, success=None, time_settings=time_settings)
+        return render_template("admin/settings.html", error=None, success=None, time_settings=time_settings, current_admin=current_admin)
         
     except ValidationError as e:
         logger.warning(f"Validation error in settings: {str(e)}")
@@ -793,7 +1232,17 @@ def settings():
             time_settings = {k: convert_time_for_html(v) for k, v in time_settings_raw.items()}
         except:
             time_settings = {}
-        return render_template("admin/settings.html", error=str(e), success=None, time_settings=time_settings)
+        current_admin = None
+        try:
+            if session.get("admin_id") and db is not None:
+                cur = db.cursor()
+                cur.execute("SELECT id, name, photo_path FROM admin WHERE id = ?", (session["admin_id"],))
+                row = cur.fetchone()
+                if row:
+                    current_admin = {"id": row["id"], "name": row["name"] or "", "photo_path": (row["photo_path"] if "photo_path" in row.keys() else None) or ""}
+        except Exception:
+            pass
+        return render_template("admin/settings.html", error=str(e), success=None, time_settings=time_settings, current_admin=current_admin)
     except Exception as e:
         # Only rollback if db was created
         try:
@@ -818,10 +1267,21 @@ def settings():
             time_settings = {k: convert_time_for_html(v) for k, v in time_settings_raw.items()}
         except:
             time_settings = {}
+        current_admin = None
+        try:
+            if session.get("admin_id") and db is not None:
+                cur = db.cursor()
+                cur.execute("SELECT id, name, photo_path FROM admin WHERE id = ?", (session["admin_id"],))
+                row = cur.fetchone()
+                if row:
+                    current_admin = {"id": row["id"], "name": row["name"] or "", "photo_path": (row["photo_path"] if "photo_path" in row.keys() else None) or ""}
+        except Exception:
+            pass
         return render_template("admin/settings.html",
                              error=f"Error: {str(e)}",
                              success=None,
-                             time_settings=time_settings)
+                             time_settings=time_settings,
+                             current_admin=current_admin)
 
 
 @admin_bp.route("/capture-face", methods=["POST"])
@@ -888,7 +1348,6 @@ def create_admin():
         
         # Sanitize inputs
         username = sanitize_string(username, max_length=50)
-        password = sanitize_string(password, max_length=100)
         name = sanitize_string(name, max_length=100)
         
         from db import get_db
@@ -906,19 +1365,29 @@ def create_admin():
         if existing:
             return jsonify({"success": False, "error": "Username already exists"}), 400
         
-        # Create new admin
+        # Hash password and create new admin
+        hashed_pwd = hash_password(password)
         execute_query_safe(
             db,
             "INSERT INTO admin (username, password, name) VALUES (?, ?, ?)",
-            (username, password, name)
+            (username, hashed_pwd, name)
         )
         
         db.commit()
         logger.info(f"New admin account created: {username} by {session.get('admin_name')}")
+        log_admin_action(
+            db,
+            action="create_admin",
+            details=f"Created admin '{username}'",
+        )
         
         return jsonify({"success": True, "message": f"Admin account '{username}' created successfully"})
     except ValidationError as e:
         logger.warning(f"Admin creation validation error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 400
+    except ValueError as e:
+        # Typically raised by hash_password for weak/empty passwords
+        logger.warning(f"Admin creation password error: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 400
     except sqlite3.IntegrityError as e:
         logger.warning(f"Admin creation integrity error: {str(e)}")
@@ -969,11 +1438,11 @@ def update_admin(admin_id):
         
         # Update admin (password only if provided)
         if password and password.strip():
-            password = sanitize_string(password, max_length=100)
+            # New password provided – hash it
             execute_query_safe(
                 db,
                 "UPDATE admin SET username=?, password=?, name=? WHERE id=?",
-                (username, password, name, admin_id)
+                (username, hash_password(password), name, admin_id)
             )
         else:
             execute_query_safe(
@@ -984,10 +1453,19 @@ def update_admin(admin_id):
         
         db.commit()
         logger.info(f"Admin account updated: ID {admin_id} by {session.get('admin_name')}")
+        log_admin_action(
+            db,
+            action="update_admin",
+            details=f"Updated admin ID {admin_id} (username: {username})",
+        )
         
         return jsonify({"success": True, "message": f"Admin account '{username}' updated successfully"})
     except ValidationError as e:
         logger.warning(f"Admin update validation error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 400
+    except ValueError as e:
+        # Typically raised by hash_password for weak/empty passwords
+        logger.warning(f"Admin update password error: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 400
     except sqlite3.IntegrityError as e:
         logger.warning(f"Admin update integrity error: {str(e)}")
@@ -1024,7 +1502,15 @@ def delete_admin(admin_id):
             fetch_one=True
         )
         
-        if admin_count and admin_count.get("count", 0) <= 1:
+        # sqlite3.Row does not support .get(); use index or key access
+        total_admins = 0
+        if admin_count is not None:
+            try:
+                total_admins = admin_count["count"]
+            except (KeyError, TypeError):
+                total_admins = admin_count[0]
+        
+        if total_admins <= 1:
             return jsonify({"success": False, "error": "Cannot delete the last admin account"}), 400
         
         # Delete admin
@@ -1036,7 +1522,12 @@ def delete_admin(admin_id):
         
         db.commit()
         logger.info(f"Admin account deleted: ID {admin_id} ({admin_info['username']}) by {session.get('admin_name')}")
-        
+        log_admin_action(
+            db,
+            action="delete_admin",
+            details=f"Deleted admin ID {admin_id} ({admin_info['username']})",
+        )
+
         return jsonify({"success": True, "message": f"Admin account '{admin_info['username']}' deleted successfully"})
     except Exception as e:
         logger.error(f"Error deleting admin: {str(e)}", exc_info=True)
@@ -1565,133 +2056,226 @@ def export_dtr_pdf():
             dtr_data = {
                 "year": year,
                 "month": month,
-                "records": {}
+                "records": {},
+                "total_work_minutes": 0,
             }
+
+            def _compute_work_minutes(morning_in, lunch_out, afternoon_in, time_out):
+                """
+                Compute total work minutes for the day.
+                - Count morning segment only if BOTH morning_in AND lunch_out exist (complete morning half).
+                - Count afternoon segment only if BOTH afternoon_in AND time_out exist (complete afternoon half).
+                - Half-day is OK: only morning or only afternoon still gets totalled.
+                - Do NOT total if a segment has only one punch (e.g. morning in but no lunch out).
+                - Lunch break (12:00 PM - 1:00 PM) not counted; afternoon count starts at 1:00 PM if earlier.
+                """
+                try:
+                    fmt = "%I:%M %p"
+                    lunch_start = datetime.strptime("12:00 PM", fmt)
+                    afternoon_sched_start = datetime.strptime("01:00 PM", fmt)
+                    morning_minutes = 0
+                    afternoon_minutes = 0
+
+                    if morning_in and lunch_out:
+                        m_in = datetime.strptime(morning_in, fmt)
+                        l_out = datetime.strptime(lunch_out, fmt)
+                        morning_end = min(l_out, lunch_start)
+                        morning_minutes = max(
+                            0, int((morning_end - m_in).total_seconds() / 60)
+                        )
+
+                    if afternoon_in and time_out:
+                        a_in = datetime.strptime(afternoon_in, fmt)
+                        t_out = datetime.strptime(time_out, fmt)
+                        afternoon_start = max(a_in, afternoon_sched_start)
+                        afternoon_minutes = max(
+                            0, int((t_out - afternoon_start).total_seconds() / 60)
+                        )
+
+                    work_minutes = morning_minutes + afternoon_minutes
+                    return work_minutes if work_minutes > 0 else 0
+                except Exception:
+                    return 0
             
             for record in attendance_records:
-                day = record["date"].split("-")[2]
+                day = record["date"].split("-")[2]  # keep zero-padded e.g. "01", "02"
+                morning_in = record["morning_in"] or ""
+                lunch_out = record["lunch_out"] or ""
+                afternoon_in = record["afternoon_in"] or ""
+                time_out = record["time_out"] or ""
+                work_minutes = _compute_work_minutes(
+                    morning_in, lunch_out, afternoon_in, time_out
+                )
                 dtr_data["records"][day] = {
-                    "morning_in": record["morning_in"] or "",
-                    "lunch_out": record["lunch_out"] or "",
-                    "afternoon_in": record["afternoon_in"] or "",
-                    "time_out": record["time_out"] or "",
-                    "status": record["attendance_status"] or ""
+                    "morning_in": morning_in,
+                    "lunch_out": lunch_out,
+                    "afternoon_in": afternoon_in,
+                    "time_out": time_out,
+                    "status": record["attendance_status"] or "",
+                    "work_minutes": work_minutes,
                 }
+                dtr_data["total_work_minutes"] += work_minutes
         except Exception as e:
             logger.warning(f"Error processing DTR data: {str(e)}")
             dtr_data = {"year": year, "month": month, "records": {}}
         
-        # Generate PDF using reportlab
+        # Generate PDF using reportlab - two side-by-side DTR forms via Frames
         try:
             from reportlab.lib.pagesizes import letter
             from reportlab.lib import colors
             from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
             from reportlab.lib.units import inch
-            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+            from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate, Paragraph, Spacer, Table, TableStyle, NextFrameFlowable
+            from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
             from calendar import month_name
             
             output = io.BytesIO()
-            doc = SimpleDocTemplate(output, pagesize=letter, topMargin=0.3*inch, bottomMargin=0.3*inch)
-            elements = []
+            page_w, page_h = letter
+            margin = 0.35 * inch
+            col_width = (page_w - 2 * margin - 0.5 * inch) / 2  # two cols with gap
+            frame_height = page_h - 2 * margin
             
-            styles = getSampleStyleSheet()
+            # Left and right frames for two columns
+            frame_left = Frame(margin, margin, col_width, frame_height, id='col1')
+            frame_right = Frame(margin + col_width + 0.5*inch, margin, col_width, frame_height, id='col2')
+            doc = BaseDocTemplate(output, pagesize=letter, leftMargin=0, rightMargin=0, topMargin=0, bottomMargin=0)
+            doc.addPageTemplates([PageTemplate(id='TwoCol', frames=[frame_left, frame_right])])
             
-            # Title
-            title_style = ParagraphStyle(
-                'DTRTitle',
-                parent=styles['Heading1'],
-                fontSize=12,
-                textColor=colors.black,
-                spaceAfter=10,
-                alignment=1  # Center
-            )
-            
-            elements.append(Paragraph("CIVIL SERVICE FORM NO. 48", title_style))
-            elements.append(Paragraph("DAILY TIME RECORD", title_style))
-            elements.append(Spacer(1, 0.2*inch))
-            
-            # Employee name
-            name_style = ParagraphStyle(
-                'DTRName',
-                parent=styles['Normal'],
-                fontSize=10,
-                textColor=colors.black
-            )
-            elements.append(Paragraph(f"(Name) {employee_info['full_name'] or 'N/A'}", name_style))
-            elements.append(Spacer(1, 0.1*inch))
-            
-            # Month
-            month_name_str = month_name[int(month)]
-            elements.append(Paragraph(f"For the month of {month_name_str}, {year}", name_style))
-            elements.append(Spacer(1, 0.2*inch))
-            
-            # Create calendar table
-            days_in_month = 31  # Will be calculated properly
-            try:
-                from calendar import monthrange
-                days_in_month = monthrange(int(year), int(month))[1]
-            except:
-                pass
-            
-            # Table headers
-            table_data = [['Day', 'AM IN', 'AM OUT', 'PM IN', 'PM OUT', 'Remarks']]
-            
-            # Fill in attendance data
-            for day in range(1, days_in_month + 1):
-                day_str = str(day).zfill(2)
-                day_key = str(day)
+            def build_one_dtr():
+                flowables = []
+                styles = getSampleStyleSheet()
+                form_style = ParagraphStyle(
+                    'DTRFormNo', parent=styles['Normal'],
+                    fontSize=8, textColor=colors.black, fontName='Times-Roman',
+                    alignment=TA_LEFT, spaceAfter=4
+                )
+                flowables.append(Paragraph("Civil Service Form No. 48", form_style))
+                title_style = ParagraphStyle(
+                    'DTRTitle', parent=styles['Normal'],
+                    fontSize=14, textColor=colors.black, fontName='Times-Bold',
+                    alignment=TA_CENTER, spaceAfter=4
+                )
+                flowables.append(Paragraph("DAILY TIME RECORD", title_style))
+                o0o_style = ParagraphStyle('DTRo0o', parent=form_style, alignment=TA_CENTER)
+                flowables.append(Paragraph("-----o0o-----", o0o_style))
+                flowables.append(Spacer(1, 0.12*inch))
+                name_style = ParagraphStyle(
+                    'DTRName', parent=styles['Normal'],
+                    fontSize=11, textColor=colors.black, fontName='Times-Bold',
+                    alignment=TA_CENTER, spaceAfter=2
+                )
+                flowables.append(Paragraph(f"{employee_info['full_name'] or 'N/A'}", name_style))
+                flowables.append(Paragraph("(Name)", form_style))
+                flowables.append(Spacer(1, 0.1*inch))
+                month_name_str = month_name[int(month)]
+                month_style = ParagraphStyle(
+                    'DTRMonth', parent=styles['Normal'],
+                    fontSize=10, textColor=colors.black, fontName='Times-Roman',
+                    alignment=TA_CENTER, spaceAfter=8
+                )
+                flowables.append(Paragraph(f"For the month of {month_name_str} {year}", month_style))
+                flowables.append(Spacer(1, 0.08*inch))
+                official_style = ParagraphStyle(
+                    'DTROfficial', parent=styles['Normal'],
+                    fontSize=8, textColor=colors.black, fontName='Times-Roman',
+                    alignment=TA_LEFT, spaceAfter=8
+                )
+                flowables.append(Paragraph("Official hours for arrival and departure &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Regular days ____________ &nbsp;&nbsp; Saturdays ____________", official_style))
+                flowables.append(Spacer(1, 0.08*inch))
                 
-                if day_key in dtr_data.get("records", {}):
-                    record = dtr_data["records"][day_key]
-                    table_data.append([
-                        day_str,
-                        record.get("morning_in", ""),
-                        record.get("lunch_out", ""),
-                        record.get("afternoon_in", ""),
-                        record.get("time_out", ""),
-                        record.get("status", "")
-                    ])
-                else:
-                    table_data.append([day_str, "", "", "", "", ""])
+                days_in_month = 31
+                try:
+                    from calendar import monthrange
+                    days_in_month = monthrange(int(year), int(month))[1]
+                except Exception:
+                    pass
+                table_data = [
+                    ['Day', 'A.M.', 'A.M.', 'P.M.', 'P.M.', 'Undertime', 'Undertime'],
+                    ['', 'Arrival', 'Departure', 'Arrival', 'Departure', 'Hours', 'Minutes']
+                ]
+                for day in range(1, days_in_month + 1):
+                    day_str = str(day).zfill(2)
+                    day_key = day_str
+                    rec = dtr_data.get("records", {}).get(day_key)
+                    ut_minutes = rec.get("work_minutes", 0) if rec else 0
+                    if rec:
+                        has_full_times = bool(
+                            rec.get("morning_in")
+                            and rec.get("lunch_out")
+                            and rec.get("afternoon_in")
+                            and rec.get("time_out")
+                        )
+                        if ut_minutes:
+                            ut_hours_val = ut_minutes // 60
+                            ut_mins_val = ut_minutes % 60
+                        elif has_full_times:
+                            ut_hours_val = 0
+                            ut_mins_val = 0
+                        else:
+                            ut_hours_val = ""
+                            ut_mins_val = ""
+
+                        table_data.append([
+                            str(day),
+                            rec.get("morning_in", ""),
+                            rec.get("lunch_out", ""),
+                            rec.get("afternoon_in", ""),
+                            rec.get("time_out", ""),
+                            ut_hours_val,
+                            ut_mins_val,
+                        ])
+                    else:
+                        table_data.append([str(day), "", "", "", "", "", ""])
+
+                total_ut = dtr_data.get("total_work_minutes", 0) or 0
+                table_data.append([
+                    "Total", "", "", "", "",
+                    total_ut // 60,
+                    total_ut % 60,
+                ])
+                col_widths = [0.32*inch, 0.58*inch, 0.58*inch, 0.58*inch, 0.58*inch, 0.38*inch, 0.38*inch]
+                tbl = Table(table_data, colWidths=col_widths)
+                tbl.setStyle(TableStyle([
+                    ('FONTNAME', (0, 0), (-1, 1), 'Times-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 1), 7),
+                    ('ALIGN', (0, 0), (0, -1), TA_LEFT),
+                    ('ALIGN', (1, 0), (-1, -1), 'CENTER'),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                    ('BACKGROUND', (0, 0), (-1, 1), colors.HexColor('#e5e5e5')),
+                    ('TEXTCOLOR', (0, 0), (-1, 1), colors.black),
+                    ('FONTNAME', (0, 2), (-1, -2), 'Times-Roman'),
+                    ('FONTSIZE', (0, 2), (-1, -2), 7),
+                    ('FONTNAME', (0, -1), (-1, -1), 'Times-Bold'),
+                    ('LINEABOVE', (0, -1), (-1, -1), 1, colors.black),
+                    ('INNERGRID', (0, 0), (-1, -1), 0.5, colors.black),
+                    ('BOX', (0, 0), (-1, -1), 0.5, colors.black),
+                ]))
+                flowables.append(tbl)
+                flowables.append(Spacer(1, 0.2*inch))
+                cert_style = ParagraphStyle(
+                    'DTRCert', parent=styles['Normal'],
+                    fontSize=8, textColor=colors.black, fontName='Times-Italic',
+                    alignment=TA_JUSTIFY, spaceAfter=12
+                )
+                flowables.append(Paragraph("I certify on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.", cert_style))
+                flowables.append(Paragraph("_________________________________________________________________________", form_style))
+                flowables.append(Paragraph("(Signature)", form_style))
+                flowables.append(Spacer(1, 0.15*inch))
+                flowables.append(Paragraph("VERIFIED as to the prescribed office hours:", cert_style))
+                flowables.append(Spacer(1, 0.08*inch))
+                flowables.append(Paragraph("_________________________________________________________________________", form_style))
+                flowables.append(Paragraph("In Charge", ParagraphStyle('DTRInCharge', parent=form_style, fontName='Times-Bold', alignment=TA_CENTER)))
+                return flowables
             
-            # Create table
-            table = Table(table_data, colWidths=[0.4*inch, 0.8*inch, 0.8*inch, 0.8*inch, 0.8*inch, 1*inch])
-            table.setStyle(TableStyle([
-                ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-                ('FONTSIZE', (0, 0), (-1, 0), 8),
-                ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
-                ('BACKGROUND', (0, 1), (-1, -1), colors.white),
-                ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-                ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-                ('FONTSIZE', (0, 1), (-1, -1), 7),
-                ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-            ]))
-            
-            elements.append(table)
-            elements.append(Spacer(1, 0.3*inch))
-            
-            # Certification
-            cert_style = ParagraphStyle(
-                'DTRCert',
-                parent=styles['Normal'],
-                fontSize=8,
-                textColor=colors.black
-            )
-            elements.append(Paragraph("I certify on my honor that the above is a true and correct report of the hours of work performed, record of which was made daily at the time of arrival and departure from office.", cert_style))
-            elements.append(Spacer(1, 0.3*inch))
-            
-            # Signature line
-            elements.append(Paragraph("_________________________", cert_style))
-            elements.append(Paragraph("Signature", cert_style))
-            
-            # Build PDF
-            doc.build(elements)
+            # Build story: first column content, then force next frame, then second column (same)
+            story = []
+            story.extend(build_one_dtr())
+            story.append(NextFrameFlowable())
+            story.extend(build_one_dtr())
+            doc.build(story)
             output.seek(0)
             
-            filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+            filename = f"DTR_{employee_info['employee_code'] or employee_id}_{month_year}.pdf"
             
             response = make_response(output.getvalue())
             response.headers['Content-Type'] = 'application/pdf'

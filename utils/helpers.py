@@ -225,3 +225,106 @@ def is_time_out_allowed(time_str):
     except Exception as e:
         logger.error(f"Error checking time-out: {str(e)}", exc_info=True)
         return False
+
+
+def ensure_absent_records_for_date(target_date: str) -> int:
+    """
+    Ensure that every active employee has an attendance row for the given date.
+    If an employee has no attendance for that date, automatically insert a row
+    marked as Absent, but ONLY when the day is finished:
+      - for past dates (before today), always;
+      - for today, only after the configured time-out start (e.g. 05:00 PM).
+
+    Args:
+        target_date: Date string in format "YYYY-MM-DD".
+
+    Returns:
+        int: Number of new Absent records that were created.
+    """
+    try:
+        from config import DATABASE
+        import sqlite3
+        from datetime import date as _date
+
+        # Decide if we are allowed to auto-mark absences for this date
+        today_str = _date.today().isoformat()
+        if target_date > today_str:
+            # Future date – never auto-mark absent
+            return 0
+
+        if target_date == today_str:
+            # For today, only mark absent after time_out_start
+            settings = get_time_settings()
+            timeout_start_str = settings.get("time_out_start", "05:00 PM")
+            try:
+                cutoff = datetime.strptime(timeout_start_str, "%I:%M %p").time()
+                now_time = datetime.now().time()
+                if now_time < cutoff:
+                    # It's not yet end of day – do nothing
+                    return 0
+            except Exception:
+                # If parsing fails, be safe and do nothing for today
+                return 0
+
+        db = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+        cur = db.cursor()
+
+        # Get all active employees; fall back to all employees if status column is missing
+        try:
+            cur.execute("SELECT id FROM employees WHERE status='Active'")
+        except sqlite3.OperationalError:
+            cur.execute("SELECT id FROM employees")
+
+        employee_rows = cur.fetchall()
+        if not employee_rows:
+            db.close()
+            return 0
+
+        employee_ids = []
+        for row in employee_rows:
+            try:
+                employee_ids.append(row["id"])
+            except (KeyError, TypeError, IndexError):
+                employee_ids.append(row[0])
+
+        # Find which employees already have attendance for this date
+        placeholders = ",".join("?" for _ in employee_ids)
+        params = [target_date] + employee_ids
+        cur.execute(
+            f"SELECT employee_id FROM attendance WHERE date=? AND employee_id IN ({placeholders})",
+            params,
+        )
+
+        existing_ids = set()
+        for row in cur.fetchall():
+            try:
+                existing_ids.add(row["employee_id"])
+            except (KeyError, TypeError, IndexError):
+                existing_ids.add(row[0])
+
+        missing_ids = [emp_id for emp_id in employee_ids if emp_id not in existing_ids]
+
+        for emp_id in missing_ids:
+            cur.execute(
+                """
+                INSERT INTO attendance (employee_id, date, attendance_status, verification_method)
+                VALUES (?, ?, 'Absent', 'Auto: no attendance recorded')
+                """,
+                (emp_id, target_date),
+            )
+
+        db.commit()
+        db.close()
+        created_count = len(missing_ids)
+        if created_count:
+            logger.info(
+                f"ensure_absent_records_for_date: created {created_count} Absent records for {target_date}"
+            )
+        return created_count
+    except Exception as e:
+        logger.error(
+            f"Error ensuring absent records for date {target_date}: {str(e)}",
+            exc_info=True,
+        )
+        return 0

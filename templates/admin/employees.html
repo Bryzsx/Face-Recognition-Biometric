@@ -12,17 +12,17 @@
         <a href="{{ url_for('admin.export_employees', format='csv') }}{% if search_query %}?search={{ search_query }}{% endif %}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📄 CSV
+          CSV
         </a>
         <a href="{{ url_for('admin.export_employees', format='excel') }}{% if search_query %}?search={{ search_query }}{% endif %}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #059669; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📊 Excel
+          Excel
         </a>
         <a href="{{ url_for('admin.export_employees', format='pdf') }}{% if search_query %}?search={{ search_query }}{% endif %}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📑 PDF
+          PDF
         </a>
       </div>
       {% endif %}

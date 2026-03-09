@@ -11,7 +11,7 @@
       <p><strong>Employee:</strong> {{ record.full_name }} ({{ record.employee_code }})</p>
     </div>
 
-    <form method="POST" action="{{ url_for('admin.edit_dtr', attendance_id=record.attendance_id) }}">
+    <form method="POST" action="{{ url_for('admin.edit_dtr', attendance_id=record.attendance_id) }}" enctype="multipart/form-data">
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
         <div>
           <label style="display: block; margin-bottom: 8px; font-weight: 500;">Date:</label>
@@ -58,10 +58,29 @@
         </div>
       </div>
 
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Proof of attendance (optional):</label>
+        <textarea name="proof_notes" rows="3" maxlength="400" placeholder="If employee forgot to time in/out and submitted proof (e.g. certificate, memo, slip), describe it here. This will be saved with the record."
+                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; resize: vertical;">{% if record.verification_method and 'Admin edit; Proof:' in (record.verification_method or '') %}{{ record.verification_method.replace('Admin edit; Proof: ', '') }}{% endif %}</textarea>
+        <small style="color: #6b7280; font-size: 12px;">For past dates: note the proof submitted by the employee (e.g. medical certificate, travel order, signed memo).</small>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 500;">Attach proof document (optional):</label>
+        <input type="file" name="proof_file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
+               style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+        <small style="color: #6b7280; font-size: 12px;">Upload travel order, memo, certificate, or other proof (PDF, JPG, PNG, DOC, DOCX — max 10MB).</small>
+        {% if record.proof_file_path %}
+        <p style="margin-top: 8px; font-size: 13px;">
+          Current attachment: <a href="{{ url_for('static', filename=record.proof_file_path) }}" target="_blank" rel="noopener">View attached file</a>. Upload a new file to replace.
+        </p>
+        {% endif %}
+      </div>
+
       <div style="display: flex; gap: 10px; margin-top: 30px;">
         <button type="submit" 
                 style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-          💾 Save Changes
+          Save Changes
         </button>
         <a href="{{ url_for('admin.attendance', date=record.date) }}" 
            style="padding: 12px 24px; background: #6b7280; color: white; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
@@ -72,7 +91,7 @@
 
     {% if error %}
     <div style="margin-top: 20px; padding: 12px; background-color: #fee2e2; color: #991b1b; border-radius: 6px;">
-      ✗ {{ error }}
+      {{ error }}
     </div>
     {% endif %}
   </div>

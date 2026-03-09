@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS attendance (
     time_out TEXT,
     attendance_status TEXT,
     verification_method TEXT,
+    proof_file_path TEXT,
     FOREIGN KEY(employee_id) REFERENCES employees(id)
 )
 """)

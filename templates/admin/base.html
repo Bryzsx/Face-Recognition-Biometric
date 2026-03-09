@@ -53,25 +53,26 @@
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo">
-    <img src="{{ url_for('static', filename='Department_of_Transportation_(Philippines).svg-CnZCv33r.png') }}" 
+    <img src="{{ url_for('static', filename=organization_logo) }}" 
          alt="Department of Transportation Logo" 
          class="logo-img">
     <div class="logo-text">Admin Panel</div>
   </div>
 
   <ul class="nav-menu">
-    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">📊 Dashboard</a></li>
-    <li><a href="{{ url_for('admin.register') }}" class="nav-link">➕ Register Employee</a></li>
-    <li><a href="{{ url_for('admin.employees') }}" class="nav-link">👥 All Employees</a></li>
-    <li><a href="{{ url_for('admin.attendance') }}" class="nav-link">📅 Attendance</a></li>
-    <li><a href="{{ url_for('admin.reports') }}" class="nav-link">📈 Reports</a></li>
-    <li><a href="{{ url_for('admin.employee_info') }}" class="nav-link">📄 Employee Info</a></li>
-    <li><a href="{{ url_for('admin.settings') }}" class="nav-link">⚙️ Settings</a></li>
-    <li><a href="{{ url_for('admin.manage_admins') }}" class="nav-link">👨‍💼 Admin Accounts</a></li>
+    <li><a href="{{ url_for('admin.dashboard') }}" class="nav-link">Dashboard</a></li>
+    <li><a href="{{ url_for('admin.register') }}" class="nav-link">Register Employee</a></li>
+    <li><a href="{{ url_for('admin.employees') }}" class="nav-link">All Employees</a></li>
+    <li><a href="{{ url_for('admin.attendance') }}" class="nav-link">Attendance</a></li>
+    <li><a href="{{ url_for('admin.reports') }}" class="nav-link">Reports</a></li>
+    <li><a href="{{ url_for('admin.employee_info') }}" class="nav-link">Employee Info</a></li>
+    <li><a href="{{ url_for('admin.settings') }}" class="nav-link">Settings</a></li>
+    <li><a href="{{ url_for('admin.manage_admins') }}" class="nav-link">Admin Accounts</a></li>
+    <li><a href="{{ url_for('admin.audit_log') }}" class="nav-link">Activity Log</a></li>
   </ul>
 
   <div class="logout-box">
-    <a href="{{ url_for('auth.admin_logout') }}" class="logout-btn">🔒 Logout</a>
+    <a href="{{ url_for('auth.admin_logout') }}" class="logout-btn">Logout</a>
   </div>
 </div>
 
@@ -82,10 +83,14 @@
 
     <div class="admin-profile">
       <div class="admin-info">
-        <strong>DOTR Admin</strong>
+        <strong>{{ session.get('admin_name') or 'DOTR Admin' }}</strong>
         <small>System Administrator</small>
       </div>
-      <div class="admin-avatar">Dotr</div>
+      {% if session.get('admin_photo_path') %}
+      <img src="{{ url_for('static', filename=session.get('admin_photo_path')) }}" alt="Profile" class="admin-avatar-img" style="width: 46px; height: 46px; border-radius: 50%; object-fit: cover;">
+      {% else %}
+      <div class="admin-avatar">{{ (session.get('admin_name') or 'DOTR')[0:4] }}</div>
+      {% endif %}
     </div>
   </div>
 
@@ -339,7 +344,7 @@ function performAttendanceRefresh() {
                                             <a href="/admin/attendance/edit/${record.attendance_id}" 
                                                class="btn-edit" 
                                                style="padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-block;">
-                                                ✏️ Edit
+                                                Edit
                                             </a>
                                         </td>
                                     </tr>
@@ -398,7 +403,7 @@ function showUpdateIndicator() {
     }
     
     const now = new Date();
-    indicator.textContent = `✓ ${now.toLocaleTimeString()}`;
+    indicator.textContent = 'Updated ' + now.toLocaleTimeString();
     indicator.style.display = 'block';
     
     // Hide after 1.5 seconds (shorter to be less annoying)

@@ -40,6 +40,15 @@ MORNING_MIN_TIME = "05:00 AM"
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10MB
 ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp'}
 PHOTOS_DIR = os.path.join(BASE_DIR, 'static', 'photos')
+# Proof of attendance uploads (travel order, memo, etc.)
+PROOF_UPLOADS_DIR = os.path.join(BASE_DIR, 'static', 'uploads', 'proofs')
+ALLOWED_PROOF_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'}
+MAX_PROOF_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+# Admin profile photos (shown in topbar)
+ADMIN_PHOTOS_DIR = os.path.join(BASE_DIR, 'static', 'uploads', 'admins')
+# Organization logo (sidebar, login, attendance page) - stored under static
+LOGO_UPLOADS_DIR = os.path.join(BASE_DIR, 'static', 'uploads', 'logo')
+DEFAULT_LOGO_FILENAME = "Department_of_Transportation_(Philippines).svg-CnZCv33r.png"
 
 # Session configuration
 SESSION_PERMANENT = False
@@ -50,3 +59,4 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 # Security configuration
 PASSWORD_MIN_LENGTH = int(os.environ.get('PASSWORD_MIN_LENGTH', '8'))
 BCRYPT_LOG_ROUNDS = int(os.environ.get('BCRYPT_LOG_ROUNDS', '12'))
+

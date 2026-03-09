@@ -30,10 +30,14 @@ def admin_required(f):
 def dashboard_stats():
     """API endpoint to get dashboard statistics - optimized for fast loading"""
     try:
+        from utils.helpers import ensure_absent_records_for_date
         from db import get_db
         from utils.db_helpers import execute_query_safe
         db = get_db()
         today = date.today().isoformat()
+
+        # Auto-create Absent records for employees with no attendance today
+        ensure_absent_records_for_date(today)
 
         # Optimized query - use safe query helper with retry
         try:
@@ -150,11 +154,15 @@ def dashboard_stats():
 def attendance_records():
     """API endpoint to get attendance records for auto-refresh"""
     try:
+        from utils.helpers import ensure_absent_records_for_date
         from db import get_db
         db = get_db()
         cur = db.cursor()
         
         selected_date = request.args.get("date", date.today().isoformat())
+
+        # Auto-create Absent records for employees with no attendance on the selected date
+        ensure_absent_records_for_date(selected_date)
         
         cur.execute("""
             SELECT a.attendance_id, e.id, e.full_name, a.date, a.morning_in, a.lunch_out, 
@@ -398,7 +406,7 @@ def recognize_face():
                            WHERE employee_id=? AND date=?""",
                         (current_time, employee_id, today)
                     )
-                    message = f"Lunch break recorded at {current_time}"
+                    message = f"Time out recorded at {current_time}"
                 elif not existing["afternoon_in"]:
                     # Check if afternoon time-in is allowed
                     from utils.helpers import is_afternoon_time_in_allowed

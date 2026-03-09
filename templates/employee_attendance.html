@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Employee Attendance - Face Recognition</title>
@@ -94,6 +95,7 @@
                 opacity: 0;
                 transform: translateY(-20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -153,7 +155,7 @@
             transform: scaleX(-1);
             background: #000;
         }
-        
+
         #video:not([srcObject]) {
             background: #000;
         }
@@ -193,20 +195,23 @@
             background: #10b981;
             flex-shrink: 0;
         }
-        
+
         .status-dot.error {
             background: #ef4444;
         }
-        
+
         .status-dot.warning {
             background: #f59e0b;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 1;
             }
+
             50% {
                 opacity: 0.5;
             }
@@ -218,10 +223,12 @@
         }
 
         .history-section {
-            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            overflow: hidden;
         }
 
         .employee-info-section {
@@ -301,19 +308,78 @@
         }
 
         .history-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            padding: 20px 24px;
+            background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .history-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+        }
+
+        .history-list {
             display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px 20px;
+        }
+
+        .history-item {
+            background: #fff;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .history-date {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .history-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 4px;
+        }
+
+        .badge-in {
+            background: #10b981;
+            color: white;
+        }
+
+        .badge-out {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .history-empty {
+            text-align: center;
+            color: #64748b;
+            padding: 56px 24px;
+            font-size: 14px;
+        }
+
+        .history-error {
+            text-align: center;
+            color: #dc2626;
+            padding: 56px 24px;
+            font-size: 14px;
         }
 
         .time-filter {
@@ -342,58 +408,11 @@
             color: white;
         }
 
-        .history-list {
-            max-height: 500px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .history-item {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .history-date {
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .history-badges {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .badge-in {
-            background: #10b981;
-            color: white;
-        }
-
-        .badge-out {
-            background: #f59e0b;
-            color: white;
-        }
-
         @media (max-width: 1400px) {
             .main-container {
                 grid-template-columns: 1fr 2fr;
             }
+
             .employee-info-section {
                 grid-column: 1 / -1;
                 margin-top: 20px;
@@ -419,11 +438,11 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <img src="{{ url_for('static', filename='Department_of_Transportation_(Philippines).svg-CnZCv33r.png') }}" 
-             alt="DOTR Logo" 
-             class="logo">
+        <img src="{{ url_for('static', filename=organization_logo) }}"
+            alt="DOTR Logo" class="logo">
         <div class="welcome-text">Welcome!</div>
         <div class="subtitle">Scan your face to record attendance</div>
     </div>
@@ -432,17 +451,13 @@
         <!-- Left Section: Attendance History -->
         <div class="history-section">
             <div class="history-header">
-                <div class="history-title">
-                    📄 Your Attendance History
-                </div>
-                <div class="time-filter">
-                    <button class="filter-btn active" onclick="loadHistory('week')">This Week</button>
-                    <button class="filter-btn" onclick="loadHistory('month')">This Month</button>
-                </div>
+                <div class="history-title">Your Attendance History</div>
             </div>
             <div class="history-list" id="historyList">
-                <!-- History items will be loaded here -->
+                <!-- Cards loaded by JS -->
             </div>
+            <div id="historyEmpty" class="history-empty" style="display: none;">No attendance records found.</div>
+            <div id="historyError" class="history-error" style="display: none;">Error loading attendance history.</div>
         </div>
 
         <!-- Center Section: Camera Feed -->
@@ -504,10 +519,10 @@
         // Update date and time
         function updateDateTime() {
             const now = new Date();
-            const dateOptions = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
                 day: 'numeric'
             };
             const timeOptions = {
@@ -530,23 +545,23 @@
         async function startCamera() {
             try {
                 // Check if we're on HTTP (not HTTPS) and not localhost
-                const isLocalhost = window.location.hostname === 'localhost' || 
-                                   window.location.hostname === '127.0.0.1' ||
-                                   window.location.hostname === '[::1]';
+                const isLocalhost = window.location.hostname === 'localhost' ||
+                    window.location.hostname === '127.0.0.1' ||
+                    window.location.hostname === '[::1]';
                 const isHTTPS = window.location.protocol === 'https:';
-                
+
                 if (!isHTTPS && !isLocalhost) {
                     // HTTP access from IP address - browsers block camera
-                    const errorMsg = '⚠️ HTTPS Required: Camera access requires HTTPS when accessing via IP address. Please contact administrator to set up HTTPS, or access via localhost if on the same machine.';
+                    const errorMsg = 'HTTPS required: Camera access requires HTTPS when accessing via IP address. Please contact administrator to set up HTTPS, or access via localhost if on the same machine.';
                     console.error('[CAMERA] HTTPS required for camera access');
                     updateStatus(errorMsg, false);
                     document.getElementById('statusDot').classList.add('error');
-                    
+
                     // Show detailed instructions
                     const statusText = document.getElementById('statusText');
                     statusText.innerHTML = `
                         <div style="text-align: left; max-width: 600px; margin: 0 auto;">
-                            <strong style="color: #ef4444; display: block; margin-bottom: 10px;">⚠️ Camera Access Blocked</strong>
+                            <strong style="color: #ef4444; display: block; margin-bottom: 10px;">Camera Access Blocked</strong>
                             <p style="margin-bottom: 10px;">Modern browsers require HTTPS for camera access when accessing via IP address.</p>
                             <p style="margin-bottom: 10px;"><strong>Solutions:</strong></p>
                             <ol style="text-align: left; margin-left: 20px; margin-bottom: 10px;">
@@ -559,7 +574,7 @@
                     `;
                     return;
                 }
-                
+
                 // Check if getUserMedia is available
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                     const errorMsg = 'Camera API not available. Please use a modern browser (Chrome, Firefox, Edge).';
@@ -568,30 +583,30 @@
                     document.getElementById('statusDot').classList.add('error');
                     return;
                 }
-                
+
                 console.log('[CAMERA] Requesting camera access...');
                 updateStatus('Requesting camera access...', false);
-                
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
+
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
                         facingMode: 'user',
                         width: { ideal: 640 },
                         height: { ideal: 480 }
-                    } 
+                    }
                 });
-                
+
                 // Store stream reference for cleanup
                 cameraStream = stream;
                 video.srcObject = stream;
-                
+
                 // Ensure video is playing
                 video.play().catch(err => {
                     console.error('[CAMERA] Error playing video:', err);
                 });
-                
+
                 console.log('[CAMERA] Camera stream started');
                 updateStatus('Camera ready. Positioning face...', false);
-                
+
                 // Wait for video to be ready
                 video.onloadedmetadata = () => {
                     console.log('[CAMERA] Video metadata loaded, dimensions:', video.videoWidth, 'x', video.videoHeight);
@@ -605,7 +620,7 @@
                         startScanning();
                     }, 1000);
                 };
-                
+
                 // Keep video playing even if it pauses (only if page is visible)
                 video.addEventListener('pause', () => {
                     if (!document.hidden) {
@@ -615,13 +630,13 @@
                         });
                     }
                 });
-                
+
             } catch (err) {
                 console.error('[CAMERA] Error accessing camera:', err);
-                
+
                 // Provide specific error messages based on error type
                 let errorMsg = 'Camera access denied. Please allow camera permissions.';
-                
+
                 if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
                     errorMsg = 'Camera permission denied. Please allow camera access in your browser settings and refresh the page.';
                 } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
@@ -645,17 +660,17 @@
                         errorMsg = 'Camera access failed. Please check your camera settings.';
                     }
                 } else if (err.message && err.message.includes('secure context')) {
-                    errorMsg = '⚠️ HTTPS Required: Camera access requires a secure connection (HTTPS) when accessing via IP address.';
+                    errorMsg = 'HTTPS required: Camera access requires a secure connection (HTTPS) when accessing via IP address.';
                 }
-                
+
                 updateStatus(errorMsg, false);
                 document.getElementById('statusDot').classList.add('error');
-                
+
                 // Show detailed error in status text
                 const statusText = document.getElementById('statusText');
                 statusText.innerHTML = `
                     <div style="text-align: left; max-width: 600px; margin: 0 auto;">
-                        <strong style="color: #ef4444; display: block; margin-bottom: 10px;">⚠️ Camera Error</strong>
+                        <strong style="color: #ef4444; display: block; margin-bottom: 10px;">Camera Error</strong>
                         <p style="margin-bottom: 10px;">${errorMsg}</p>
                         <p style="font-size: 12px; color: #666; margin-top: 10px;">Error: ${err.name || 'UNKNOWN'} - ${err.message || 'Unknown error'}</p>
                     </div>
@@ -669,7 +684,7 @@
         function startScanning() {
             if (scanning) return;
             scanning = true;
-            
+
             console.log('[SCANNING] Starting face recognition scanning...');
             scanInterval = setInterval(async () => {
                 // Don't scan if page is hidden or window doesn't have focus
@@ -677,16 +692,16 @@
                     console.log('[SCANNING] Page hidden or lost focus, skipping scan...');
                     return;
                 }
-                
+
                 // Add a small delay to allow cancellation if page becomes hidden
                 await new Promise(resolve => setTimeout(resolve, 100));
-                
+
                 // Check again after delay
                 if (document.hidden || !document.hasFocus()) {
                     console.log('[SCANNING] Page hidden or lost focus during delay, cancelling...');
                     return;
                 }
-                
+
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     await captureAndRecognize();
                 } else {
@@ -695,71 +710,70 @@
             }, 3000); // Scan every 3 seconds (reduced frequency to reduce load)
         }
 
-        // Capture frame and send for recognition (liveness detection removed)
+        // Capture frame and send for recognition
         async function captureAndRecognize() {
             console.log('[RECOGNITION] ===== STARTING CAPTURE AND RECOGNIZE =====');
             console.log('[RECOGNITION] Document hidden:', document.hidden);
             console.log('[RECOGNITION] Document has focus:', document.hasFocus());
             console.log('[RECOGNITION] Is processing:', isProcessing);
-            
+
             // Don't process if page is hidden or window doesn't have focus
             if (document.hidden || !document.hasFocus()) {
                 console.log('[RECOGNITION] Page hidden or lost focus, stopping recognition...');
                 return;
             }
-            
+
             // Prevent multiple simultaneous recognition attempts
             if (isProcessing) {
                 console.log('[RECOGNITION] Already processing, skipping...');
                 return;
             }
-            
+
             // Ensure video is ready
             if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
                 console.log('[RECOGNITION] Video not ready, readyState:', video ? video.readyState : 'null');
                 updateStatus('Camera not ready. Please wait...', false);
                 return;
             }
-            
+
             // Check if video has valid dimensions
             if (video.videoWidth === 0 || video.videoHeight === 0) {
                 console.log('[RECOGNITION] Video dimensions invalid:', video.videoWidth, 'x', video.videoHeight);
                 updateStatus('Camera initializing...', false);
                 return;
             }
-            
+
             console.log('[RECOGNITION] Starting face recognition process...');
             isProcessing = true;
             updateStatus('Capturing face...', false);
             document.getElementById('scanningIndicator').classList.add('active');
-            
+
             let timeoutId = null;
             let recognitionController = null;
-            
+
             try {
-                console.log('[RECOGNITION] Step 1: Capturing frame...');
-                // Capture single frame with reduced size for faster transmission
+                console.log('[RECOGNITION] Step 1: Capturing single frame...');
+
+                // Capture single frame
+                updateStatus('Analyzing face...', false);
                 const canvas = document.createElement('canvas');
-                // Reduce image size to max 640x480 for faster processing and transmission
-                const maxWidth = 640;
-                const maxHeight = 480;
-                const scale = Math.min(maxWidth / video.videoWidth, maxHeight / video.videoHeight, 1);
-                canvas.width = video.videoWidth * scale;
-                canvas.height = video.videoHeight * scale;
+                // Use 640x480 for better quality (liveness detection removed)
+                canvas.width = 640;
+                canvas.height = 480;
                 const ctx = canvas.getContext('2d');
+
+                // Draw current video frame
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                // Use lower quality (0.7) for faster transmission
-                const imageData = canvas.toDataURL('image/jpeg', 0.7);
-                
-                console.log('[RECOGNITION] Step 2: Frame captured, sending to server...');
-                console.log('[RECOGNITION] Image data length:', imageData.length);
-                updateStatus('Recognizing face...', false);
-                
+                // Use good quality (0.85) for accurate recognition
+                const imageData = canvas.toDataURL('image/jpeg', 0.85);
+
+                console.log('[RECOGNITION] Frame captured, sending to server...');
+
                 // Cancel any previous request
                 if (window.recognitionController) {
                     window.recognitionController.abort();
                 }
-                
+
                 // Create new AbortController for this request
                 recognitionController = new AbortController();
                 window.recognitionController = recognitionController;
@@ -767,8 +781,8 @@
                     console.log('[RECOGNITION] Request timeout - aborting...');
                     recognitionController.abort();
                 }, 10000); // 10 second timeout
-                
-                // Double-check page is still visible and has focus before sending large request
+
+                // Double-check page is still visible and has focus before sending request
                 if (document.hidden || !document.hasFocus()) {
                     if (timeoutId) clearTimeout(timeoutId);
                     recognitionController.abort();
@@ -776,28 +790,28 @@
                     window.recognitionController = null;
                     return;
                 }
-                
-                console.log('[RECOGNITION] Step 3: Making fetch request to /api/recognize-face');
+
+                console.log('[RECOGNITION] Step 2: Making fetch request to /api/recognize-face');
                 const response = await fetch('/api/recognize-face', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ 
-                        image: imageData
+                    body: JSON.stringify({
+                        image: imageData  // Send single image
                     }),
                     signal: recognitionController.signal,
                     priority: 'low' // Low priority to not block other requests
                 });
-                
+
                 console.log('[RECOGNITION] Step 4: Response received, status:', response.status, response.statusText);
-                
+
                 // Check if response is ok
                 if (!response.ok) {
                     console.error('[RECOGNITION] Response not OK, status:', response.status);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                
+
                 console.log('[RECOGNITION] Step 5: Parsing JSON response...');
                 const data = await response.json();
                 console.log('[RECOGNITION] Step 6: JSON parsed successfully');
@@ -806,16 +820,16 @@
                 console.log('[RECOGNITION] Employee data:', data.employee);
                 console.log('[RECOGNITION] Time in:', data.time_in);
                 console.log('[RECOGNITION] Message:', data.message);
-                
+
                 if (timeoutId) clearTimeout(timeoutId);
                 document.getElementById('scanningIndicator').classList.remove('active');
-                
+
                 // Check if page is still visible and has focus before processing result
                 if (document.hidden || !document.hasFocus()) {
                     console.log('[RECOGNITION] Page hidden or lost focus, ignoring response');
                     return;
                 }
-                
+
                 // Check if response indicates success
                 if (data && data.success === true) {
                     // Verify employee data exists
@@ -832,16 +846,16 @@
                     const errorMessage = data.message || 'Face not recognized. Please try again.';
                     const statusDot = document.getElementById('statusDot');
                     const statusText = document.getElementById('statusText');
-                    
+
                     // Check if it's a "no face detected" error
-                    if (errorMessage.toLowerCase().includes('no face detected') || 
+                    if (errorMessage.toLowerCase().includes('no face detected') ||
                         errorMessage.toLowerCase().includes('no face') ||
                         errorMessage.toLowerCase().includes('face is clearly visible')) {
                         // No face detected - show warning, not error
                         statusText.textContent = '👤 No face detected. Please position your face in the camera frame and ensure good lighting.';
                         statusDot.classList.remove('error');
                         statusDot.classList.add('warning');
-                        
+
                         // Reset to normal state after 3 seconds to allow retry
                         setTimeout(() => {
                             statusDot.classList.remove('warning', 'error');
@@ -858,7 +872,7 @@
                 // Always clear timeout and indicator
                 if (timeoutId) clearTimeout(timeoutId);
                 document.getElementById('scanningIndicator').classList.remove('active');
-                
+
                 // Don't log abort errors (these are expected when requests are cancelled)
                 if (error.name === 'AbortError') {
                     console.log('[RECOGNITION] Request aborted (timeout or cancelled)');
@@ -882,7 +896,7 @@
                 if (window.recognitionController === recognitionController) {
                     window.recognitionController = null;
                 }
-                
+
                 // Ensure scanning indicator is removed
                 const indicator = document.getElementById('scanningIndicator');
                 if (indicator) {
@@ -897,58 +911,59 @@
             console.log('[SUCCESS] Employee object:', employee);
             console.log('[SUCCESS] Time in:', timeIn);
             console.log('[SUCCESS] Message:', message);
-            
+
             // Stop scanning temporarily
             if (scanInterval) {
                 clearInterval(scanInterval);
                 scanInterval = null;
             }
             scanning = false;
-            
+
             // Show success status with welcome message
             const welcomeNameEl = document.getElementById('welcomeName');
             const checkinTimeEl = document.getElementById('checkinTime');
             const scanStatusEl = document.getElementById('scanStatus');
-            
+
             console.log('[SUCCESS] Elements found:', {
                 welcomeName: !!welcomeNameEl,
                 checkinTime: !!checkinTimeEl,
                 scanStatus: !!scanStatusEl
             });
-            
+
             if (!scanStatusEl) {
                 console.error('[SUCCESS] ERROR: scanStatus element not found!');
                 return;
             }
-            
+
             if (welcomeNameEl) {
                 const name = employee.full_name || employee.fullName || 'Employee';
                 welcomeNameEl.textContent = `Welcome, ${name}!`;
                 console.log('[SUCCESS] Set welcome name to:', name);
             }
-            
+
             if (checkinTimeEl) {
-                checkinTimeEl.textContent = `Time in recorded at ${timeIn}`;
-                console.log('[SUCCESS] Set check-in time to:', timeIn);
+                // Use the message from the API so it matches the actual action (time in, lunch out, afternoon in, time out)
+                checkinTimeEl.textContent = message || `Time in recorded at ${timeIn}`;
+                console.log('[SUCCESS] Set check-in time to:', message || timeIn);
             }
-            
+
             // Force show the welcome banner
             scanStatusEl.classList.add('active', 'success');
             scanStatusEl.style.display = 'flex'; // Force display
             console.log('[SUCCESS] Welcome banner should now be visible');
-            
+
             // Update status message
             updateStatus(message || 'Successfully timed in!', true);
             console.log('[SUCCESS] Status message updated');
-            
+
             // Display employee info in right panel
             displayEmployeeInfo(employee);
             console.log('[SUCCESS] Employee info display called');
-            
+
             // Reload history to show the new entry
             loadHistory(currentFilter);
             console.log('[SUCCESS] History reload called');
-            
+
             // Hide success message after 10 seconds and resume scanning
             setTimeout(() => {
                 console.log('[SUCCESS] Hiding welcome banner after 10 seconds');
@@ -966,18 +981,18 @@
         // Display employee information in right panel
         function displayEmployeeInfo(employee) {
             console.log('[INFO] Displaying employee info:', employee);
-            
+
             const employeeInfoSection = document.getElementById('employeeInfoSection');
             const employeeName = document.getElementById('employeeName');
             const employeeCode = document.getElementById('employeeCode');
             const employeePhoto = document.getElementById('employeePhoto');
             const employeeInfoGrid = document.getElementById('employeeInfoGrid');
-            
+
             if (!employeeInfoSection) {
                 console.error('[INFO] Employee info section not found!');
                 return;
             }
-            
+
             // Set name and code
             if (employeeName) {
                 employeeName.textContent = employee.full_name ? employee.full_name.toUpperCase() : 'EMPLOYEE';
@@ -985,7 +1000,7 @@
             if (employeeCode) {
                 employeeCode.textContent = employee.employee_code ? `(${employee.employee_code})` : '';
             }
-            
+
             // Set photo if available
             if (employee.photo_path) {
                 // Construct photo URL - photo_path might already include photos/ prefix
@@ -997,16 +1012,16 @@
                 }
                 employeePhoto.src = photoUrl;
                 employeePhoto.style.display = 'block';
-                employeePhoto.onerror = function() {
+                employeePhoto.onerror = function () {
                     this.style.display = 'none';
                 };
             } else {
                 employeePhoto.style.display = 'none';
             }
-            
+
             // Build info grid
             const infoItems = [];
-            
+
             // Address (full width)
             if (employee.address) {
                 infoItems.push(`
@@ -1016,7 +1031,7 @@
                     </div>
                 `);
             }
-            
+
             // Age and Contact Number
             if (employee.age) {
                 infoItems.push(`
@@ -1026,7 +1041,7 @@
                     </div>
                 `);
             }
-            
+
             if (employee.contact_number) {
                 infoItems.push(`
                     <div class="info-item">
@@ -1035,7 +1050,7 @@
                     </div>
                 `);
             }
-            
+
             // Department and Employment Status
             if (employee.department) {
                 infoItems.push(`
@@ -1045,7 +1060,7 @@
                     </div>
                 `);
             }
-            
+
             if (employee.employment_status) {
                 infoItems.push(`
                     <div class="info-item">
@@ -1054,7 +1069,7 @@
                     </div>
                 `);
             }
-            
+
             // Email (full width)
             if (employee.email) {
                 infoItems.push(`
@@ -1064,7 +1079,7 @@
                     </div>
                 `);
             }
-            
+
             // Position (full width if available)
             if (employee.position) {
                 infoItems.push(`
@@ -1074,14 +1089,14 @@
                     </div>
                 `);
             }
-            
+
             // If no info items, show a message
             if (infoItems.length === 0) {
                 employeeInfoGrid.innerHTML = '<div class="info-item full-width"><div class="info-value" style="text-align: center; color: #666;">No additional information available</div></div>';
             } else {
                 employeeInfoGrid.innerHTML = infoItems.join('');
             }
-            
+
             // Show the employee info section (keep it visible permanently after first time-in)
             employeeInfoSection.classList.add('active');
             employeeInfoSection.style.display = 'block'; // Force display
@@ -1102,14 +1117,14 @@
         function updateStatus(message, isSuccess) {
             const statusText = document.getElementById('statusText');
             const statusDot = document.getElementById('statusDot');
-            
+
             if (typeof message === 'string') {
                 statusText.textContent = message;
             } else {
                 // If message is HTML, use innerHTML
                 statusText.innerHTML = message;
             }
-            
+
             if (isSuccess) {
                 statusDot.classList.remove('error', 'warning');
             } else {
@@ -1124,37 +1139,42 @@
         // Load attendance history
         async function loadHistory(filter) {
             currentFilter = filter;
-            
+
             // Update active button
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             event?.target?.classList.add('active');
-            
+
             // Cancel any previous history request
             if (historyController) {
                 historyController.abort();
             }
-            
+
             // Don't load if page is hidden or doesn't have focus
             if (document.hidden || !document.hasFocus()) {
                 return;
             }
-            
+
             try {
                 historyController = new AbortController();
                 const timeoutId = setTimeout(() => historyController.abort(), 5000); // 5 second timeout
-                
+
                 const response = await fetch(`/api/attendance-history?filter=${filter}`, {
                     signal: historyController.signal,
                     priority: 'low' // Low priority to not block other requests
                 });
                 const data = await response.json();
-                
+
                 clearTimeout(timeoutId);
-                
+
                 const historyList = document.getElementById('historyList');
-                
+                const historyEmpty = document.getElementById('historyEmpty');
+                const historyError = document.getElementById('historyError');
+
+                historyError.style.display = 'none';
+                historyEmpty.style.display = 'none';
+
                 if (data.success && data.records && data.records.length > 0) {
                     historyList.innerHTML = data.records.map(record => `
                         <div class="history-item">
@@ -1168,13 +1188,19 @@
                         </div>
                     `).join('');
                 } else {
-                    historyList.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">No attendance records found.</div>';
+                    historyList.innerHTML = '';
+                    historyEmpty.style.display = 'block';
                 }
             } catch (error) {
                 if (error.name !== 'AbortError') {
                     console.error('Error loading history:', error);
                     if (!document.hidden) {
-                        document.getElementById('historyList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 40px;">Error loading attendance history.</div>';
+                        const historyList = document.getElementById('historyList');
+                        const historyEmpty = document.getElementById('historyEmpty');
+                        const historyError = document.getElementById('historyError');
+                        if (historyList) historyList.innerHTML = '';
+                        if (historyEmpty) historyEmpty.style.display = 'none';
+                        if (historyError) historyError.style.display = 'block';
                     }
                 }
             } finally {
@@ -1185,7 +1211,7 @@
         // Function to stop camera and cleanup
         function stopCamera() {
             console.log('[CAMERA] Stopping camera...');
-            
+
             // Stop scanning
             if (scanInterval) {
                 clearInterval(scanInterval);
@@ -1193,7 +1219,7 @@
             }
             scanning = false;
             isProcessing = false; // Reset processing flag
-            
+
             // Cancel any ongoing fetch requests
             if (recognitionController) {
                 recognitionController.abort();
@@ -1203,7 +1229,7 @@
                 historyController.abort();
                 historyController = null;
             }
-            
+
             // Stop video tracks
             if (cameraStream) {
                 cameraStream.getTracks().forEach(track => {
@@ -1212,13 +1238,13 @@
                 });
                 cameraStream = null;
             }
-            
+
             // Clear video source
             if (video && video.srcObject) {
                 video.srcObject = null;
             }
         }
-        
+
         // Stop camera when page becomes hidden (user navigated away or tab switched)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
@@ -1234,7 +1260,7 @@
                 }
             }
         });
-        
+
         // Also stop when window loses focus (switching to another tab/window)
         window.addEventListener('blur', () => {
             console.log('[CAMERA] Window lost focus, stopping camera...');
@@ -1242,7 +1268,7 @@
                 stopCamera();
             }
         });
-        
+
         // Resume when window gains focus (but only if page is visible)
         window.addEventListener('focus', () => {
             if (!document.hidden && !cameraStream) {
@@ -1250,15 +1276,16 @@
                 startCamera();
             }
         });
-        
+
         // Cleanup camera when page is completely unloaded
         window.addEventListener('beforeunload', () => {
             stopCamera();
         });
-        
+
         // Initialize
         startCamera();
         loadHistory('week');
     </script>
 </body>
+
 </html>

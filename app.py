@@ -7,7 +7,9 @@ import os
 from utils.logger import setup_logger, get_logger
 from config import (
     DATABASE, SECRET_KEY, DEBUG, HOST, PORT,
-    SSL_CERT_PATH, SSL_KEY_PATH, LOG_FILE, LOG_LEVEL
+    SSL_CERT_PATH, SSL_KEY_PATH, LOG_FILE, LOG_LEVEL,
+    SESSION_COOKIE_SECURE, SESSION_COOKIE_HTTPONLY, SESSION_COOKIE_SAMESITE,
+    DEFAULT_LOGO_FILENAME,
 )
 
 # Setup logging
@@ -17,6 +19,9 @@ logger = setup_logger(__name__, LOG_FILE, LOG_LEVEL)
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.config['DEBUG'] = DEBUG
+app.config['SESSION_COOKIE_SECURE'] = SESSION_COOKIE_SECURE
+app.config['SESSION_COOKIE_HTTPONLY'] = SESSION_COOKIE_HTTPONLY
+app.config['SESSION_COOKIE_SAMESITE'] = SESSION_COOKIE_SAMESITE
 
 # Register blueprints
 from blueprints import auth_bp, admin_bp, employee_bp, api_bp
@@ -35,6 +40,22 @@ from db import get_db, close_db
 def teardown_db(exception):
     """Close database connection at the end of request"""
     close_db(exception)
+
+
+# ================= CONTEXT PROCESSOR: ORGANIZATION LOGO =================
+@app.context_processor
+def inject_organization_logo():
+    """Inject organization_logo (path under static/) for sidebar, login, and attendance page."""
+    try:
+        from db import get_db
+        db = get_db()
+        cur = db.cursor()
+        cur.execute("SELECT setting_value FROM settings WHERE setting_key = ?", ("organization_logo",))
+        row = cur.fetchone()
+        value = row["setting_value"] if row else None
+        return {"organization_logo": value or DEFAULT_LOGO_FILENAME}
+    except Exception:
+        return {"organization_logo": DEFAULT_LOGO_FILENAME}
 
 
 # ================= SERVER HEADER =================
@@ -68,11 +89,13 @@ def create_app(config=None):
     app_instance = Flask(__name__)
     app_instance.secret_key = SECRET_KEY
     app_instance.config['DEBUG'] = DEBUG
+    app_instance.config['SESSION_COOKIE_SECURE'] = SESSION_COOKIE_SECURE
+    app_instance.config['SESSION_COOKIE_HTTPONLY'] = SESSION_COOKIE_HTTPONLY
+    app_instance.config['SESSION_COOKIE_SAMESITE'] = SESSION_COOKIE_SAMESITE
     
     if config:
         app_instance.config.update(config)
     
-    # Register blueprints
     from blueprints import auth_bp, admin_bp, employee_bp, api_bp
     app_instance.register_blueprint(auth_bp)
     app_instance.register_blueprint(admin_bp)

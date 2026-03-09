@@ -11,12 +11,25 @@
 
 <div class="login-card">
     <div class="login-header">
-        <img src="{{ url_for('static', filename='Department_of_Transportation_(Philippines).svg-CnZCv33r.png') }}" 
+        <img src="{{ url_for('static', filename=organization_logo) }}" 
              alt="Department of Transportation Logo" 
              class="login-logo">
         <h2>Admin Login</h2>
         <p>Face Recognition Biometric System</p>
     </div>
+
+    {% if error %}
+    <div class="login-error" 
+         {% if lock_remaining %}data-lock-remaining="{{ lock_remaining }}"{% endif %}>
+        {{ error }}
+        {% if lock_remaining %}
+        <br>
+        <span id="lockCountdown" style="font-size: 12px; color: #6b7280;">
+            You can try again in <strong></strong>.
+        </span>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <form method="POST">
         <div class="form-group">
@@ -30,12 +43,64 @@
         </div>
 
         <button type="submit" class="login-btn">Login</button>
-    </form>
+    </form>    
 
     <div class="login-footer">
         © 2025 Attendance System
     </div>
 </div>
+
+<script>
+(function () {
+    const errorBox = document.querySelector('.login-error');
+    if (!errorBox) return;
+
+    const remainingAttr = errorBox.getAttribute('data-lock-remaining');
+    const countdownSpan = document.getElementById('lockCountdown');
+    const loginButton = document.querySelector('.login-btn');
+
+    let remaining = remainingAttr ? parseInt(remainingAttr, 10) : 0;
+
+    if (remaining > 0 && countdownSpan && loginButton) {
+        loginButton.disabled = true;
+        loginButton.style.opacity = '0.6';
+        loginButton.style.cursor = 'not-allowed';
+
+        const valueNode = countdownSpan.querySelector('strong');
+
+        function updateCountdown() {
+            if (remaining <= 0) {
+                countdownSpan.textContent = 'You can now try logging in again.';
+                loginButton.disabled = false;
+                loginButton.style.opacity = '1';
+                loginButton.style.cursor = 'pointer';
+                return;
+            }
+
+            let text;
+            if (remaining >= 60) {
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                text = `${minutes.toString().padStart(2, '0')}:${seconds
+                    .toString()
+                    .padStart(2, '0')} minute(s)`;
+            } else {
+                text = `${remaining.toString().padStart(2, '0')} second(s)`;
+            }
+
+            if (valueNode) {
+                valueNode.textContent = text;
+            } else {
+                countdownSpan.textContent = text;
+            }
+            remaining -= 1;
+            setTimeout(updateCountdown, 1000);
+        }
+
+        updateCountdown();
+    }
+})();
+</script>
 
 </body>
 </html>

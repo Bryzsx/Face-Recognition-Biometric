@@ -5,8 +5,8 @@
 {% block content %}
 <div class="section active">
   <form id="registerForm" method="POST" action="{{ url_for('admin.register') }}">
-    
-    <!-- Personal Information -->
+
+    <!-- Personal Information (as in design) -->
     <div class="register-card">
       <h5>Personal Information</h5>
       <div class="form-grid">
@@ -17,28 +17,6 @@
         <div>
           <label>Employee ID *</label>
           <input type="text" name="employee_id" required>
-        </div>
-        <div>
-          <label>Address</label>
-          <input type="text" name="address">
-        </div>
-        <div>
-          <label>Place of Birth</label>
-          <input type="text" name="place_of_birth">
-        </div>
-        <div>
-          <label>Blood Type</label>
-          <select name="blood_type">
-            <option value="">Select</option>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
-          </select>
         </div>
         <div>
           <label>Date of Birth</label>
@@ -63,90 +41,32 @@
             <option value="Widowed">Widowed</option>
           </select>
         </div>
-        <div>
-          <label>Age</label>
-          <input type="number" name="age" min="18" max="100">
-        </div>
       </div>
     </div>
 
-    <!-- Contact & Education -->
-    <div class="register-card">
-      <h5>Contact & Education</h5>
-      <div class="form-grid">
-        <div>
-          <label>Contact Number</label>
-          <input type="tel" name="contact_number">
-        </div>
-        <div>
-          <label>Email</label>
-          <input type="email" name="email">
-        </div>
-        <div>
-          <label>Course</label>
-          <input type="text" name="course">
-        </div>
-        <div>
-          <label>Entity / Office</label>
-          <input type="text" name="entity_office">
-        </div>
-      </div>
-    </div>
-
-    <!-- Government & Identification Numbers -->
-    <div class="register-card">
-      <h5>Government & Identification Numbers</h5>
-      <div class="form-grid">
-        <div>
-          <label>BP Number</label>
-          <input type="text" name="bp_number">
-        </div>
-        <div>
-          <label>PhilHealth Number</label>
-          <input type="text" name="philhealth_number">
-        </div>
-        <div>
-          <label>Pag-IBIG Number</label>
-          <input type="text" name="pagibig_number">
-        </div>
-        <div>
-          <label>TIN</label>
-          <input type="text" name="tin">
-        </div>
-        <div>
-          <label>ID Number</label>
-          <input type="text" name="id_number">
-        </div>
-      </div>
-    </div>
-
-    <!-- Employment Information -->
+    <!-- Employment Information (as in design) -->
     <div class="register-card">
       <h5>Employment Information</h5>
       <div class="form-grid">
         <div>
-          <label>Position</label>
+          <label>Original Plantilla Position</label>
           <input type="text" name="position">
         </div>
         <div>
-          <label>Salary Grade</label>
-          <input type="text" name="salary_grade">
-        </div>
-        <div>
-          <label>Basic Salary</label>
-          <input type="number" name="basic_salary" step="0.01">
-        </div>
-        <div>
-          <label>Department</label>
+          <label>Present Designation</label>
           <input type="text" name="department">
+        </div>
+        <div>
+          <label>Original Place of Assignment</label>
+          <input type="text" name="original_place_of_assignment">
         </div>
         <div>
           <label>Place of Assignment</label>
           <input type="text" name="place_of_assignment">
         </div>
         <div>
-          <label>Original Place of Assignment</label>
-          <input type="text" name="original_place_of_assignment">
+          <label>Salary Grade</label>
+          <input type="text" name="salary_grade">
         </div>
         <div>
           <label>Item Number</label>
@@ -155,21 +75,13 @@
       </div>
     </div>
 
-    <!-- Appointment & Service Records -->
+    <!-- Appointment & Service Records (as in design) -->
     <div class="register-card">
-      <h5>Appointment & Service Records</h5>
+      <h5>Appointment &amp; Service Records</h5>
       <div class="form-grid">
         <div>
           <label>Date Appointed</label>
           <input type="date" name="date_appointed">
-        </div>
-        <div>
-          <label>Date of Last Promotion</label>
-          <input type="date" name="date_of_last_promotion">
-        </div>
-        <div>
-          <label>Date of Separation</label>
-          <input type="date" name="date_of_separation">
         </div>
         <div>
           <label>Employment Status</label>
@@ -182,13 +94,17 @@
           </select>
         </div>
         <div>
-          <label>Eligibility</label>
-          <input type="text" name="eligibility">
+          <label>Date of Last Promotion</label>
+          <input type="date" name="date_of_last_promotion">
+        </div>
+        <div>
+          <label>Date of Separation</label>
+          <input type="date" name="date_of_separation">
         </div>
       </div>
     </div>
 
-    <!-- Facial Capture -->
+    <!-- Facial Capture (as in design) -->
     <div class="register-card facial-capture-section">
       <h5>Facial Capture</h5>
       <div class="facial-capture-container">
@@ -200,15 +116,6 @@
             <div class="slot-icon">✓</div>
           </div>
           <div class="capture-slot" id="slot-2">
-            <div class="slot-icon">✓</div>
-          </div>
-          <div class="capture-slot" id="slot-3">
-            <div class="slot-icon">✓</div>
-          </div>
-          <div class="capture-slot" id="slot-4">
-            <div class="slot-icon">✓</div>
-          </div>
-          <div class="capture-slot" id="slot-5">
             <div class="slot-icon">✓</div>
           </div>
         </div>
@@ -231,7 +138,7 @@
 
     {% if error %}
     <div class="error-message" style="margin-top: 20px; padding: 15px; background: #fee; color: #c33; border-radius: 8px; border: 2px solid #c33; font-weight: 600;">
-      <strong>⚠️ Registration Failed:</strong> {{ error }}
+      <strong>Registration Failed:</strong> {{ error }}
     </div>
     {% endif %}
   </form>
@@ -289,7 +196,7 @@ function capturePhoto() {
   const imageData = canvas.toDataURL('image/jpeg', 0.8);
   
   // Store captured image
-  if (currentSlot < 6) {
+  if (currentSlot < 3) {
     capturedImages[currentSlot] = imageData;
     
     // Mark slot as captured
@@ -305,7 +212,7 @@ function capturePhoto() {
     faceImagesInput.value = JSON.stringify(capturedImages.filter(img => img !== undefined));
     
     // If all slots filled, stop camera
-    if (currentSlot >= 6) {
+    if (currentSlot >= 3) {
       stopCamera();
       captureBtn.textContent = 'All Photos Captured';
       captureBtn.disabled = true;

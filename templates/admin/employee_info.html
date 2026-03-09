@@ -299,17 +299,15 @@
   <div class="employee-actions">
     <a href="{{ url_for('admin.reports') }}?employee_id={{ employee.id }}" 
        class="action-btn action-btn-secondary">
-      📊 View DTR
+      View DTR
     </a>
     <a href="{{ url_for('admin.edit_employee', employee_id=employee.id) }}" 
        class="action-btn action-btn-edit">
-      ✏️ Edit Employee
+      Edit Employee
     </a>
-    <form method="POST" action="{{ url_for('admin.delete_employee', employee_id=employee.id) }}" 
-          class="action-btn-form"
-          onsubmit="return confirm('Are you sure you want to delete {{ employee.full_name }}? This action cannot be undone!');">
-      <button type="submit" class="action-btn action-btn-delete">
-        🗑️ Delete Employee
+    <form id="deleteEmployeeForm" method="POST" action="{{ url_for('admin.delete_employee', employee_id=employee.id) }}" class="action-btn-form">
+      <button type="button" id="deleteEmployeeBtn" class="action-btn action-btn-delete">
+        Delete Employee
       </button>
     </form>
     <a href="{{ url_for('admin.employees') }}" 
@@ -317,6 +315,70 @@
       ← Back to Employees
     </a>
   </div>
+
+  <!-- Custom delete confirmation modal (same UI as Activity Log) -->
+  <div id="employeeDeleteModal" class="audit-modal-overlay" role="dialog" aria-labelledby="employeeModalTitle" aria-hidden="true">
+    <div class="audit-modal-box">
+      <h3 id="employeeModalTitle" class="audit-modal-title">Delete employee?</h3>
+      <p class="audit-modal-message">Are you sure you want to delete <strong id="employeeDeleteName">{{ employee.full_name or 'this employee' }}</strong>? This action cannot be undone. All attendance and face data will be removed.</p>
+      <div class="audit-modal-actions">
+        <button type="button" id="employeeModalCancel" class="audit-modal-btn audit-modal-btn-cancel">Cancel</button>
+        <button type="button" id="employeeModalConfirm" class="audit-modal-btn audit-modal-btn-delete">Delete</button>
+      </div>
+    </div>
+  </div>
+  <style>
+    .audit-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .audit-modal-overlay.is-open { display: flex; }
+    .audit-modal-box {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+      padding: 24px;
+    }
+    .audit-modal-title { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 10px 0; }
+    .audit-modal-message { font-size: 14px; color: #6b7280; line-height: 1.5; margin: 0 0 20px 0; }
+    .audit-modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+    .audit-modal-btn { padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+    .audit-modal-btn-cancel { background: #f3f4f6; color: #374151; }
+    .audit-modal-btn-cancel:hover { background: #e5e7eb; }
+    .audit-modal-btn-delete { background: #ef4444; color: white; }
+    .audit-modal-btn-delete:hover { background: #dc2626; }
+  </style>
+  <script>
+    (function() {
+      var modal = document.getElementById('employeeDeleteModal');
+      var form = document.getElementById('deleteEmployeeForm');
+      var openBtn = document.getElementById('deleteEmployeeBtn');
+      var cancelBtn = document.getElementById('employeeModalCancel');
+      var confirmBtn = document.getElementById('employeeModalConfirm');
+      openBtn.addEventListener('click', function() {
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+      });
+      function closeModal() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+      }
+      modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+      cancelBtn.addEventListener('click', closeModal);
+      confirmBtn.addEventListener('click', function() {
+        closeModal();
+        form.submit();
+      });
+    })();
+  </script>
 
   {% elif employees is defined %}
   <!-- Employee Selection List -->

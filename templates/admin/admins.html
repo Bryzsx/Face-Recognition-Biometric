@@ -7,7 +7,7 @@
   <div class="card">
     <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
       <span>Admin Account Management</span>
-      <button onclick="openCreateModal()" class="btn-primary" style="padding: 10px 20px;">➕ Create New Admin</button>
+      <button onclick="openCreateModal()" class="btn-primary" style="padding: 10px 20px;">Create New Admin</button>
     </div>
     
     {% if error %}
@@ -34,8 +34,8 @@
           <td>{{ admin.username }}</td>
           <td>{{ admin.name or 'N/A' }}</td>
           <td>
-            <button onclick="editAdmin({{ admin.id }})" class="btn-secondary" style="padding: 6px 12px; margin-right: 5px;">✏️ Edit</button>
-            <button onclick="deleteAdmin({{ admin.id }}, '{{ admin.username }}')" class="btn-danger" style="padding: 6px 12px;">🗑️ Delete</button>
+            <button type="button" class="btn-secondary btn-edit-admin" style="padding: 6px 12px; margin-right: 5px;" data-admin-id="{{ admin.id }}">Edit</button>
+            <button type="button" class="btn-danger btn-delete-admin" style="padding: 6px 12px;" data-admin-id="{{ admin.id }}" data-admin-username="{{ (admin.username or '')|e }}">Delete</button>
           </td>
         </tr>
         {% endfor %}
@@ -78,7 +78,7 @@
                id="passwordRequired"
                style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
         <small style="color: #666; display: block; margin-top: 5px;" id="passwordHint">
-          Leave blank to keep current password when editing
+          Minimum 8 characters. Leave blank to keep current password when editing.
         </small>
       </div>
       
@@ -98,6 +98,19 @@
         <button type="submit" class="btn-primary" style="padding: 12px 24px;">Save Admin</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Delete confirmation modal (same UI as Activity Log / Employee Info) -->
+<div id="adminDeleteModal" class="delete-modal-overlay" role="dialog" aria-labelledby="adminDeleteModalTitle" aria-hidden="true">
+  <div class="delete-modal-box">
+    <h3 id="adminDeleteModalTitle" class="delete-modal-title">Delete admin account?</h3>
+    <p class="delete-modal-message">Are you sure you want to delete the admin account <strong id="adminDeleteUsername"></strong>? This action cannot be undone.</p>
+    <p id="adminDeleteModalError" class="delete-modal-error" style="display: none;"></p>
+    <div class="delete-modal-actions">
+      <button type="button" id="adminDeleteModalCancel" class="delete-modal-btn delete-modal-btn-cancel">Cancel</button>
+      <button type="button" id="adminDeleteModalConfirm" class="delete-modal-btn delete-modal-btn-delete">Delete</button>
+    </div>
   </div>
 </div>
 
@@ -176,6 +189,37 @@
 .btn-danger:hover {
   background: #dc2626;
 }
+
+/* Delete confirmation modal (same style as Activity Log / Employee Info) */
+.delete-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.delete-modal-overlay.is-open { display: flex; }
+.delete-modal-box {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  padding: 24px;
+}
+.delete-modal-title { font-size: 18px; font-weight: 600; color: #111827; margin: 0 0 10px 0; }
+.delete-modal-message { font-size: 14px; color: #6b7280; line-height: 1.5; margin: 0 0 20px 0; }
+.delete-modal-error { font-size: 13px; color: #dc2626; margin: 0 0 12px 0; }
+.delete-modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
+.delete-modal-btn { padding: 10px 18px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+.delete-modal-btn-cancel { background: #f3f4f6; color: #374151; }
+.delete-modal-btn-cancel:hover { background: #e5e7eb; }
+.delete-modal-btn-delete { background: #ef4444; color: white; }
+.delete-modal-btn-delete:hover { background: #dc2626; }
+.delete-modal-btn-delete:disabled { opacity: 0.7; cursor: not-allowed; }
 </style>
 
 <script>
@@ -227,37 +271,82 @@ function editAdmin(adminId) {
 }
 
 function deleteAdmin(adminId, username) {
-  if (!confirm(`Are you sure you want to delete admin account "${username}"?\n\nThis action cannot be undone.`)) {
-    return;
-  }
-  
+  const modal = document.getElementById('adminDeleteModal');
+  const usernameEl = document.getElementById('adminDeleteUsername');
+  const errorEl = document.getElementById('adminDeleteModalError');
+  const confirmBtn = document.getElementById('adminDeleteModalConfirm');
+  modal.setAttribute('data-admin-id', adminId);
+  modal._pendingRow = document.getElementById('admin-row-' + adminId);
+  usernameEl.textContent = '"' + (username || '') + '"';
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
+  confirmBtn.disabled = false;
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+function closeDeleteModal() {
+  const modal = document.getElementById('adminDeleteModal');
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  modal._pendingRow = null;
+}
+
+function confirmDeleteAdmin() {
+  const modal = document.getElementById('adminDeleteModal');
+  const adminId = modal.getAttribute('data-admin-id');
+  const errorEl = document.getElementById('adminDeleteModalError');
+  const confirmBtn = document.getElementById('adminDeleteModalConfirm');
+  if (!adminId) return;
+  confirmBtn.disabled = true;
+  errorEl.style.display = 'none';
+  errorEl.textContent = '';
   const formData = new FormData();
   formData.append('admin_id', adminId);
-  
-  fetch(`/admin/admins/delete/${adminId}`, {
+  fetch('/admin/admins/delete/' + adminId, {
     method: 'POST',
     body: formData
   })
-    .then(response => response.json())
-    .then(data => {
+    .then(function(response) { return response.json(); })
+    .then(function(data) {
       if (data.success) {
-        alert(data.message);
-        // Remove row from table
-        const row = document.getElementById(`admin-row-${adminId}`);
-        if (row) {
-          row.remove();
-        }
-        // Reload page to refresh list
-        location.reload();
+        if (modal._pendingRow) modal._pendingRow.remove();
+        closeDeleteModal();
       } else {
-        alert('Error: ' + (data.error || 'Unknown error'));
+        errorEl.textContent = data.error || 'Failed to delete admin account.';
+        errorEl.style.display = 'block';
+        confirmBtn.disabled = false;
       }
     })
-    .catch(error => {
-      console.error('Error:', error);
-      alert('Error deleting admin account');
+    .catch(function(err) {
+      console.error('Error:', err);
+      errorEl.textContent = 'Request failed. Please try again.';
+      errorEl.style.display = 'block';
+      confirmBtn.disabled = false;
     });
 }
+
+(function initDeleteModal() {
+  const modal = document.getElementById('adminDeleteModal');
+  const cancelBtn = document.getElementById('adminDeleteModalCancel');
+  const confirmBtn = document.getElementById('adminDeleteModalConfirm');
+  if (modal) modal.addEventListener('click', function(e) { if (e.target === modal) closeDeleteModal(); });
+  if (cancelBtn) cancelBtn.addEventListener('click', closeDeleteModal);
+  if (confirmBtn) confirmBtn.addEventListener('click', confirmDeleteAdmin);
+  document.querySelectorAll('.btn-delete-admin').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-admin-id');
+      var username = this.getAttribute('data-admin-username') || '';
+      deleteAdmin(id, username);
+    });
+  });
+  document.querySelectorAll('.btn-edit-admin').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = this.getAttribute('data-admin-id');
+      if (id) editAdmin(parseInt(id, 10));
+    });
+  });
+})();
 
 function saveAdmin(event) {
   event.preventDefault();

@@ -6,16 +6,17 @@
 <div class="section active">
   <div class="card">
     <div class="card-title">Reports - Daily Time Record (DTR)</div>
-    
+
     <!-- Employee and Month Selection -->
     <div style="margin-bottom: 30px; padding: 20px; background: #f9fafb; border-radius: 10px;">
-      <form method="GET" action="{{ url_for('admin.reports') }}" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+      <form method="GET" action="{{ url_for('admin.reports') }}"
+        style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
         <div>
           <label style="display: block; margin-bottom: 8px; font-weight: 500;">Select Employee:</label>
           <select name="employee_id" required style="width: 100%;">
             <option value="">-- Select Employee --</option>
             {% for emp in employees %}
-            <option value="{{ emp.id }}" {% if employee_id and employee_id|string == emp.id|string %}selected{% endif %}>
+            <option value="{{ emp.id }}" {% if employee_id and employee_id|string==emp.id|string %}selected{% endif %}>
               {{ emp.full_name }} ({{ emp.employee_code }})
             </option>
             {% endfor %}
@@ -33,116 +34,139 @@
 
     <!-- Export/Print Button -->
     {% if dtr_data and employee_info %}
-    <div style="margin-bottom: 20px; text-align: right;">
-      <button onclick="window.print()" 
-              style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; margin-right: 10px;">
-        🖨️ Print DTR
-      </button>
-      <a href="{{ url_for('admin.export_dtr_pdf', employee_id=employee_id, month=month_year) }}" 
-         style="padding: 10px 20px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; display: inline-block;">
-        📑 Download PDF
+    <div style="margin-bottom: 20px; text-align: right; display: flex; justify-content: flex-end; gap: 10px;" class="no-print">
+      <a href="{{ url_for('admin.export_dtr_pdf', employee_id=employee_id, month=month_year) }}" class="btn-export"
+        style="padding: 10px 20px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+        Download PDF
       </a>
+      <button onclick="window.print()"
+        style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+        Print DTR
+      </button>
     </div>
     {% endif %}
 
     <!-- DTR Form -->
     {% if dtr_data and employee_info %}
-    <div id="dtr-form-container" class="dtr-container">
+    <div id="dtr-form-container" class="dtr-container-multi">
+      {% for i in range(2) %}
       <div class="dtr-wrapper">
-        <div class="dtr-center dtr-bold">CIVIL SERVICE FORM NO. 48</div>
-        <div class="dtr-center dtr-bold">DAILY TIME RECORD</div>
+        <div class="dtr-header-label">Civil Service Form No. 48</div>
+        <div class="dtr-center dtr-bold dtr-title">DAILY TIME RECORD</div>
+        <div class="dtr-center dtr-o0o">-----o0o-----</div>
 
-        <br>
-
-        <div>
-          (Name) {{ employee_info.full_name or 'N/A' }}
+        <div class="dtr-name-section">
+          <div class="dtr-name-line">{{ employee_info.full_name or '' }}</div>
+          <div class="dtr-name-label">(Name)</div>
         </div>
 
-        <br>
-
-        <div>
-          For the month of 
-          {% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
-          {{ month_names[dtr_data.month|int - 1] }} {{ dtr_data.year }}
+        <div class="dtr-month-section">
+          {% set month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+          'October', 'November', 'December'] %}
+          For the month of <span class="dtr-underline">&nbsp;&nbsp;{{ month_names[dtr_data.month|int - 1] }} {{
+            dtr_data.year }}&nbsp;&nbsp;</span>
         </div>
 
-        <div style="margin-top: 4px;">
-          Official hours for arrival and departure
-          &nbsp;&nbsp;&nbsp;&nbsp;
-          Regular Days
-          <br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          Saturdays
+        <div class="dtr-hours-section">
+          <div style="display: flex; justify-content: space-between;">
+            <div>Official hours for <br> arrival and departure</div>
+            <div style="text-align: right;">Regular days ____________<br> Saturdays ____________</div>
+          </div>
         </div>
 
         <table class="dtr-table">
-          <tr>
-            <th rowspan="2">Day</th>
-            <th colspan="2">A.M.</th>
-            <th colspan="2">P.M.</th>
-            <th colspan="2">UNDER TIME</th>
-          </tr>
-          <tr>
-            <th>Arrival</th>
-            <th>Departure</th>
-            <th>Arrival</th>
-            <th>Departure</th>
-            <th>Hours</th>
-            <th>Minutes</th>
-          </tr>
+          <thead>
+            <tr>
+              <th rowspan="2" style="width: 25px;">Day</th>
+              <th colspan="2">A.M.</th>
+              <th colspan="2">P.M.</th>
+              <th colspan="2">Undertime</th>
+            </tr>
+            <tr>
+              <th style="font-size: 5px;">Arrival</th>
+              <th style="font-size: 5px;">Depar-<br>ture</th>
+              <th style="font-size: 5px;">Arrival</th>
+              <th style="font-size: 5px;">Depar-<br>ture</th>
+              <th style="font-size: 5px;">Hours</th>
+              <th style="font-size: 5px;">Min-<br>utes</th>
+            </tr>
+          </thead>
           <tbody>
             {% set days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31] %}
             {% set month_num = dtr_data.month|int %}
             {% set year_num = dtr_data.year|int %}
             {% set max_days = days_in_month[month_num - 1] %}
             {% if month_num == 2 and year_num % 4 == 0 and (year_num % 100 != 0 or year_num % 400 == 0) %}
-              {% set max_days = 29 %}
+            {% set max_days = 29 %}
             {% endif %}
-            
-            {% for day in range(1, max_days + 1) %}
+
+            {% for day in range(1, 32) %}
             {% set day_str = day|string %}
             {% set day_padded = day_str.zfill(2) %}
-            {% set record = dtr_data.records.get(day_padded, {}) %}
+            {% set record = dtr_data.records.get(day_padded, {}) if day <= max_days else None %}
+            {% set ut_minutes = record.work_minutes if record and record.work_minutes is not none else 0 %}
+            {% set has_full_times = record and record.morning_in and record.lunch_out and record.afternoon_in and record.time_out %}
             <tr>
-              <td>{{ day }}</td>
+              <td class="dtr-bold">{{ day }}</td>
+              {% if record %}
               <td>{{ record.morning_in or '' }}</td>
               <td>{{ record.lunch_out or '' }}</td>
               <td>{{ record.afternoon_in or '' }}</td>
               <td>{{ record.time_out or '' }}</td>
+              {% if ut_minutes %}
+              <td>{{ ut_minutes // 60 }}</td>
+              <td>{{ ut_minutes % 60 }}</td>
+              {% elif has_full_times %}
+              <td>0</td>
+              <td>0</td>
+              {% else %}
               <td></td>
               <td></td>
+              {% endif %}
+              {% else %}
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              {% endif %}
             </tr>
             {% endfor %}
             <tr>
-              <td colspan="5" class="dtr-left dtr-bold">TOTAL</td>
-              <td></td>
-              <td></td>
+              <td colspan="5" class="dtr-right dtr-bold">Total</td>
+              {% set total_ut = dtr_data.total_work_minutes if dtr_data and dtr_data.total_work_minutes is not none else 0 %}
+              <td>{{ total_ut // 60 }}</td>
+              <td>{{ total_ut % 60 }}</td>
             </tr>
           </tbody>
         </table>
 
-        <p class="dtr-cert">
-          I CERTIFY on my honor that the above is a true and correct report of the
-          hours of work performed, record of which was made daily at the time of
-          arrival at and departure from office.
-        </p>
+        <div class="dtr-footer">
+          <p class="dtr-cert">
+            I certify on my honor that the above is a true and correct report of
+            the hours of work performed, record of which was made daily at the
+            time of arrival and departure from office.
+          </p>
 
-        <p class="dtr-cert">
-          Verified as to the prescribed office hours:
-        </p>
+          <div class="dtr-signature-employee">
+            <div class="dtr-line-full"></div>
+            <div>(Signature)</div>
+          </div>
 
-        <div class="dtr-signature">
-          <div class="dtr-line"></div>
-          <div class="dtr-bold">{{ employee_info.full_name or 'N/A' }}</div>
-          Employee Signature
+          <p class="dtr-verified">
+            VERIFIED as to the prescribed office hours:
+          </p>
+
+          <div class="dtr-signature-incharge">
+            <div class="dtr-line-full"></div>
+            <div class="dtr-bold">In Charge</div>
+          </div>
         </div>
       </div>
+      {% endfor %}
     </div>
 
-    <!-- Print Button -->
-    <div style="margin-top: 20px; text-align: center;">
-      <button onclick="window.print()" style="padding: 12px 30px; font-size: 16px;">Print DTR</button>
-    </div>
     {% elif employee_id and month_year %}
     <div style="padding: 40px; text-align: center; color: #6b7280;">
       <p>No attendance records found for the selected employee and month.</p>
@@ -156,195 +180,184 @@
 </div>
 
 <style>
-/* DTR Styles - Original Compact Format on Bond Paper */
-@page {
-  size: letter;  /* 8.5" x 11" standard bond paper */
-  margin: 0.2in;  /* Small margins to center content */
-}
-
-.dtr-container {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: auto;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 7px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-.dtr-wrapper {
-  width: 3.2in;
-  height: 8.5in;
-  border: 1px solid #000;
-  padding: 2px;
-  box-sizing: border-box;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.dtr-center {
-  text-align: center;
-}
-
-.dtr-bold {
-  font-weight: bold;
-}
-
-.dtr-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 2px;
-  margin-bottom: 0;
-  font-size: 6px;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.dtr-table th, .dtr-table td {
-  border: 1px solid #000;
-  padding: 0px;
-  text-align: center;
-  height: 10px;
-  font-size: 6px;
-}
-
-.dtr-left {
-  text-align: left;
-}
-
-.dtr-signature {
-  margin-top: 2px;
-  text-align: center;
-  font-size: 6px;
-}
-
-.dtr-line {
-  border-bottom: 1px solid #000;
-  width: 120px;
-  margin: 2px auto;
-}
-
-p.dtr-cert {
-  font-size: 6px;
-  margin: 2px;
-  padding: 0;
-  line-height: 1;
-}
-
-/* Screen view */
-@media screen {
-  .dtr-container {
-    max-width: 800px;
-    margin: 20px auto;
+  /* DTR Styles - High Fidelity CS Form No. 48 */
+  .dtr-container-multi {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    background: #f3f4f6;
   }
-  
+
   .dtr-wrapper {
-    box-shadow: 0 2px 10px rgba(0,0,0,.1);
+    width: 3.5in;
+    min-height: 9in;
+    background: white;
+    border: 1px solid #000;
+    padding: 15px;
+    box-sizing: border-box;
+    font-family: serif;
+    color: #000;
+    display: flex;
+    flex-direction: column;
   }
-}
 
-/* Print Styles */
-@media print {
-  @page {
-    size: letter;  /* 8.5" x 11" standard bond paper */
-    margin: 0.2in;  /* Small margins to center the compact DTR */
+  .dtr-header-label {
+    font-size: 8px;
+    font-style: italic;
+    margin-bottom: 5px;
   }
-  
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+
+  .dtr-title {
+    font-size: 14px;
+    margin-bottom: 2px;
   }
-  
-  html, body {
-    width: 8.5in;
-    height: 11in;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible;
-    background: white !important;
+
+  .dtr-o0o {
+    font-size: 10px;
+    margin-bottom: 15px;
   }
-  
-  /* Hide navigation and UI elements */
-  .sidebar, .topbar, .card-title, button, form, 
-  .card > div:first-child, 
-  div[style*="margin-top: 20px"][style*="text-align: center"] {
-    display: none !important;
+
+  .dtr-name-section {
+    text-align: center;
+    margin-bottom: 15px;
   }
-  
-  /* Ensure parent containers are visible */
-  .main, .section, .card {
-    display: block !important;
-    position: static !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
-    border: none !important;
-    box-shadow: none !important;
+
+  .dtr-name-line {
+    border-bottom: 1px solid #000;
+    font-size: 14px;
+    font-weight: bold;
+    height: 20px;
+    padding-top: 5px;
   }
-  
-  /* DTR Container - Center on page */
-  .dtr-container {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: flex-start !important;
-    page-break-inside: avoid;
+
+  .dtr-name-label {
+    font-size: 10px;
   }
-  
-  /* DTR Wrapper - Original compact format */
-  .dtr-wrapper {
-    width: 3.2in !important;
-    height: 8.5in !important;
-    max-height: 10.6in !important;  /* Fit within page with margins */
-    margin: 0 auto !important;
-    padding: 2px !important;
-    border: 1px solid #000 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
-    display: flex !important;
-    flex-direction: column !important;
+
+  .dtr-month-section {
+    font-size: 11px;
+    margin-bottom: 10px;
   }
-  
+
+  .dtr-underline {
+    border-bottom: 1px solid #000;
+    display: inline-block;
+    min-width: 150px;
+  }
+
+  .dtr-hours-section {
+    font-size: 9px;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
   .dtr-table {
-    font-size: 6px !important;
-    margin-top: 2px !important;
-    margin-bottom: 0 !important;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8px;
   }
-  
-  .dtr-table th, .dtr-table td {
-    font-size: 6px !important;
-    height: 10px !important;
-    padding: 0px !important;
-    line-height: 1 !important;
+
+  .dtr-table th,
+  .dtr-table td {
+    border: 1px solid #000;
+    text-align: center;
+    height: 16px;
+    padding: 0 2px;
   }
-  
-  p.dtr-cert {
-    font-size: 6px !important;
-    margin: 2px !important;
-    line-height: 1 !important;
+
+  .dtr-table th {
+    font-weight: bold;
+    font-size: 8px;
   }
-  
-  .dtr-signature {
-    font-size: 6px !important;
-    margin-top: 2px !important;
+
+  .dtr-right {
+    text-align: right;
+    padding-right: 5px;
   }
-  
-  .dtr-line {
-    width: 120px !important;
-    margin: 2px auto !important;
+
+  .dtr-footer {
+    margin-top: 15px;
   }
-  
-  /* Reduce br spacing */
-  br {
-    line-height: 0.3 !important;
+
+  .dtr-cert {
+    font-size: 9px;
+    font-style: italic;
+    line-height: 1.3;
+    margin-bottom: 15px;
+    text-align: justify;
   }
-}
+
+  .dtr-signature-employee {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .dtr-line-full {
+    border-bottom: 1.5px solid #000;
+    width: 100%;
+    margin-bottom: 2px;
+  }
+
+  .dtr-verified {
+    font-size: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .dtr-signature-incharge {
+    text-align: center;
+    font-size: 11px;
+  }
+
+  .dtr-bold {
+    font-weight: bold;
+  }
+
+  /* Print Styles */
+  @media print {
+    @page {
+      size: letter;
+      margin: 0.25in;
+    }
+
+    body * {
+      visibility: hidden;
+    }
+
+    .dtr-container-multi,
+    .dtr-container-multi * {
+      visibility: visible;
+    }
+
+    .dtr-container-multi {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background: white;
+      padding: 0;
+      gap: 0.5in;
+      display: flex;
+      justify-content: center;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    .dtr-wrapper {
+      box-shadow: none;
+      border: 1px solid #000;
+    }
+  }
+
+  /* Screen adjustments */
+  @media screen and (max-width: 800px) {
+    .dtr-container-multi {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 </style>
 {% endblock %}

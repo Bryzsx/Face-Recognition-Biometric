@@ -1203,3 +1203,456 @@ AttributeError: 'sqlite3.Row' object has no attribute 'get'
 2026-01-26 13:35:44 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
 2026-01-26 14:22:49 - blueprints.admin - ERROR - admin.py:1445 - openpyxl not installed
 2026-01-26 14:23:09 - blueprints.admin - ERROR - admin.py:1517 - reportlab not installed
+2026-01-27 10:01:16 - blueprints.admin - ERROR - admin.py:1704 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1694, in export_dtr_pdf
+    filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-27 10:01:23 - blueprints.admin - ERROR - admin.py:1704 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1694, in export_dtr_pdf
+    filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-27 10:01:35 - blueprints.admin - ERROR - admin.py:1704 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 1694, in export_dtr_pdf
+    filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-01-29 10:32:36 - blueprints.admin - ERROR - admin.py:320 - Error deleting employee 1: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 311, in delete_employee
+    cur.execute("DELETE FROM employees WHERE id=?", (employee_id,))
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-01-29 10:32:42 - blueprints.admin - ERROR - admin.py:320 - Error deleting employee 1: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 311, in delete_employee
+    cur.execute("DELETE FROM employees WHERE id=?", (employee_id,))
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-01-29 10:32:50 - blueprints.admin - ERROR - admin.py:320 - Error deleting employee 1: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 311, in delete_employee
+    cur.execute("DELETE FROM employees WHERE id=?", (employee_id,))
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-01-29 10:33:49 - blueprints.admin - ERROR - admin.py:195 - Registration failed - IntegrityError: Employee ID '2200017700' already exists
+2026-01-29 10:35:58 - blueprints.admin - ERROR - admin.py:320 - Error deleting employee 1: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 311, in delete_employee
+    os.remove(photo_path)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-01-29 10:36:23 - blueprints.admin - ERROR - admin.py:320 - Error deleting employee 1: FOREIGN KEY constraint failed
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - Copy\blueprints\admin.py", line 311, in delete_employee
+    os.remove(photo_path)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+2026-03-02 08:52:01 - blueprints.admin - ERROR - admin.py:1796 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1786, in export_dtr_pdf
+    filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-02 08:52:25 - blueprints.admin - ERROR - admin.py:1796 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1786, in export_dtr_pdf
+    filename = f"DTR_{employee_info.get('employee_code', employee_id)}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-02 08:55:11 - blueprints.admin - ERROR - admin.py:1796 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1786, in export_dtr_pdf
+    filename = f"DTR_{employee_info['employee_code'] or employee_id}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-02 08:55:13 - blueprints.admin - ERROR - admin.py:1796 - Error generating DTR PDF: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1786, in export_dtr_pdf
+    filename = f"DTR_{employee_info['employee_code'] or employee_id}_{month_year}.pdf"
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-03 14:30:19 - blueprints.admin - ERROR - admin.py:1814 - Error generating DTR PDF: NextFrameFlowable.__init__() missing 1 required positional argument: 'ix'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1799, in export_dtr_pdf
+    story.append(NextFrameFlowable())
+TypeError: NextFrameFlowable.__init__() missing 1 required positional argument: 'ix'
+2026-03-05 13:32:38 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 608, in edit_dtr
+    record = cur.fetchone()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:32:42 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 608, in edit_dtr
+    record = cur.fetchone()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:32:43 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 608, in edit_dtr
+    record = cur.fetchone()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:32:43 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 608, in edit_dtr
+    record = cur.fetchone()
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:39:11 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 608, in edit_dtr
+    cur.execute("SELECT a.*, e.full_name, e.employee_code FROM attendance a JOIN employees e ON a.employee_id = e.id WHERE a.attendance_id=?", (attendance_id,))
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:39:35 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 551, in edit_dtr
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:39:53 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 551, in edit_dtr
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 13:44:08 - blueprints.admin - ERROR - admin.py:622 - Error updating DTR 7: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 551, in edit_dtr
+    if not request.is_json:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 14:28:51 - blueprints.admin - ERROR - admin.py:1199 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1184, in delete_admin
+    if admin_count and admin_count.get("count", 0) <= 1:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 14:28:57 - blueprints.admin - ERROR - admin.py:1199 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1184, in delete_admin
+    if admin_count and admin_count.get("count", 0) <= 1:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 14:39:30 - blueprints.admin - ERROR - admin.py:1208 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1193, in delete_admin
+    if admin_count and admin_count.get("count", 0) <= 1:
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 14:46:58 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:46:58 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:47:01 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:47:01 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:47:02 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:47:02 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:12 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:12 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:12 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:12 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:13 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:13 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:13 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:13 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:13 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:13 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:14 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:14 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:17 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:17 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:50:18 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    return redirect(url_for("admin.dashboard"))
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:50:18 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 14:54:18 - __main__ - ERROR - app.py:64 - 500 error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\auth.py", line 60, in admin_login
+    except Exception as e:
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\templates\admin_login.html", line 22, in top-level template code
+    <div class="form-group">
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\venv310\lib\site-packages\jinja2\utils.py", line 92, in from_obj
+    if hasattr(obj, "jinja_pass_arg"):
+jinja2.exceptions.UndefinedError: 'csrf_token' is undefined
+2026-03-05 14:54:18 - db - ERROR - db.py:109 - Exception in teardown: 'csrf_token' is undefined
+NoneType: None
+2026-03-05 15:15:24 - blueprints.admin - ERROR - admin.py:1290 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1270, in delete_admin
+    # sqlite3.Row does not support .get(); use index or key access
+AttributeError: 'sqlite3.Row' object has no attribute 'get'
+2026-03-05 15:15:30 - blueprints.admin - ERROR - admin.py:1290 - Error deleting admin: 'sqlite3.Row' object has no attribute 'get'
+Traceback (most recent call last):
+  File "C:\Users\Bryce\Documents\Face_Biometric_System - REGION OFFICE\blueprints\admin.py", line 1270, in delete_admin
+    # sqlite3.Row does not support .get(); use index or key access
+AttributeError: 'sqlite3.Row' object has no attribute 'get'

@@ -12,17 +12,17 @@
         <a href="{{ url_for('admin.export_attendance', format='csv') }}?date={{ selected_date }}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #10b981; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📄 CSV
+          CSV
         </a>
         <a href="{{ url_for('admin.export_attendance', format='excel') }}?date={{ selected_date }}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #059669; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📊 Excel
+          Excel
         </a>
         <a href="{{ url_for('admin.export_attendance', format='pdf') }}?date={{ selected_date }}" 
            class="btn-export" 
            style="padding: 8px 16px; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px;">
-          📑 PDF
+          PDF
         </a>
       </div>
       {% endif %}
@@ -45,10 +45,11 @@
           <th>Name</th>
           <th>Date</th>
           <th>Time In</th>
-          <th>Lunch Out</th>
-          <th>Afternoon In</th>
+          <th>Time Out</th>
+          <th>Time In</th>
           <th>Time Out</th>
           <th>Status</th>
+          <th>Proof</th>
           <th>Action</th>
         </tr>
       </thead>
@@ -73,10 +74,22 @@
             {% endif %}
           </td>
           <td>
+            {% if record.proof_file_path %}
+              <a href="{{ url_for('static', filename=record.proof_file_path) }}" target="_blank" rel="noopener" style="font-size: 12px; color: #2563eb; text-decoration: none;">📎 View</a>
+              {% if record.verification_method and 'Proof:' in (record.verification_method or '') %}
+                <span style="font-size: 11px; color: #059669;" title="{{ record.verification_method }}"> (notes)</span>
+              {% endif %}
+            {% elif record.verification_method and 'Proof:' in (record.verification_method or '') %}
+              <span style="font-size: 11px; color: #059669;" title="{{ record.verification_method }}">✓ Yes</span>
+            {% else %}
+              <span style="color: #9ca3af;">--</span>
+            {% endif %}
+          </td>
+          <td>
             <a href="{{ url_for('admin.edit_dtr', attendance_id=record.attendance_id) }}" 
                class="btn-edit" 
                style="padding: 6px 12px; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-size: 13px; display: inline-block;">
-              ✏️ Edit
+              Edit
             </a>
           </td>
         </tr>
