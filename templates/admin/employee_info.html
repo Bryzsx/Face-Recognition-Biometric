@@ -26,7 +26,7 @@
       <div class="employee-header-info">
         <div class="employee-name-wrapper">
           <h2 class="employee-name">{{ employee.full_name or 'N/A' }}</h2>
-          <div class="employee-verified-badge">✓ Verified</div>
+          <div class="employee-verified-badge">Verified</div>
         </div>
         <div class="employee-header-meta">
           <span class="employee-id-badge">
@@ -191,7 +191,7 @@
         </div>
         <div class="info-item">
           <span class="info-label">Basic Salary</span>
-          <span class="info-value salary-value">{% if employee.basic_salary %}₱{{ "%.2f"|format(employee.basic_salary) }}{% else %}N/A{% endif %}</span>
+          <span class="info-value salary-value">{% if employee.basic_salary %}PHP {{ "%.2f"|format(employee.basic_salary) }}{% else %}N/A{% endif %}</span>
         </div>
         <div class="info-item">
           <span class="info-label">Item Number</span>
@@ -310,9 +310,9 @@
         Delete Employee
       </button>
     </form>
-    <a href="{{ url_for('admin.employees') }}" 
+    <a href="{{ url_for('admin.employees') }}"
        class="action-btn action-btn-secondary">
-      ← Back to Employees
+      Back to Employees
     </a>
   </div>
 
@@ -424,9 +424,9 @@
     {% endif %}
     
     <div style="margin-top: 20px; text-align: center;">
-      <a href="{{ url_for('admin.employees') }}" 
+      <a href="{{ url_for('admin.employees') }}"
          style="color: #667eea; text-decoration: none;">
-        ← Back to All Employees
+        Back to All Employees
       </a>
     </div>
   </div>

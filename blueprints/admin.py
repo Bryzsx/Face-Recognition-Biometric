@@ -1438,7 +1438,7 @@ def update_admin(admin_id):
         
         # Update admin (password only if provided)
         if password and password.strip():
-            # New password provided – hash it
+            # New password provided - hash it
             execute_query_safe(
                 db,
                 "UPDATE admin SET username=?, password=?, name=? WHERE id=?",

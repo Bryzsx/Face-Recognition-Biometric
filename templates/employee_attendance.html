@@ -467,7 +467,7 @@
             <!-- Success/Error Status -->
             <div class="scan-status" id="scanStatus">
                 <div class="checkmark-circle">
-                    <div class="checkmark">✓</div>
+                    <div class="checkmark">OK</div>
                 </div>
                 <div class="welcome-name" id="welcomeName"></div>
                 <div class="checkin-time" id="checkinTime"></div>
@@ -488,7 +488,7 @@
                 </div>
                 <div class="status-item">
                     <div class="status-dot"></div>
-                    <div class="status-text">👤 Look directly at the camera and keep your face clearly visible</div>
+                    <div class="status-text">Look directly at the camera and keep your face clearly visible</div>
                 </div>
             </div>
         </div>
@@ -852,7 +852,7 @@
                         errorMessage.toLowerCase().includes('no face') ||
                         errorMessage.toLowerCase().includes('face is clearly visible')) {
                         // No face detected - show warning, not error
-                        statusText.textContent = '👤 No face detected. Please position your face in the camera frame and ensure good lighting.';
+                        statusText.textContent = 'No face detected. Please position your face in the camera frame and ensure good lighting.';
                         statusDot.classList.remove('error');
                         statusDot.classList.add('warning');
 
@@ -1180,10 +1180,10 @@
                         <div class="history-item">
                             <div class="history-date">${record.date_label}</div>
                             <div class="history-badges">
-                                ${record.morning_in ? `<span class="badge badge-in">↓ In: ${record.morning_in}</span>` : ''}
-                                ${record.lunch_out ? `<span class="badge badge-out">↑ Out: ${record.lunch_out}</span>` : ''}
-                                ${record.afternoon_in ? `<span class="badge badge-in">↓ In: ${record.afternoon_in}</span>` : ''}
-                                ${record.time_out ? `<span class="badge badge-out">↑ Out: ${record.time_out}</span>` : ''}
+                                ${record.morning_in ? `<span class="badge badge-in">In: ${record.morning_in}</span>` : ''}
+                                ${record.lunch_out ? `<span class="badge badge-out">Out: ${record.lunch_out}</span>` : ''}
+                                ${record.afternoon_in ? `<span class="badge badge-in">In: ${record.afternoon_in}</span>` : ''}
+                                ${record.time_out ? `<span class="badge badge-out">Out: ${record.time_out}</span>` : ''}
                             </div>
                         </div>
                     `).join('');

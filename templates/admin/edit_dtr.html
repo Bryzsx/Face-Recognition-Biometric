@@ -69,7 +69,7 @@
         <label style="display: block; margin-bottom: 8px; font-weight: 500;">Attach proof document (optional):</label>
         <input type="file" name="proof_file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" 
                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-        <small style="color: #6b7280; font-size: 12px;">Upload travel order, memo, certificate, or other proof (PDF, JPG, PNG, DOC, DOCX — max 10MB).</small>
+        <small style="color: #6b7280; font-size: 12px;">Upload travel order, memo, certificate, or other proof (PDF, JPG, PNG, DOC, DOCX - max 10MB).</small>
         {% if record.proof_file_path %}
         <p style="margin-top: 8px; font-size: 13px;">
           Current attachment: <a href="{{ url_for('static', filename=record.proof_file_path) }}" target="_blank" rel="noopener">View attached file</a>. Upload a new file to replace.
@@ -84,7 +84,7 @@
         </button>
         <a href="{{ url_for('admin.attendance', date=record.date) }}" 
            style="padding: 12px 24px; background: #6b7280; color: white; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
-          ← Cancel
+          Cancel
         </a>
       </div>
     </form>

@@ -249,7 +249,7 @@ def ensure_absent_records_for_date(target_date: str) -> int:
         # Decide if we are allowed to auto-mark absences for this date
         today_str = _date.today().isoformat()
         if target_date > today_str:
-            # Future date – never auto-mark absent
+            # Future date - never auto-mark absent
             return 0
 
         if target_date == today_str:
@@ -260,7 +260,7 @@ def ensure_absent_records_for_date(target_date: str) -> int:
                 cutoff = datetime.strptime(timeout_start_str, "%I:%M %p").time()
                 now_time = datetime.now().time()
                 if now_time < cutoff:
-                    # It's not yet end of day – do nothing
+                    # It's not yet end of day - do nothing
                     return 0
             except Exception:
                 # If parsing fails, be safe and do nothing for today

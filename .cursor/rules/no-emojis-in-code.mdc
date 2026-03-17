@@ -1,0 +1,17 @@
+---
+description: Disallow emojis and emoticons in backend and frontend code
+globs: "**/*.py, **/*.html, **/*.js, **/*.css"
+alwaysApply: true
+---
+
+# No Emojis in Code
+
+- Do not use emojis or emoticon characters in any backend or frontend code.
+- This includes:
+  - Log messages
+  - User-facing text in templates
+  - Comments and documentation inside code files
+- Use clear text instead of emojis. For example:
+  - Use "HTTPS Enabled - Using SSL certificates" rather than prefixed lock icons.
+  - Use "Warning: HTTP mode, camera may not work from remote devices" rather than warning symbols.
+

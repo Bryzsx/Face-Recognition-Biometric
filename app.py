@@ -117,12 +117,12 @@ if __name__ == "__main__":
     if os.path.exists(SSL_CERT_PATH) and os.path.exists(SSL_KEY_PATH):
         ssl_context = (SSL_CERT_PATH, SSL_KEY_PATH)
         logger.info("=" * 50)
-        logger.info("🔒 HTTPS Enabled - Using SSL certificates")
+        logger.info("HTTPS Enabled - Using SSL certificates")
         logger.info("=" * 50)
         logger.info(f"Access the app via: https://YOUR_IP:{PORT}")
     else:
         logger.warning("=" * 50)
-        logger.warning("⚠️  HTTP Mode - Camera may not work from remote devices")
+        logger.warning("HTTP Mode - Camera may not work from remote devices")
         logger.warning("=" * 50)
         logger.warning("To enable HTTPS (required for camera access from IP address):")
         logger.warning("  1. Run: ./setup_https.sh")

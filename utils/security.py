@@ -57,7 +57,7 @@ def needs_rehash(hashed_password: str) -> bool:
     (e.g., when rounds setting changes).
     """
     if not hashed_password or not hashed_password.startswith(("$2a$", "$2b$", "$2y$")):
-        # Plain-text or unknown format – should be upgraded
+        # Plain-text or unknown format - should be upgraded
         return True
     try:
         parts = hashed_password.split("$")

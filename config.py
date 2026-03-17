@@ -14,7 +14,7 @@ DATABASE = os.environ.get('DATABASE_PATH', os.path.join(BASE_DIR, 'biometric.db'
 SECRET_KEY = os.environ.get('SECRET_KEY', 'change-this-to-a-random-secret-key-in-production')
 DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 HOST = os.environ.get('FLASK_HOST', '0.0.0.0')
-PORT = int(os.environ.get('FLASK_PORT', 5000))
+PORT = int(os.environ.get('PORT', os.environ.get('FLASK_PORT', 5000)))
 
 # SSL/HTTPS configuration
 SSL_CERT_PATH = os.path.join(BASE_DIR, 'certs', 'server.crt')

@@ -6882,3 +6882,170 @@ AttributeError: 'sqlite3.Row' object has no attribute 'get'
 2026-03-07 16:18:39 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 12
 2026-03-07 16:18:39 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
 2026-03-07 16:18:39 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:21:25 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-09 20:21:25 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-09 20:21:25 - __main__ - INFO - app.py:120 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-03-09 20:21:25 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-09 20:21:25 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-09 20:21:25 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-09 20:21:33 - __main__ - WARNING - app.py:73 - 404 error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-09 20:21:37 - blueprints.auth - INFO - auth.py:74 - Admin login successful: admin
+2026-03-09 20:21:37 - utils.helpers - INFO - helpers.py:321 - ensure_absent_records_for_date: created 1 Absent records for 2026-03-09
+2026-03-09 20:21:37 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:21:38 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:21:38 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:21:38 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:21:49 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:21:50 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:21:50 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:21:50 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:23:42 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:23:42 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:23:42 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:23:42 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:24:10 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:24:10 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:24:10 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:24:10 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-09 20:24:11 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-09 20:24:11 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-09 20:24:11 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-09 20:24:11 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:40:21 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-11 15:40:21 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-11 15:40:21 - __main__ - INFO - app.py:120 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-03-11 15:40:21 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-11 15:40:21 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-11 15:40:21 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-11 15:42:05 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-11 15:42:05 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-11 15:42:05 - __main__ - INFO - app.py:120 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-03-11 15:42:05 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-11 15:42:05 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-11 15:42:05 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-11 15:42:11 - __main__ - WARNING - app.py:73 - 404 error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-11 15:42:27 - blueprints.auth - INFO - auth.py:74 - Admin login successful: admin
+2026-03-11 15:42:27 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:42:27 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-11 15:42:27 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:42:27 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:42:59 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:42:59 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 13
+2026-03-11 15:42:59 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:42:59 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:44:04 - blueprints.employee - INFO - employee.py:14 - Employee attendance page accessed
+2026-03-11 15:44:26 - blueprints.api - INFO - api.py:212 - Starting face recognition...
+2026-03-11 15:44:27 - face_utils - INFO - face_utils.py:222 - Successfully loaded 1 face encodings
+2026-03-11 15:44:27 - blueprints.api - INFO - api.py:263 - Face match found at index 0, employee_id: 2
+2026-03-11 15:44:27 - blueprints.api - INFO - api.py:492 - Attendance recorded for employee 2 at 03:44 PM
+2026-03-11 15:44:41 - blueprints.api - INFO - api.py:212 - Starting face recognition...
+2026-03-11 15:44:42 - blueprints.api - INFO - api.py:263 - Face match found at index 0, employee_id: 2
+2026-03-11 15:44:47 - blueprints.api - INFO - api.py:212 - Starting face recognition...
+2026-03-11 15:44:48 - blueprints.api - INFO - api.py:263 - Face match found at index 0, employee_id: 2
+2026-03-11 15:44:55 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:44:55 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 15:44:55 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:44:55 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:52:46 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-11 15:52:46 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-11 15:52:46 - __main__ - INFO - app.py:120 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-03-11 15:52:46 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-11 15:52:46 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-11 15:52:46 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-11 15:53:23 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:53:24 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 15:53:24 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:53:24 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:53:26 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:53:26 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 15:53:26 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:53:26 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 15:53:44 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 15:53:44 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 15:53:44 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 15:53:44 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:03:57 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-11 16:03:57 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-11 16:03:57 - __main__ - INFO - app.py:120 - 🔒 HTTPS Enabled - Using SSL certificates
+2026-03-11 16:03:57 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-11 16:03:57 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-11 16:03:57 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-11 16:04:00 - blueprints.admin - WARNING - admin.py:92 - Unauthorized access attempt to admin route
+2026-03-11 16:04:01 - __main__ - WARNING - app.py:73 - 404 error: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-11 16:05:03 - blueprints.auth - INFO - auth.py:74 - Admin login successful: admin
+2026-03-11 16:05:03 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:05:03 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:05:03 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:05:03 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:06:41 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:06:41 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:06:41 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:06:41 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:13:05 - blueprints.admin - INFO - admin.py:324 - Employee found: ID=2, Name=Bryce A. Corvera
+2026-03-11 16:13:19 - blueprints.admin - INFO - admin.py:324 - Employee found: ID=2, Name=Bryce A. Corvera
+2026-03-11 16:13:20 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:13:20 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:13:20 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:13:20 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:13:21 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:13:21 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:13:21 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:13:21 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:38 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:38 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:38 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:38 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:39 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:39 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:39 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:39 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:39 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:40 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:40 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:40 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:14:41 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:14:41 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:14:41 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:14:41 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:17:24 - __main__ - INFO - app.py:33 - Flask application initialized with blueprints
+2026-03-11 16:17:24 - __main__ - INFO - app.py:119 - ==================================================
+2026-03-11 16:17:24 - __main__ - INFO - app.py:120 - HTTPS Enabled - Using SSL certificates
+2026-03-11 16:17:24 - __main__ - INFO - app.py:121 - ==================================================
+2026-03-11 16:17:24 - __main__ - INFO - app.py:122 - Access the app via: https://YOUR_IP:5000
+2026-03-11 16:17:24 - __main__ - INFO - app.py:136 - Starting Flask app with HTTPS on 0.0.0.0:5000
+2026-03-11 16:17:26 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:17:26 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:17:26 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:17:26 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:17:34 - blueprints.admin - INFO - admin.py:1333 - Admin management page accessed by: IT_System Admin
+2026-03-11 16:17:37 - blueprints.admin - INFO - admin.py:137 - Dashboard accessed by admin: IT_System Admin
+2026-03-11 16:17:37 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:17:37 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:17:37 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard
+2026-03-11 16:17:54 - blueprints.api - INFO - api.py:78 - Total attendance records in database: 14
+2026-03-11 16:17:54 - blueprints.api - INFO - api.py:93 - Recent attendance query returned 10 records
+2026-03-11 16:17:54 - blueprints.api - INFO - api.py:111 - Processed 10 attendance records for dashboard

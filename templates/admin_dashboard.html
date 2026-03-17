@@ -14,17 +14,16 @@
   </div>
 
   <ul class="nav-menu">
-<li><a href="#" class="nav-link active" data-target="dashboard">📊Dashboard</a></li>
-<li><a href="#" class="nav-link" data-target="register">➕Register Employee</a></li>
-<li><a href="#" class="nav-link" data-target="employees">👥All Employees</a></li>
-<li><a href="#" class="nav-link" data-target="attendance">📅Today's Attendance</a></li>
-<li><a href="#" class="nav-link" data-target="reports">📈Reports</a></li>
-<li><a href="#" class="nav-link" data-target="employeeInfo">📄Employee Information</a></li>
+<li><a href="#" class="nav-link active" data-target="dashboard">Dashboard</a></li>
+<li><a href="#" class="nav-link" data-target="register">Register Employee</a></li>
+<li><a href="#" class="nav-link" data-target="employees">All Employees</a></li>
+<li><a href="#" class="nav-link" data-target="attendance">Today's Attendance</a></li>
+<li><a href="#" class="nav-link" data-target="reports">Reports</a></li>
+<li><a href="#" class="nav-link" data-target="employeeInfo">Employee Information</a></li>
 </ul>
 
   <div class="logout-box">
-    <a href="#" id="logout-btn" class="logout-btn">🔒 Logout</a>
-  </div>
+    <a href="#" id="logout-btn" class="logout-btn">Logout</a>
 </div>
 
 
@@ -46,10 +45,10 @@
 <!-- DASHBOARD -->
 <div id="dashboard" class="section active">
 <div class="stats">
-<div class="stat"><div class="stat-icon">👥</div><small>Total Employees</small><h2>127</h2><span>Company-wide</span></div>
-<div class="stat"><div class="stat-icon">✅</div><small>Present Today</small><h2>114</h2><span>89.8%</span></div>
-<div class="stat"><div class="stat-icon">❌</div><small>Absent</small><h2>8</h2><span>Needs review</span></div>
-<div class="stat"><div class="stat-icon">⏰</div><small>Late</small><h2>5</h2><span>Today</span></div>
+<div class="stat"><div class="stat-icon">TE</div><small>Total Employees</small><h2>127</h2><span>Company-wide</span></div>
+<div class="stat"><div class="stat-icon">PR</div><small>Present Today</small><h2>114</h2><span>89.8%</span></div>
+<div class="stat"><div class="stat-icon">AB</div><small>Absent</small><h2>8</h2><span>Needs review</span></div>
+<div class="stat"><div class="stat-icon">LT</div><small>Late</small><h2>5</h2><span>Today</span></div>
 </div>
 
 <div class="card">
@@ -418,7 +417,7 @@ p.dtr-cert{
                 <th>Minutes</th>
             </tr>
 
-            <!-- DAYS 1–31 -->
+            <!-- DAYS 1-31 -->
             <tbody id="dtr-days"></tbody>
 
             <tr>
@@ -483,7 +482,7 @@ let count=0;
 function capture(){
 if(count<5){
 document.querySelectorAll(".photo")[count].classList.add("done");
-document.querySelectorAll(".photo")[count].innerText="✓";
+document.querySelectorAll(".photo")[count].innerText="OK";
 count++;
 }
 }
