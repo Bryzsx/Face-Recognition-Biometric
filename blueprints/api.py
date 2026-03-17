@@ -3,11 +3,13 @@ API blueprint for REST API endpoints
 """
 from flask import Blueprint, request, jsonify
 from functools import wraps
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from utils.logger import get_logger
 import face_utils
 import face_recognition
 import sqlite3
+
+PH_TZ = timezone(timedelta(hours=8))  # Asia/Manila (UTC+8)
 
 logger = get_logger(__name__)
 api_bp = Blueprint('api', __name__, url_prefix='/api')
@@ -308,9 +310,10 @@ def recognize_face():
             logger.warning(f"Inactive employee attempted attendance: {employee_id}, status: {employee_status}")
             return jsonify({"success": False, "message": "Your account is not active. Please contact administrator."})
         
-        # Record attendance
-        today = date.today().isoformat()
-        current_time = datetime.now().strftime("%I:%M %p")
+        # Record attendance using Asia/Manila timezone
+        now_ph = datetime.now(PH_TZ)
+        today = now_ph.date().isoformat()
+        current_time = now_ph.strftime("%I:%M %p")
         
         # Check existing attendance for today (use safe query helper)
         existing = execute_query_safe(
@@ -533,10 +536,11 @@ def attendance_history():
         
         filter_type = request.args.get("filter", "week")
         
+        now_ph = datetime.now(PH_TZ)
         if filter_type == "week":
-            start_date = (datetime.now() - timedelta(days=7)).date().isoformat()
+            start_date = (now_ph - timedelta(days=7)).date().isoformat()
         else:  # month
-            start_date = (datetime.now() - timedelta(days=30)).date().isoformat()
+            start_date = (now_ph - timedelta(days=30)).date().isoformat()
         
         cur.execute("""
             SELECT e.full_name, a.date, a.morning_in, a.lunch_out, 
@@ -553,7 +557,7 @@ def attendance_history():
         formatted_records = []
         for record in records:
             date_obj = datetime.strptime(record["date"], "%Y-%m-%d")
-            today = datetime.now().date()
+            today = datetime.now(PH_TZ).date()
             
             if date_obj.date() == today:
                 date_label = f"Today, {date_obj.strftime('%b %d, %Y')} ({record['full_name']})"
